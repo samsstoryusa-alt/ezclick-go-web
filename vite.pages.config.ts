@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import {fileURLToPath} from 'node:url';
 
 // A separate browser-only entry keeps the existing server implementation intact.
-const base = process.env.PAGES_BASE_PATH || '/ezclick-go-web/';
+const base = process.env.PAGES_BASE_PATH || '/';
 if (!base.startsWith('/') || !base.endsWith('/')) throw new Error('PAGES_BASE_PATH must start and end with /');
 export default defineConfig({
   base,
