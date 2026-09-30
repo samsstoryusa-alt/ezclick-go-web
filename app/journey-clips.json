@@ -1,0 +1,109 @@
+[
+  {
+    "id": "00-smooth",
+    "frames": 480,
+    "duration": 8.0,
+    "source": "Truck_to_office_transition_1080p_20260928190217.mp4",
+    "samplingFps": 60,
+    "sourceFps": 24
+  },
+  {
+    "id": "01",
+    "frames": 128,
+    "duration": 8.0,
+    "source": "Seamless_transition_to_truck_dri\u2026_20260928192043.mp4"
+  },
+  {
+    "id": "02",
+    "frames": 128,
+    "duration": 8.0,
+    "source": "Create_single-shot_transition_1080p_20260928201801.mp4"
+  },
+  {
+    "id": "03",
+    "frames": 128,
+    "duration": 8.0,
+    "source": "Create_smooth_one-shot_transition_1080p_20260928202517.mp4"
+  },
+  {
+    "id": "04",
+    "frames": 128,
+    "duration": 8.0,
+    "source": "\u0421\u043e\u0435\u0434\u0435\u043d\u0438_1080p_20260928203441.mp4"
+  },
+  {
+    "id": "05",
+    "frames": 128,
+    "duration": 8.0,
+    "source": "99296.mp4"
+  },
+  {
+    "id": "06",
+    "frames": 128,
+    "duration": 8.0,
+    "source": "Camera_flight_across_office_1080p_20260928210021.mp4"
+  },
+  {
+    "id": "07",
+    "frames": 128,
+    "duration": 8.0,
+    "source": "Flying_towards_the_city_1080p_20260928210754.mp4"
+  },
+  {
+    "id": "08",
+    "frames": 114,
+    "duration": 7.125229,
+    "source": "Camera_flying_into_space_1080p_20260928211952.mp4"
+  },
+  {
+    "id": "09",
+    "frames": 128,
+    "duration": 8.0,
+    "source": "Smoothly_away_from_ground_1080p_20260928212732.mp4"
+  },
+  {
+    "id": "10-quick-setup",
+    "frames": 240,
+    "duration": 10,
+    "source": "EZCLICK-Quick-Setup-Cropped.mp4",
+    "samplingFps": 24,
+    "sourceFps": 24
+  },
+  {
+    "id": "13-statement-city",
+    "frames": 64,
+    "duration": 4,
+    "source": "07 frames 65\u2013128 with dissolve from accounting desk",
+    "samplingFps": 16
+  },
+  {
+    "id": "12-statement",
+    "frames": 240,
+    "duration": 10,
+    "source": "Camera_moving_to_accounting_desk_20260929142834.mp4",
+    "samplingFps": 24,
+    "sourceFps": 24
+  },
+  {
+    "id": "14-security",
+    "frames": 240,
+    "duration": 10,
+    "source": "Camera_moves_into_server_room_20260929150514.mp4",
+    "samplingFps": 24,
+    "sourceFps": 24
+  },
+  {
+    "id": "15-security-dark",
+    "frames": 24,
+    "duration": 1,
+    "source": "Server-room final frame fading to black",
+    "samplingFps": 24
+  },
+  {
+    "id": "16-dark-city",
+    "frames": 64,
+    "duration": 4,
+    "source": "City frames 65\u2013128 fading in from black",
+    "samplingFps": 16
+  }
+]

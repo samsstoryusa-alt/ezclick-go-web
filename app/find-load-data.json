@@ -1,0 +1,681 @@
+[
+  {
+    "name": "Flatbed",
+    "image": "/media/trailers/flatbed.webp",
+    "description": "Open deck",
+    "loads": [
+      {
+        "id": "EZ-2212",
+        "cargo": "Lumber bundles",
+        "route": "Charlotte, NC \u2192 Knoxville, TN",
+        "rate": 1825,
+        "miles": 255,
+        "tolls": 0,
+        "dh": 14,
+        "loaded": 241
+      },
+      {
+        "id": "DEMO-FLATBED-1",
+        "cargo": "Steel coils",
+        "route": "Charlotte, NC \u2192 Miami, FL",
+        "rate": 3400,
+        "miles": 760,
+        "dh": 25,
+        "loaded": 735,
+        "tolls": 0
+      },
+      {
+        "id": "EZ-2244",
+        "cargo": "Structural steel",
+        "route": "Monroe, NC \u2192 Cincinnati, OH",
+        "rate": 2675,
+        "miles": 495,
+        "tolls": 20,
+        "dh": 31,
+        "loaded": 464
+      },
+      {
+        "id": "EZ-2280",
+        "cargo": "Roofing material",
+        "route": "Concord, NC \u2192 Jacksonville, FL",
+        "rate": 2325,
+        "miles": 405,
+        "tolls": 8,
+        "dh": 19,
+        "loaded": 386
+      },
+      {
+        "id": "DEMO-FLATBED-2",
+        "cargo": "Lumber bundles",
+        "route": "Concord, NC \u2192 Tampa, FL",
+        "rate": 2850,
+        "miles": 600,
+        "dh": 20,
+        "loaded": 580,
+        "tolls": 0
+      },
+      {
+        "id": "EZ-2140",
+        "cargo": "Structural steel",
+        "route": "Gastonia, NC \u2192 Louisville, KY",
+        "rate": 2600,
+        "miles": 520,
+        "tolls": 16,
+        "dh": 24,
+        "loaded": 496
+      },
+      {
+        "id": "EZ-2315",
+        "cargo": "Pipe bundles",
+        "route": "Gastonia, NC \u2192 Louisville, KY",
+        "rate": 2580,
+        "miles": 515,
+        "tolls": 18,
+        "dh": 29,
+        "loaded": 486
+      },
+      {
+        "id": "EZ-2104",
+        "cargo": "Steel coils",
+        "route": "Charlotte, NC \u2192 Birmingham, AL",
+        "rate": 2250,
+        "miles": 430,
+        "tolls": 0,
+        "dh": 31,
+        "loaded": 399
+      },
+      {
+        "id": "EZ-2117",
+        "cargo": "Lumber bundles",
+        "route": "Rock Hill, SC \u2192 Richmond, VA",
+        "rate": 1950,
+        "miles": 355,
+        "tolls": 12,
+        "dh": 29,
+        "loaded": 326
+      }
+    ]
+  },
+  {
+    "name": "Step Deck",
+    "image": "/media/trailers/step-deck.webp",
+    "description": "Drop deck",
+    "loads": [
+      {
+        "id": "EZ-1330",
+        "cargo": "Generator package",
+        "route": "Charlotte, NC \u2192 Lexington, KY",
+        "rate": 2550,
+        "miles": 455,
+        "tolls": 12,
+        "dh": 9,
+        "loaded": 446
+      },
+      {
+        "id": "DEMO-STEPDECK-1",
+        "cargo": "Industrial machinery",
+        "route": "Charlotte, NC \u2192 Miami, FL",
+        "rate": 3400,
+        "miles": 760,
+        "dh": 25,
+        "loaded": 735,
+        "tolls": 0
+      },
+      {
+        "id": "EZ-1214",
+        "cargo": "Steel coils",
+        "route": "Concord, NC \u2192 Columbus, OH",
+        "rate": 2725,
+        "miles": 510,
+        "tolls": 28,
+        "dh": 22,
+        "loaded": 488
+      },
+      {
+        "id": "EZ-1188",
+        "cargo": "HVAC rooftop units",
+        "route": "Charlotte, NC \u2192 Nashville, TN",
+        "rate": 2350,
+        "miles": 430,
+        "tolls": 6,
+        "dh": 11,
+        "loaded": 419
+      },
+      {
+        "id": "EZ-1261",
+        "cargo": "Crated machinery",
+        "route": "Gastonia, NC \u2192 Birmingham, AL",
+        "rate": 2475,
+        "miles": 470,
+        "tolls": 0,
+        "dh": 28,
+        "loaded": 442
+      },
+      {
+        "id": "EZ-1042",
+        "cargo": "Industrial machinery",
+        "route": "Charlotte, NC \u2192 Chicago, IL",
+        "rate": 2850,
+        "miles": 627,
+        "tolls": 42,
+        "dh": 42,
+        "loaded": 585
+      },
+      {
+        "id": "EZ-1298",
+        "cargo": "Construction forms",
+        "route": "Rock Hill, SC \u2192 Richmond, VA",
+        "rate": 1925,
+        "miles": 365,
+        "tolls": 15,
+        "dh": 34,
+        "loaded": 331
+      },
+      {
+        "id": "EZ-1051",
+        "cargo": "Crated generators",
+        "route": "Greenville, SC \u2192 Columbus, OH",
+        "rate": 2350,
+        "miles": 498,
+        "tolls": 18,
+        "dh": 68,
+        "loaded": 430
+      },
+      {
+        "id": "EZ-1068",
+        "cargo": "Oversize HVAC units",
+        "route": "Atlanta, GA \u2192 Nashville, TN",
+        "rate": 1750,
+        "miles": 360,
+        "tolls": 0,
+        "dh": 110,
+        "loaded": 250
+      }
+    ]
+  },
+  {
+    "name": "Lowboy",
+    "image": "/media/trailers/lowboy.webp",
+    "description": "Specialized",
+    "loads": [
+      {
+        "id": "EZ-2840",
+        "cargo": "Paver",
+        "route": "Charlotte, NC \u2192 Savannah, GA",
+        "rate": 2875,
+        "miles": 260,
+        "tolls": 0,
+        "dh": 12,
+        "loaded": 248
+      },
+      {
+        "id": "EZ-2783",
+        "cargo": "Dozer",
+        "route": "Gastonia, NC \u2192 Richmond, VA",
+        "rate": 3250,
+        "miles": 350,
+        "tolls": 26,
+        "dh": 35,
+        "loaded": 315
+      },
+      {
+        "id": "EZ-2748",
+        "cargo": "Wheel loader",
+        "route": "Concord, NC \u2192 Charleston, SC",
+        "rate": 2475,
+        "miles": 225,
+        "tolls": 0,
+        "dh": 24,
+        "loaded": 201
+      },
+      {
+        "id": "EZ-2711",
+        "cargo": "CAT excavator",
+        "route": "Charlotte, NC \u2192 Raleigh, NC",
+        "rate": 2150,
+        "miles": 185,
+        "tolls": 0,
+        "dh": 18,
+        "loaded": 167
+      },
+      {
+        "id": "EZ-2817",
+        "cargo": "Telehandler",
+        "route": "Rock Hill, SC \u2192 Atlanta, GA",
+        "rate": 2250,
+        "miles": 255,
+        "tolls": 0,
+        "dh": 41,
+        "loaded": 214
+      },
+      {
+        "id": "DEMO-LOWBOY-1",
+        "cargo": "CAT excavator",
+        "route": "Charlotte, NC \u2192 Miami, FL",
+        "rate": 3400,
+        "miles": 760,
+        "dh": 25,
+        "loaded": 735,
+        "tolls": 0
+      },
+      {
+        "id": "DEMO-LOWBOY-3",
+        "cargo": "Dozer",
+        "route": "Greenville, SC \u2192 Dallas, TX",
+        "rate": 3700,
+        "miles": 990,
+        "dh": 35,
+        "loaded": 955,
+        "tolls": 0
+      },
+      {
+        "id": "DEMO-LOWBOY-2",
+        "cargo": "Wheel loader",
+        "route": "Concord, NC \u2192 Tampa, FL",
+        "rate": 2850,
+        "miles": 600,
+        "dh": 20,
+        "loaded": 580,
+        "tolls": 0
+      },
+      {
+        "id": "DEMO-LOWBOY-4",
+        "cargo": "CAT excavator",
+        "route": "Charlotte, NC \u2192 Knoxville, TN",
+        "rate": 1750,
+        "miles": 285,
+        "dh": 25,
+        "loaded": 260,
+        "tolls": 0
+      }
+    ]
+  },
+  {
+    "name": "Dry Van",
+    "image": "/media/trailers/dry-van.webp",
+    "description": "Enclosed",
+    "loads": [
+      {
+        "id": "DEMO-DRYVAN-1",
+        "cargo": "Retail goods",
+        "route": "Charlotte, NC \u2192 Miami, FL",
+        "rate": 3400,
+        "miles": 760,
+        "dh": 25,
+        "loaded": 735,
+        "tolls": 0
+      },
+      {
+        "id": "DEMO-DRYVAN-2",
+        "cargo": "Packaged beverages",
+        "route": "Concord, NC \u2192 Tampa, FL",
+        "rate": 2850,
+        "miles": 600,
+        "dh": 20,
+        "loaded": 580,
+        "tolls": 0
+      },
+      {
+        "id": "EZ-3360",
+        "cargo": "Packaging",
+        "route": "Gastonia, NC \u2192 Baltimore, MD",
+        "rate": 2225,
+        "miles": 455,
+        "tolls": 34,
+        "dh": 33,
+        "loaded": 422
+      },
+      {
+        "id": "EZ-3268",
+        "cargo": "Paper products",
+        "route": "Charlotte, NC \u2192 Columbus, OH",
+        "rate": 2175,
+        "miles": 480,
+        "tolls": 25,
+        "dh": 8,
+        "loaded": 472
+      },
+      {
+        "id": "EZ-3394",
+        "cargo": "Auto components",
+        "route": "Charlotte, NC \u2192 Toledo, OH",
+        "rate": 2490,
+        "miles": 625,
+        "tolls": 32,
+        "dh": 12,
+        "loaded": 613
+      },
+      {
+        "id": "EZ-3319",
+        "cargo": "Consumer goods",
+        "route": "Concord, NC \u2192 Memphis, TN",
+        "rate": 2440,
+        "miles": 610,
+        "tolls": 4,
+        "dh": 17,
+        "loaded": 593
+      },
+      {
+        "id": "EZ-3155",
+        "cargo": "Auto parts",
+        "route": "Salisbury, NC \u2192 Detroit, MI",
+        "rate": 2450,
+        "miles": 670,
+        "tolls": 38,
+        "dh": 44,
+        "loaded": 626
+      },
+      {
+        "id": "EZ-3126",
+        "cargo": "Packaged beverages",
+        "route": "Concord, NC \u2192 Atlanta, GA",
+        "rate": 1350,
+        "miles": 290,
+        "tolls": 0,
+        "dh": 21,
+        "loaded": 269
+      },
+      {
+        "id": "EZ-3108",
+        "cargo": "Retail goods",
+        "route": "Charlotte, NC \u2192 Indianapolis, IN",
+        "rate": 2050,
+        "miles": 590,
+        "tolls": 24,
+        "dh": 18,
+        "loaded": 572
+      }
+    ]
+  },
+  {
+    "name": "Reefer",
+    "image": "/media/trailers/reefer.webp",
+    "description": "Refrigerated",
+    "loads": [
+      {
+        "id": "EZ-3846",
+        "cargo": "Pharma cool chain",
+        "route": "Rock Hill, SC \u2192 Richmond, VA",
+        "rate": 2380,
+        "miles": 340,
+        "tolls": 14,
+        "dh": 38,
+        "loaded": 302
+      },
+      {
+        "id": "EZ-3810",
+        "cargo": "Meat products",
+        "route": "Charlotte, NC \u2192 Cincinnati, OH",
+        "rate": 2740,
+        "miles": 505,
+        "tolls": 21,
+        "dh": 10,
+        "loaded": 495
+      },
+      {
+        "id": "EZ-3712",
+        "cargo": "Fresh produce",
+        "route": "Charlotte, NC \u2192 Philadelphia, PA",
+        "rate": 2850,
+        "miles": 540,
+        "tolls": 44,
+        "dh": 15,
+        "loaded": 525
+      },
+      {
+        "id": "DEMO-REEFER-1",
+        "cargo": "Fresh produce",
+        "route": "Charlotte, NC \u2192 Miami, FL",
+        "rate": 3400,
+        "miles": 760,
+        "dh": 25,
+        "loaded": 735,
+        "tolls": 0
+      },
+      {
+        "id": "DEMO-REEFER-3",
+        "cargo": "Dairy products",
+        "route": "Greenville, SC \u2192 Dallas, TX",
+        "rate": 3700,
+        "miles": 990,
+        "dh": 35,
+        "loaded": 955,
+        "tolls": 0
+      },
+      {
+        "id": "DEMO-REEFER-2",
+        "cargo": "Frozen foods",
+        "route": "Concord, NC \u2192 Tampa, FL",
+        "rate": 2850,
+        "miles": 600,
+        "dh": 20,
+        "loaded": 580,
+        "tolls": 0
+      },
+      {
+        "id": "EZ-3744",
+        "cargo": "Frozen foods",
+        "route": "Concord, NC \u2192 Orlando, FL",
+        "rate": 2625,
+        "miles": 530,
+        "tolls": 22,
+        "dh": 23,
+        "loaded": 507
+      },
+      {
+        "id": "DEMO-REEFER-4",
+        "cargo": "Fresh produce",
+        "route": "Charlotte, NC \u2192 Knoxville, TN",
+        "rate": 1750,
+        "miles": 285,
+        "dh": 25,
+        "loaded": 260,
+        "tolls": 0
+      },
+      {
+        "id": "EZ-3781",
+        "cargo": "Dairy products",
+        "route": "Gastonia, NC \u2192 Nashville, TN",
+        "rate": 2175,
+        "miles": 405,
+        "tolls": 5,
+        "dh": 29,
+        "loaded": 376
+      }
+    ]
+  },
+  {
+    "name": "Tanker",
+    "image": "/media/trailers/tanker.webp",
+    "description": "Liquid bulk",
+    "loads": [
+      {
+        "id": "EZ-5262",
+        "cargo": "Food-grade syrup",
+        "route": "Charlotte, NC \u2192 Atlanta, GA",
+        "rate": 2750,
+        "miles": 260,
+        "tolls": 0,
+        "dh": 17,
+        "loaded": 243
+      },
+      {
+        "id": "EZ-5374",
+        "cargo": "Liquid fertilizer",
+        "route": "Charlotte, NC \u2192 Knoxville, TN",
+        "rate": 2550,
+        "miles": 260,
+        "tolls": 0,
+        "dh": 13,
+        "loaded": 247
+      },
+      {
+        "id": "EZ-5295",
+        "cargo": "Non-haz liquid",
+        "route": "Concord, NC \u2192 Richmond, VA",
+        "rate": 2925,
+        "miles": 330,
+        "tolls": 18,
+        "dh": 26,
+        "loaded": 304
+      },
+      {
+        "id": "EZ-5338",
+        "cargo": "Food oil",
+        "route": "Gastonia, NC \u2192 Savannah, GA",
+        "rate": 2675,
+        "miles": 285,
+        "tolls": 0,
+        "dh": 36,
+        "loaded": 249
+      },
+      {
+        "id": "EZ-5133",
+        "cargo": "Non-hazmat chemical",
+        "route": "Spartanburg, SC \u2192 Memphis, TN",
+        "rate": 3650,
+        "miles": 620,
+        "tolls": 10,
+        "dh": 58,
+        "loaded": 562
+      },
+      {
+        "id": "EZ-5102",
+        "cargo": "Food-grade liquid",
+        "route": "Charlotte, NC \u2192 Cincinnati, OH",
+        "rate": 3100,
+        "miles": 505,
+        "tolls": 22,
+        "dh": 46,
+        "loaded": 459
+      },
+      {
+        "id": "DEMO-TANKER-1",
+        "cargo": "Food-grade liquid",
+        "route": "Charlotte, NC \u2192 Miami, FL",
+        "rate": 3400,
+        "miles": 760,
+        "dh": 25,
+        "loaded": 735,
+        "tolls": 0
+      },
+      {
+        "id": "EZ-5164",
+        "cargo": "Food oil",
+        "route": "Greensboro, NC \u2192 Pittsburgh, PA",
+        "rate": 2950,
+        "miles": 500,
+        "tolls": 34,
+        "dh": 72,
+        "loaded": 428
+      },
+      {
+        "id": "DEMO-TANKER-2",
+        "cargo": "Non-hazmat chemical",
+        "route": "Concord, NC \u2192 Tampa, FL",
+        "rate": 2850,
+        "miles": 600,
+        "dh": 20,
+        "loaded": 580,
+        "tolls": 0
+      }
+    ]
+  },
+  {
+    "name": "Bobtail",
+    "image": "/media/trailers/bobtail.webp",
+    "description": "Truck only",
+    "loads": [
+      {
+        "id": "DEMO-BOBTAIL-1",
+        "cargo": "Power-only recovery",
+        "route": "Charlotte, NC \u2192 Miami, FL",
+        "rate": 3400,
+        "miles": 760,
+        "dh": 25,
+        "loaded": 735,
+        "tolls": 0
+      },
+      {
+        "id": "DEMO-BOBTAIL-2",
+        "cargo": "Trailer reposition",
+        "route": "Concord, NC \u2192 Tampa, FL",
+        "rate": 2850,
+        "miles": 600,
+        "dh": 20,
+        "loaded": 580,
+        "tolls": 0
+      },
+      {
+        "id": "EZ-6250",
+        "cargo": "Trailer recovery",
+        "route": "Charlotte, NC \u2192 Greensboro, NC",
+        "rate": 750,
+        "miles": 105,
+        "tolls": 0,
+        "dh": 8,
+        "loaded": 97
+      },
+      {
+        "id": "EZ-6106",
+        "cargo": "Power-only recovery",
+        "route": "Charlotte, NC \u2192 Columbia, SC",
+        "rate": 850,
+        "miles": 125,
+        "tolls": 0,
+        "dh": 12,
+        "loaded": 113
+      },
+      {
+        "id": "EZ-6284",
+        "cargo": "Power-only reposition",
+        "route": "Concord, NC \u2192 Columbia, SC",
+        "rate": 890,
+        "miles": 135,
+        "tolls": 0,
+        "dh": 16,
+        "loaded": 119
+      },
+      {
+        "id": "EZ-6124",
+        "cargo": "Trailer reposition",
+        "route": "Concord, NC \u2192 Greensboro, NC",
+        "rate": 725,
+        "miles": 105,
+        "tolls": 0,
+        "dh": 19,
+        "loaded": 86
+      },
+      {
+        "id": "EZ-6321",
+        "cargo": "Empty trailer pickup",
+        "route": "Gastonia, NC \u2192 Winston-Salem, NC",
+        "rate": 680,
+        "miles": 100,
+        "tolls": 0,
+        "dh": 25,
+        "loaded": 75
+      },
+      {
+        "id": "EZ-6362",
+        "cargo": "Trailer rescue",
+        "route": "Rock Hill, SC \u2192 Greenville, SC",
+        "rate": 720,
+        "miles": 105,
+        "tolls": 0,
+        "dh": 31,
+        "loaded": 74
+      },
+      {
+        "id": "EZ-6148",
+        "cargo": "Empty trailer pickup",
+        "route": "Gastonia, NC \u2192 Greenville, SC",
+        "rate": 675,
+        "miles": 112,
+        "tolls": 0,
+        "dh": 23,
+        "loaded": 89
+      }
+    ]
+  }
+]
