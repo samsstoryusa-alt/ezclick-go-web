@@ -10,8 +10,11 @@ import {SiteDetails} from './site-details';
 import {sceneWindows} from './scene-motion';
 import {FeaturePanel} from './feature-panel';
 import {JourneyCanvas} from './journey-canvas';
-import {chapters,clips,frameUrl,total} from './journey';
+import {chapters,clips,shots,frameUrl,total} from './journey';
 
+// Release the desktop pin at the last moving frame; omit the final static hold.
+const finalShot=shots[shots.length-1];
+const desktopEnd=finalShot.hold?finalShot.start:total;
 const chapterIcons=[HomeIcon,Search,Calculator,Route,CloudRain,Flame,Fuel,FileText,Headphones,Building2,ClipboardCheck,Receipt,ShieldCheck,Building2,Download];
 const headlineAccents:Record<string,string>={find:'ahead',calculator:'profit',trip:'Own the road',weather:'safer',hotzones:'next load',fuel:'More in your pocket',documents:'Handled',dispatcher:'great load',brokers:'Make your move',setup:'More hauling',statement:'Every dollar',security:'Your control'};
 function FeatureHeadline({title,kind}:{title:string,kind:string}){const word=headlineAccents[kind],at=word?title.indexOf(word):-1;return <h2>{at<0?title:<>{title.slice(0,at)}<span className="headline-accent">{word}</span>{title.slice(at+word.length)}</>}</h2>;}
@@ -44,7 +47,7 @@ export default function Home(){
  const go=(i:number)=>{
   const st=trigger.current,element=document.getElementById(`scene-${i}`);
   if(window.matchMedia('(max-width: 800px)').matches&&element){travelTo(element.getBoundingClientRect().top+window.scrollY);return;}
-  if(st)travelTo(st.start+(st.end-st.start)*chapters[i].mark/total);
+  if(st)travelTo(st.start+(st.end-st.start)*Math.min(chapters[i].mark,st.animation?.duration()??total)/(st.animation?.duration()??total));
   else if(element)travelTo(element.getBoundingClientRect().top+window.scrollY);
  };
  const goContact=()=>{const el=document.getElementById('contact');if(el)travelTo(el.getBoundingClientRect().top+window.scrollY-40);};
@@ -55,7 +58,7 @@ export default function Home(){
   const st=trigger.current??(window.matchMedia('(max-width: 800px)').matches&&stage?{start:stage.offsetTop,end:stage.offsetTop+stage.offsetHeight-window.innerHeight}:null);if(!st)return;
   let y=window.scrollY;if(y>=st.end-10){y=st.start;window.scrollTo(0,y);}
   const state={y};setPlaying(true);
-  demo.current=gsap.to(state,{y:st.end,duration:Math.max(4,total*(1-(y-st.start)/(st.end-st.start))),ease:'none',onUpdate:()=>window.scrollTo(0,state.y),onComplete:()=>{demo.current=null;setPlaying(false);}});
+  demo.current=gsap.to(state,{y:st.end,duration:Math.max(4,(trigger.current?.animation?.duration()??total)*(1-(y-st.start)/(st.end-st.start))),ease:'none',onUpdate:()=>window.scrollTo(0,state.y),onComplete:()=>{demo.current=null;setPlaying(false);}});
  };
  useEffect(()=>{
   gsap.registerPlugin(ScrollTrigger);const media=gsap.matchMedia();
@@ -89,13 +92,13 @@ export default function Home(){
      if(element.dataset.motionVisible===undefined||visible!==visibleFlags[i]){element.dataset.motionVisible=String(visible);visibleFlags[i]=visible;}
     });
     syncVisibility(0);
-    const timeline=gsap.timeline({scrollTrigger:{trigger:root.current,start:'top top',end:()=>`+=${window.innerHeight*(window.innerWidth<800?23:25)}`,pin:'.stage',scrub:.55,invalidateOnRefresh:true},onUpdate:()=>{
+    const timeline=gsap.timeline({scrollTrigger:{trigger:root.current,start:'top top',end:()=>`+=${window.innerHeight*25*desktopEnd/total}`,pin:'.stage',scrub:.55,invalidateOnRefresh:true},onUpdate:()=>{
      time.current=clock.value;syncVisibility(clock.value);
      let next=0;chapters.forEach((c,i)=>{if(clock.value>=c.start)next=i;});
      if(next!==chapter){chapter=next;setActive(next);}
-     gsap.set('.journey-fill',{scaleX:clock.value/total});
+     gsap.set('.journey-fill',{scaleX:clock.value/desktopEnd});
     }});
-    timeline.to(clock,{value:total,duration:total,ease:'none'},0);
+    timeline.to(clock,{value:desktopEnd,duration:desktopEnd,ease:'none'},0);
     chapters.forEach((c,i)=>{
      const scene=`#scene-${i}`;
      if(i===0){timeline.to(scene,{autoAlpha:0,y:-22,duration:1.4},4.6);return;}
