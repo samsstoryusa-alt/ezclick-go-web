@@ -325,3 +325,8 @@
  .feature-overlay-root .feature-dialog .detail-heading{border-radius:22px 22px 0 0}
  .feature-overlay-root .expanded-panel .panel-row strong{flex-shrink:0;max-width:42%;overflow-wrap:normal;word-break:normal}
 }
+
+/* Keep desktop download buttons lower beneath the globe, above journey controls. */
+@media (min-width:801px) and (min-height:621px) and (prefers-reduced-motion:no-preference){
+ .final-scene .download-area{bottom:max(80px,7%)}
+}
