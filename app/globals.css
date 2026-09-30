@@ -328,5 +328,10 @@
 
 /* Keep desktop download buttons lower beneath the globe, above journey controls. */
 @media (min-width:801px) and (min-height:621px) and (prefers-reduced-motion:no-preference){
- .final-scene .download-area{bottom:max(80px,7%)}
+ .final-scene .download-area{bottom:max(80px,7%);gap:12px}
+ .final-scene .download-buttons{gap:12px}
+ .final-scene .download-button{min-width:152px;padding:11px 16px;gap:12px}
+ .final-scene .download-button .platform-logo{width:24px;height:24px;flex-basis:24px}
+ .final-scene .download-button small{font-size:11px}
+ .final-scene .download-button strong{font-size:15px}
 }
