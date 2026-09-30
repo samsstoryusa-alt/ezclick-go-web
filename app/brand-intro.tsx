@@ -4,9 +4,15 @@ import {gsap} from 'gsap';
 
 export function BrandIntro({onFinish}:{onFinish:()=>void}) {
  const overlay=useRef<HTMLDivElement>(null);
- const finish=useRef(onFinish);finish.current=onFinish;
+ const finish=useRef(onFinish);finish.current=()=>{
+  try{sessionStorage.setItem('ezclick-intro-seen','1');}catch{/* Storage may be unavailable in private browsing. */}
+  onFinish();
+ };
  useEffect(()=>{
   const panel=overlay.current!;
+  let seen=false;
+  try{seen=sessionStorage.getItem('ezclick-intro-seen')==='1';}catch{/* Keep the intro available when storage is blocked. */}
+  if(seen){finish.current();return;}
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.scrollY>60){finish.current();return;}
   let ended=false,started=false;
   let playbackTimeout:number|undefined;
