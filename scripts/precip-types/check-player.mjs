@@ -18,10 +18,22 @@ p.seek(2);assert.equal(position,2);p.replace([canvas(),canvas()],1);assert.equal
 p.play(true);map.isMoving=()=>true;
 const beforeDrag=updates;
 for(const [id,fn] of [...queue]){queue.delete(id);fn(1100);}
-assert.equal(updates,beforeDrag,'camera drag avoids competing raster uploads');
+assert.ok(updates>beforeDrag,'weather continues animating during camera gestures');
 map.isMoving=()=>false;
 for(const [id,fn] of [...queue]){queue.delete(id);fn(1150);}
 assert.ok(updates>beforeDrag,'playback resumes after camera gesture');
-p.dispose();assert.equal(layer,false);assert.equal(source,false);assert.equal(queue.size,0);
+p.dispose();
+const cadence=createRadarPlayer(map,[canvas(),canvas()],()=>{});
+cadence.play(true);
+let startUploads=0;
+for(let i=0;i<=120;i++){
+ for(const [id,fn] of [...queue]){queue.delete(id);fn(2000+i*1000/60);}
+ if(i===0)startUploads=updates;
+}
+const rendered=updates-startUploads;
+console.log('Raster updates over two seconds at 60 Hz:',rendered);
+assert.ok(rendered>=58&&rendered<=61,'30 fps scheduling must not discard fractional frame time');
+cadence.dispose();assert.equal(layer,false);assert.equal(source,false);assert.equal(queue.size,0);
 console.log('Radar replacement retains one map source, preserves playback, seeks and disposes cleanly');
+
 

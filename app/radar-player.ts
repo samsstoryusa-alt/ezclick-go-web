@@ -48,15 +48,20 @@ export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], on
   // CanvasSource updates only invalidate its canonical tile in MapLibre 6.11.
   function publish() {source.updateImage({image:canvas});map.triggerRepaint();}
   publish();
-  let lastDraw=0;
+  const frameInterval=1000/30;
+  let lastDraw:number|null=null;
   function tick(now:number) {
     raf=0;
-    // Keep the geographic layer attached while giving camera gestures the frame budget.
-    if(map.isMoving?.()){last=now;raf=requestAnimationFrame(tick);return;}
     // Move the timeline every display frame; map image uploads remain capped at 30 fps.
     if(playing){const elapsed=last?Math.min(now-last,100):0;onSmoothPosition?.(Math.min((position+elapsed*images.length/CYCLE_MS)%images.length,images.length-1));}
-    if(now-lastDraw<1000/30){raf=requestAnimationFrame(tick);return;}
-    lastDraw=now;
+    // Preserve the frame phase: resetting to now loses fractional display time
+    // and turns a 30 fps target into uneven 20 fps on a 60 Hz display.
+    if(lastDraw===null) lastDraw=now;
+    else {
+      const steps=Math.floor((now-lastDraw+0.01)/frameInterval);
+      if(steps<1){raf=requestAnimationFrame(tick);return;}
+      lastDraw+=steps*frameInterval;
+    }
     if (playing) {
       const elapsed=last ? Math.min(now-last,100) : 0;
       position=(position+elapsed*images.length/CYCLE_MS)%images.length;
@@ -73,7 +78,7 @@ export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], on
     if(playing || seeking) raf=requestAnimationFrame(tick);
     else {map.triggerRepaint();}
   }
-  function wake() {if(!raf){last=0;raf=requestAnimationFrame(tick);}}
+  function wake() {if(!raf){last=0;lastDraw=null;raf=requestAnimationFrame(tick);}}
   return {
     position() {return Math.min(position,images.length-1);},
     replace(next:HTMLCanvasElement[],nextPosition:number,nextMotion?:MotionRenderer|null) {
