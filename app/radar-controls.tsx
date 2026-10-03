@@ -1,4 +1,5 @@
 "use client";
+import {createPrecipMotion} from './precip-motion';
 import {useEffect,useRef,useState} from 'react';
 import type {Map as LibreMap} from 'maplibre-gl';
 import {createRadarPlayer,blendRadar} from './radar-player';
@@ -7,6 +8,8 @@ import {enhancePrecipitation} from './precip-appearance';
 import {forecastWindow,type ForecastFrame} from './forecast-time';
 
 export default function RadarControls({map,ready,onTimeChange}:{map:LibreMap|null;ready:boolean;onTimeChange:(time:number|null)=>void}) {
+ const motionPreview=typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('motion')==='1';
+ const [motionReady,setMotionReady]=useState(false);
  const [enabled,setEnabled]=useState(true),[frames,setFrames]=useState<number[]>([]);
  const [index,setIndex]=useState(0),[playing,setPlaying]=useState(false),[opacity,setOpacity]=useState(.65);
  const [status,setStatus]=useState('Loading 24-hour forecast…'),[failed,setFailed]=useState(false),[attempt,setAttempt]=useState(0);
@@ -50,6 +53,13 @@ export default function RadarControls({map,ready,onTimeChange}:{map:LibreMap|nul
      blendRadar(ctx,cache.get(window.source[a].url)!,cache.get(window.source[b].url)!,mix);enhancePrecipitation(canvas);next.push(canvas);
     }
     if(disposed)return;
+    let motion=null;
+    if(motionPreview){
+     if(!player.current)setStatus('Preparing smooth motion preview…');
+     try{motion=await createPrecipMotion(next,controller.signal);}catch{motion=null;}
+     if(disposed){motion?.dispose();return;}
+     setMotionReady(!!motion);
+    }
     let nextIndex=0;
     if(player.current){
      const old=player.current.position(),a=Math.floor(old),b=Math.min(a+1,visibleTimes.length-1);
@@ -57,9 +67,9 @@ export default function RadarControls({map,ready,onTimeChange}:{map:LibreMap|nul
      const after=window.times.findIndex(t=>t>=selected);
      nextIndex=after<=0?0:after-1+(selected-window.times[after-1])/(window.times[after]-window.times[after-1]);
      if(after<0)nextIndex=window.times.length-1;
-     player.current.replace(next,nextIndex);
+     player.current.replace(next,nextIndex,motion);
     }else{
-     player.current=createRadarPlayer(map!,next,v=>{setIndex(v);if(timeline.current)timeline.current.value=String(v);},v=>{if(timeline.current)timeline.current.value=String(v);});
+     player.current=createRadarPlayer(map!,next,v=>{setIndex(v);if(timeline.current)timeline.current.value=String(v);},v=>{if(timeline.current)timeline.current.value=String(v);},motion);
      player.current.seek(0);player.current.play(true);setPlaying(true);
     }
     for(const image of active){image.width=1;image.height=1;}
@@ -74,7 +84,7 @@ export default function RadarControls({map,ready,onTimeChange}:{map:LibreMap|nul
   void load();const timer=setInterval(()=>void load(),120000);
   const visible=()=>{if(!document.hidden)void load();};document.addEventListener('visibilitychange',visible);
   return()=>{disposed=true;controller.abort();clearInterval(timer);document.removeEventListener('visibilitychange',visible);player.current?.dispose();player.current=null;for(const image of active){image.width=1;image.height=1;}for(const bitmap of cache.values())bitmap.close();};
- },[map,ready,enabled,attempt]);
+ },[map,ready,enabled,attempt,motionPreview]);
  useEffect(()=>{player.current?.opacity(opacity);},[opacity,frames]);
  const a=Math.max(0,Math.min(frames.length-1,Math.floor(index))),b=Math.min(a+1,frames.length-1);
  const time=frames.length?frames[a]+(frames[b]-frames[a])*(index-a):0;
@@ -89,7 +99,7 @@ export default function RadarControls({map,ready,onTimeChange}:{map:LibreMap|nul
    {!!frames.length&&<>
     <label className="radar-opacity">Layer strength<input aria-label="Radar layer strength" type="range" min=".3" max=".9" step=".001" value={opacity} onChange={e=>setOpacity(Number(e.target.value))}/></label>
     <div className="precip-type-legend" aria-label="Precipitation types"><span><i style={{background:'#4bc982'}}/>Rain</span><span><i style={{background:'#c0a5f7'}}/>Snow</span></div>
-    <p className="precip-type-note">Forecast · US region · rain & snow</p>
+    <p className="precip-type-note">{motionPreview?(motionReady?'Motion preview · Gulf region':'Standard blend · motion unavailable'):'Forecast · US region · rain & snow'}</p>
     <div className="radar-legend"><span>Weaker</span><i/><span>Stronger</span></div>
    </>}
    <small><a href="https://www.ncei.noaa.gov/products/weather-climate-models/global-forecast" target="_blank" rel="noreferrer">NOAA GFS · model forecast</a></small>
@@ -101,5 +111,8 @@ export default function RadarControls({map,ready,onTimeChange}:{map:LibreMap|nul
   </section>}
  </div>;
 }
+
+
+
 
 

@@ -51,3 +51,12 @@ to straight RGBA. The 1.6px presentation filter softens native 0.25-degree cells
 it does not increase meteorological resolution. New /forecast/v2/ URLs prevent
 old immutable images from being reused. Backend v4; old v3 container retained.
 Rendering checks: python3 scripts/precip-types/check-forecast-render.py (GDAL image).
+
+Motion interpolation experiment: ?motion=1 opens the Gulf region. A worker
+matches alpha patches forward/backward between adjacent forecast frames. A small
+WebGL renderer warps both frames toward their intermediate positions, gated by
+matching confidence and a feathered regional mask. Empty/uncertain areas retain
+the regular blend. This is visual interpolation, not additional observations or
+motion inferred from surface wind. The default URL retains standard blending.
+Reduced-motion preference and unavailable WebGL use the regular renderer.
+Check: node scripts/precip-types/check-motion.mjs.

@@ -88,7 +88,7 @@ export default function WeatherMap() {
         map = new lib.Map({
           container: container.current,
           style: 'https://tiles.openfreemap.org/styles/positron',
-          ...INITIAL_VIEW,
+          ...(new URLSearchParams(window.location.search).get('motion')==='1'?{center:[-91,28] as [number,number],zoom:5}:INITIAL_VIEW),
           maxPitch: 65,
           dragPan: true,
           scrollZoom: true,
@@ -234,3 +234,4 @@ export default function WeatherMap() {
     </section>
   </main>;
 }
+

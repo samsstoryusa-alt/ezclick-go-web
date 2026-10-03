@@ -1,3 +1,4 @@
+import type {MotionRenderer} from './precip-motion';
 import type {ImageSource, Map as LibreMap} from 'maplibre-gl';
 
 export const RADAR_SOURCE = 'noaa-radar-composite';
@@ -20,7 +21,7 @@ export function blendRadar(context: CanvasRenderingContext2D, first: CanvasImage
   context.globalCompositeOperation = 'source-over';
 }
 
-export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], onPosition: (position:number) => void, onSmoothPosition?: (position:number) => void) {
+export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], onPosition: (position:number) => void, onSmoothPosition?: (position:number) => void, motion?:MotionRenderer|null) {
   const canvas = document.createElement('canvas');
   canvas.width = images[0].width; canvas.height = images[0].height;
   const context = canvas.getContext('2d');
@@ -35,6 +36,7 @@ export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], on
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const drawPosition=(ctx:CanvasRenderingContext2D, value:number) => {
     const base=Math.floor(value)%images.length;
+    if(!reduced&&motion?.draw(ctx,base,value-Math.floor(value)))return;
     blendRadar(ctx,images[base],images[(base+1)%images.length],value-Math.floor(value));
   };
   drawPosition(context,position);
@@ -74,7 +76,8 @@ export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], on
   function wake() {if(!raf){last=0;raf=requestAnimationFrame(tick);}}
   return {
     position() {return Math.min(position,images.length-1);},
-    replace(next:HTMLCanvasElement[],nextPosition:number) {
+    replace(next:HTMLCanvasElement[],nextPosition:number,nextMotion?:MotionRenderer|null) {
+      motion?.dispose();motion=nextMotion;
       snapshotContext.clearRect(0,0,canvas.width,canvas.height);snapshotContext.drawImage(canvas,0,0);
       images=next;position=Math.max(0,Math.min(next.length-1,nextPosition));
       drawPosition(targetContext,position);seeking=!playing;seekStart=performance.now();onPosition(position);wake();
@@ -87,7 +90,8 @@ export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], on
       seeking=true;seekStart=performance.now();onPosition(position);wake();
     },
     opacity(value:number) {if(map.getLayer(RADAR_SOURCE))map.setPaintProperty(RADAR_SOURCE,'raster-opacity',value);},
-    dispose() {if(raf)cancelAnimationFrame(raf);if(map.getLayer(RADAR_SOURCE))map.removeLayer(RADAR_SOURCE);if(map.getSource(RADAR_SOURCE))map.removeSource(RADAR_SOURCE);for(const image of [...images,canvas,snapshot,target]){image.width=1;image.height=1;}},
+    dispose() {motion?.dispose();if(raf)cancelAnimationFrame(raf);if(map.getLayer(RADAR_SOURCE))map.removeLayer(RADAR_SOURCE);if(map.getSource(RADAR_SOURCE))map.removeSource(RADAR_SOURCE);for(const image of [...images,canvas,snapshot,target]){image.width=1;image.height=1;}},
   };
 }
+
 
