@@ -13,14 +13,37 @@ from osgeo import gdal
 from PIL import Image, ImageFilter
 import winddata
 
-ROOT=Path('/data/forecast');ROOT.mkdir(exist_ok=True)
+ROOT=Path('/data/forecast-v2');ROOT.mkdir(exist_ok=True)
 MANIFEST=ROOT/'catalog.json'
 BBOX=(-130,22,-60,52)
+
+def render_precip(rate,rain,snow):
+    valid=np.isfinite(rate)&(rate>=0)&(rate<500)
+    safe=np.where(valid,rate,0)
+    # Interpolated categories are visual coverage weights, not probabilities.
+    rain=np.clip(np.nan_to_num(rain),0,1)
+    snow=np.clip(np.nan_to_num(snow),0,1)
+    coverage=np.maximum(rain,snow)
+    snow_mix=snow/np.maximum(rain+snow,1e-6)
+    levels=np.array([0,.2,1,3,8,20,50])
+    colors=np.array([[45,139,169],[43,166,178],[55,190,148],[92,201,106],[219,193,75],[226,131,67],[204,81,92]])
+    alpha=np.where(valid,np.clip(np.log1p(safe*4)*80,0,220)*coverage,0)
+    # Filter premultiplied colors to avoid dark fringes around empty cells.
+    packed=np.zeros((*rate.shape,4),dtype=np.uint8)
+    for c in range(3):
+        color=np.interp(safe,levels,colors[:,c])
+        color=color*(1-snow_mix)+[192,165,247][c]*snow_mix
+        packed[:,:,c]=np.rint(color*alpha/255).astype(np.uint8)
+    packed[:,:,3]=np.rint(alpha).astype(np.uint8)
+    soft=np.asarray(Image.fromarray(packed).filter(ImageFilter.GaussianBlur(1.6))).astype(np.float32)
+    a=soft[:,:,3]
+    for c in range(3):soft[:,:,c]=np.where(a>0,np.minimum(255,soft[:,:,c]*255/np.maximum(a,1)),0)
+    return Image.fromarray(np.rint(soft).astype(np.uint8))
 
 def produce(run,valid):
     ident=f'{int(run.timestamp()*1000)}_{int(valid.timestamp()*1000)}'
     path=ROOT/(ident+'.png')
-    if path.exists():return {'time':int(valid.timestamp()*1000),'run':int(run.timestamp()*1000),'url':'/forecast/'+path.name}
+    if path.exists():return {'time':int(valid.timestamp()*1000),'run':int(run.timestamp()*1000),'url':'/forecast/v2/'+path.name}
     lead=int((valid-run).total_seconds()/3600)
     url=winddata.BASE+run.strftime('gfs.%Y%m%d/%H/atmos/gfs.t%Hz.pgrb2.0p25.')+f'f{lead:03}'
     lines=[line.split(':') for line in winddata.read(url+'.idx').decode().splitlines()]
@@ -36,26 +59,19 @@ def produce(run,valid):
             if source.GetRasterBand(1).GetMetadataItem('GRIB_ELEMENT')!=element:raise ValueError('Wrong precipitation field')
             y=lambda lat:6378137*math.log(math.tan(math.pi/4+math.radians(lat)/2))
             bounds=[6378137*math.radians(-130),y(22),6378137*math.radians(-60),y(52)]
-            ds=gdal.Warp('',source,format='MEM',dstSRS='EPSG:3857',outputBounds=bounds,width=1024,height=600,resampleAlg='bilinear' if element=='PRATE' else 'near',dstNodata=-9999)
+            ds=gdal.Warp('',source,format='MEM',dstSRS='EPSG:3857',outputBounds=bounds,width=1024,height=600,resampleAlg='bilinear',dstNodata=-9999)
             arrays.append(ds.GetRasterBand(1).ReadAsArray());ds=None;source=None
     rate,rain,snow=arrays
     rate=rate*3600 # kg/m²/s -> mm/hour liquid equivalent (also for snow)
-    good=np.isfinite(rate)&(rate>=0)&(rate<500)&((rain>.5)|(snow>.5))
-    levels=np.array([0,.2,1,3,8,20,50])
-    colors=np.array([[45,139,169],[43,166,178],[55,190,148],[92,201,106],[219,193,75],[226,131,67],[204,81,92]])
-    rgba=np.zeros((*rate.shape,4),dtype=np.uint8)
-    safe=np.where(good,rate,0)
-    for c in range(3):rgba[:,:,c]=np.interp(safe,levels,colors[:,c]).astype(np.uint8)
-    rgba[snow>.5,:3]=[192,165,247]
-    rgba[:,:,3]=np.where(good,np.clip(np.log1p(safe*4)*80,0,220),0).astype(np.uint8)
-    # Small blur is purely visual; geographical field and timestamps stay fixed.
-    Image.fromarray(rgba).filter(ImageFilter.GaussianBlur(.7)).save(str(path)+'.tmp',format='PNG')
+    render_precip(rate,rain,snow).save(str(path)+'.tmp',format='PNG')
     os.replace(str(path)+'.tmp',path)
-    return {'time':int(valid.timestamp()*1000),'run':int(run.timestamp()*1000),'url':'/forecast/'+path.name}
+    return {'time':int(valid.timestamp()*1000),'run':int(run.timestamp()*1000),'url':'/forecast/v2/'+path.name}
 
 def catalog():
     try:return json.loads(MANIFEST.read_text())
-    except (OSError,ValueError):return {'frames':[],'error':'Forecast is initializing'}
+    except (OSError,ValueError):
+        try:return json.loads(Path('/data/forecast/catalog.json').read_text())
+        except (OSError,ValueError):return {'frames':[],'error':'Forecast is initializing'}
 
 def update():
     now=dt.datetime.now(dt.timezone.utc).replace(minute=0,second=0,microsecond=0)

@@ -97,8 +97,12 @@ class Handler(SimpleHTTPRequestHandler):
         if self.path.split('?')[0]=='/forecast/frames':
             body=json.dumps(forecastdata.catalog()).encode()
             self.send_response(200);self.send_header('Content-Type','application/json');self.send_header('Cache-Control','no-store');self.end_headers();self.wfile.write(body)
-        elif re.fullmatch(r'/forecast/\d{13}_\d{13}\.png',self.path):
+        elif re.fullmatch(r'/forecast/v2/\d{13}_\d{13}\.png',self.path):
             path=forecastdata.ROOT/self.path.rsplit('/',1)[1]
+            if not path.exists():self.send_error(404);return
+            self.send_response(200);self.send_header('Content-Type','image/png');self.send_header('Cache-Control','public,max-age=86400');self.end_headers();self.wfile.write(path.read_bytes())
+        elif re.fullmatch(r'/forecast/\d{13}_\d{13}\.png',self.path):
+            path=Path('/data/forecast')/self.path.rsplit('/',1)[1]
             if not path.exists():self.send_error(404);return
             self.send_response(200);self.send_header('Content-Type','image/png');self.send_header('Cache-Control','public,max-age=86400');self.end_headers();self.wfile.write(path.read_bytes())
         elif self.path.split('?')[0]=='/wind/frames':

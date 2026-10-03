@@ -44,3 +44,10 @@ require the workstation tunnel. Internal diagnostics are bound to 127.0.0.1:8088
   ezclick-precip-types-v2-backup is retained for rollback, with the same data volume.
 - Frontend release releases/weather-forecast-20261003. Existing static media was
   copied from the preceding release; index.html/assets were replaced by the build.
+
+Precipitation rendering v2: bilinear category coverage replaces nearest-cell binary
+clipping. Color/alpha are blurred together in premultiplied form, then restored
+to straight RGBA. The 1.6px presentation filter softens native 0.25-degree cells;
+it does not increase meteorological resolution. New /forecast/v2/ URLs prevent
+old immutable images from being reused. Backend v4; old v3 container retained.
+Rendering checks: python3 scripts/precip-types/check-forecast-render.py (GDAL image).
