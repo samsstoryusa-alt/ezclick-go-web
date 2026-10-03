@@ -56,6 +56,7 @@ export default function WeatherMap() {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LibreMap | null>(null);
   const [weatherTime,setWeatherTime]=useState<number|null>(null);
+  const [mobileExpanded,setMobileExpanded]=useState(false);
   const [ready, setReady] = useState(false);
   const windData=useWindFields(ready);
   const {units,toggle:toggleUnits}=useWeatherUnits();
@@ -225,7 +226,7 @@ export default function WeatherMap() {
         </div>
         {locationMessage&&<div className="location-feedback" role="status"><span>{locationMessage}</span>{!locating&&<button type="button" aria-label="Dismiss location message" onClick={()=>setLocationMessage('')}>×</button>}</div>}
       </div>
-      <div className="weather-center-dot" aria-hidden="true" /><div className="weather-left-stack"><PointWeather map={radarMap} ready={ready} time={weatherTime} windFrames={windData.frames} units={units} onToggleUnits={toggleUnits} /><WindControls map={radarMap} ready={ready} time={weatherTime} frames={windData.frames} status={windData.status} units={units} /><RadarControls map={radarMap} ready={ready} onTimeChange={setWeatherTime} /></div>
+      <div className="weather-center-dot" aria-hidden="true" /><div className={`weather-left-stack ${mobileExpanded?"mobile-expanded":""}`}><button type="button" className="weather-mobile-expand" aria-expanded={mobileExpanded} onClick={()=>setMobileExpanded(v=>!v)}><span>{mobileExpanded?"Close settings":"Weather & layers"}</span><span aria-hidden="true">{mobileExpanded?"−":"+"}</span></button><PointWeather map={radarMap} ready={ready} time={weatherTime} windFrames={windData.frames} units={units} onToggleUnits={toggleUnits} /><WindControls map={radarMap} ready={ready} time={weatherTime} frames={windData.frames} status={windData.status} units={units} /><RadarControls map={radarMap} ready={ready} onTimeChange={setWeatherTime} /></div>
 
       {!ready && !error && <p className="weather-map-message" role="status">Loading your map…</p>}
       {error && <div className="weather-map-message" role="alert"><p>{error}</p><button type="button" onClick={() => {setReady(false); setTerrainReady(false); setThreeD(false); setError(''); setTerrainError(false); setAttempt(value => value + 1);}}>Reload map</button></div>}
