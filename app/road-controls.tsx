@@ -1,0 +1,46 @@
+"use client";
+import {useEffect,useRef,useSyncExternalStore} from 'react';
+import type {Map as LibreMap,VisibilitySpecification,FilterSpecification} from 'maplibre-gl';
+const subscribe=(fn:()=>void)=>{window.addEventListener('ezclick-roads',fn);window.addEventListener('storage',fn);return()=>{window.removeEventListener('ezclick-roads',fn);window.removeEventListener('storage',fn);};};
+let fallback=false;
+const snapshot=()=>{try{return localStorage.getItem('ezclick-highways-only')==='true';}catch{return fallback;}};
+type Paint=Parameters<LibreMap['getPaintProperty']>[1];
+export default function RoadControls({map,ready}:{map:LibreMap|null;ready:boolean}){
+ const highways=useSyncExternalStore(subscribe,snapshot,()=>false);
+ const apply=useRef<(value:boolean)=>void>(()=>{});
+ useEffect(()=>{
+  if(!map||!ready)return;
+  let hideTimer=0;
+  const visibility=new Map<string,VisibilitySpecification>();
+  const duration=window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:350;
+  const motorwayFilters=new Map<string,FilterSpecification|undefined>();
+  const changes:{id:string;property:Paint;value:Parameters<LibreMap['setPaintProperty']>[2];transition:Parameters<LibreMap['setPaintProperty']>[2]}[]=[];
+  for(const layer of map.getStyle().layers??[]){
+   if(!('source-layer' in layer))continue;
+   const source=layer['source-layer'];
+   if(source!=='transportation'&&source!=='transportation_name')continue;
+   // Low-zoom tiles promote US/state highways to motorway; network identifies actual Interstates.
+   if(layer.id.includes('motorway')){motorwayFilters.set(layer.id,layer.filter);continue;}
+   if(layer.id==='highway-shield-us-interstate')continue;
+   if(!/^(highway|road|tunnel)/.test(layer.id))continue;
+   const properties:Paint[]=layer.type==='line'?['line-opacity']:layer.type==='fill'?['fill-opacity']:layer.type==='symbol'?['text-opacity','icon-opacity']:[];
+   if(properties.length)visibility.set(layer.id,map.getLayoutProperty(layer.id,'visibility')??'visible');
+   for(const property of properties){
+    changes.push({id:layer.id,property,value:map.getPaintProperty(layer.id,property)??1,transition:map.getPaintProperty(layer.id,(property+'-transition') as Paint)});
+    map.setPaintProperty(layer.id,(property+'-transition') as Paint,{duration,delay:0});
+   }
+  }
+  apply.current=value=>{
+   for(const [id,filter] of motorwayFilters)if(map.getLayer(id))map.setFilter(id,value?(['all',filter??true,['==',['get','network'],'us-interstate']] as FilterSpecification):filter);
+   window.clearTimeout(hideTimer);
+   if(!value)for(const [id,original] of visibility)if(map.getLayer(id))map.setLayoutProperty(id,'visibility',original);
+   for(const item of changes)if(map.getLayer(item.id))map.setPaintProperty(item.id,item.property,value?0:item.value);
+   if(value)hideTimer=window.setTimeout(()=>{for(const id of visibility.keys())if(map.getLayer(id))map.setLayoutProperty(id,'visibility','none');map.triggerRepaint();},duration);
+   map.triggerRepaint();
+  };
+  return()=>{window.clearTimeout(hideTimer);apply.current=()=>{};for(const [id,filter] of motorwayFilters)if(map.getLayer(id))map.setFilter(id,filter);for(const [id,original] of visibility)if(map.getLayer(id))map.setLayoutProperty(id,'visibility',original);for(const item of changes)if(map.getLayer(item.id)){map.setPaintProperty(item.id,item.property,item.value);map.setPaintProperty(item.id,(item.property+'-transition') as Paint,item.transition);}};
+ },[map,ready]);
+ useEffect(()=>{apply.current(highways);},[highways,map,ready]);
+ function toggle(){fallback=!highways;try{localStorage.setItem('ezclick-highways-only',String(fallback));}catch{}window.dispatchEvent(new Event('ezclick-roads'));}
+ return <button type="button" disabled={!ready} className="map-icon-button roads-toggle" aria-label="Show highways only" aria-pressed={highways} onClick={toggle}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-shadow" d="m11 7 10 0 8 23H3Z"/><path className="icon-dark" d="M12 4h8l7 23H5Z"/><path className="icon-light" d="M12 4h2L9 27H5Zm6 0h2l7 23h-4Z"/><path d="M16 6v4m0 4v4m0 4v4" fill="none" stroke="#d1f7ff" strokeWidth="1.5"/></svg><span>{highways?'HWY':'Roads'}</span></button>;
+}

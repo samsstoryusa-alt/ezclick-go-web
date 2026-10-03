@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {sampleWindFrame,sampleWind,windPair} from '../../app/wind-math.ts';
+const time=Date.now();
+const frame={time,run:time,nx:4,ny:2,lon0:-180,lat0:10,dx:90,dy:-10,url:'test',values:new Int16Array([10,0,20,0,30,0,40,0,10,0,20,0,30,0,40,0])};
+assert.ok(Math.abs(sampleWindFrame(frame,-135,5).u-5.4)<1e-6);
+assert.deepEqual(sampleWindFrame(frame,-180,5),sampleWindFrame(frame,180,5));
+assert.equal(sampleWindFrame(frame,0,11),null);
+const missing={...frame,values:new Int16Array(frame.values)};missing.values[0]=32767;assert.equal(sampleWindFrame(missing,-180,10),null);
+const east={...frame,values:new Int16Array(16).map((_,i)=>i%2?0:100)};
+const west={...east,time:time+3600000,values:new Int16Array(16).map((_,i)=>i%2?0:-100)};
+const mid=sampleWind(windPair([east,west],time+1800000,time),0,5);assert.equal(mid.speed,0);
+assert.equal(sampleWind(windPair([east],time,time),0,5).direction,270);
+assert.equal(windPair([east,west],time-1,time),null);
+assert.equal(windPair([east,{...west,time:time+7200000}],time+1800000,time),null);
+assert.equal(windPair([east],time,time+19*3600000),null);
+console.log('GFS grid: bilinear interpolation, dateline, missing data, direction, temporal interpolation and staleness passed');
