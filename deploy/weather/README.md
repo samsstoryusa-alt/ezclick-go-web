@@ -60,3 +60,8 @@ the regular blend. This is visual interpolation, not additional observations or
 motion inferred from surface wind. The default URL retains standard blending.
 Reduced-motion preference and unavailable WebGL use the regular renderer.
 Check: node scripts/precip-types/check-motion.mjs.
+
+Cadence fix: preserve the 30 fps upload phase on 60 Hz displays and continue
+playback during camera gestures. Verified 60 uploads over two seconds.
+Backend v5 publishes 28 hourly frames (27h endpoint), leaving a buffer across
+hour boundaries while collection runs. Previous v4 container retained for rollback.

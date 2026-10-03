@@ -81,8 +81,10 @@ def update():
         run=cycle-dt.timedelta(hours=back)
         if run>=now:continue
         try:
+            # Keep three extra hours so the next clock hour cannot exhaust the
+            # browser's full 24-hour window while collection is in progress.
             # Probe the far end first; publish only a complete, consistent model run.
-            end=now+dt.timedelta(hours=25)
+            end=now+dt.timedelta(hours=27)
             produce(run,end)
             def hour(offset):
                 valid=now+dt.timedelta(hours=offset)
@@ -90,7 +92,7 @@ def update():
                 winddata.produce(run,valid)
                 return frame
             with ThreadPoolExecutor(max_workers=3) as pool:
-                frames=list(pool.map(hour,range(26)))
+                frames=list(pool.map(hour,range(28)))
             winddata.publish()
             body={'frames':frames,'run':int(run.timestamp()*1000),'updatedAt':int(time.time()*1000),'source':'NOAA GFS','bbox':BBOX,'width':1024,'height':600,'units':'mm/hour liquid equivalent'}
             temp=ROOT/'catalog.tmp';temp.write_text(json.dumps(body));os.replace(temp,MANIFEST)

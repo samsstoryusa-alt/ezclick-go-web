@@ -12,3 +12,6 @@ assert.equal(forecastWindow(frames,now+24*hour),null,'reject stale run');
 assert.equal(forecastWindow([],now),null);
 console.log('Forecast covers exactly now through +24h; missing, stale and mixed runs rejected.');
 
+
+const buffered=Array.from({length:28},(_,i)=>({time:base+i*hour,run,url:"/forecast/"+run+"_"+(base+i*hour)+".png"}));
+assert.ok(forecastWindow(buffered,now+2*hour),"buffer covers two hour boundaries during collection");
