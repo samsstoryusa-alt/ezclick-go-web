@@ -15,5 +15,13 @@ const uploads=updates,previous=smooth.at(-1);
 for(const [id,fn] of [...queue]){queue.delete(id);fn(1016);}
 assert.ok(smooth.at(-1)>previous,'timeline advances between raster frames');assert.equal(updates,uploads,'smooth timeline adds no raster uploads');
 p.seek(2);assert.equal(position,2);p.replace([canvas(),canvas()],1);assert.equal(p.position(),1);
+p.play(true);map.isMoving=()=>true;
+const beforeDrag=updates;
+for(const [id,fn] of [...queue]){queue.delete(id);fn(1100);}
+assert.equal(updates,beforeDrag,'camera drag avoids competing raster uploads');
+map.isMoving=()=>false;
+for(const [id,fn] of [...queue]){queue.delete(id);fn(1150);}
+assert.ok(updates>beforeDrag,'playback resumes after camera gesture');
 p.dispose();assert.equal(layer,false);assert.equal(source,false);assert.equal(queue.size,0);
 console.log('Radar replacement retains one map source, preserves playback, seeks and disposes cleanly');
+

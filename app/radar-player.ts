@@ -1,7 +1,7 @@
 import type {ImageSource, Map as LibreMap} from 'maplibre-gl';
 
 export const RADAR_SOURCE = 'noaa-radar-composite';
-const CYCLE_MS = 3500;
+const CYCLE_MS = 12000;
 
 // Mix premultiplied colors additively. Two overlapping fading map layers use
 // source-over compositing, which causes a dip in alpha halfway through a fade.
@@ -49,6 +49,8 @@ export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], on
   let lastDraw=0;
   function tick(now:number) {
     raf=0;
+    // Keep the geographic layer attached while giving camera gestures the frame budget.
+    if(map.isMoving?.()){last=now;raf=requestAnimationFrame(tick);return;}
     // Move the timeline every display frame; map image uploads remain capped at 30 fps.
     if(playing){const elapsed=last?Math.min(now-last,100):0;onSmoothPosition?.(Math.min((position+elapsed*images.length/CYCLE_MS)%images.length,images.length-1));}
     if(now-lastDraw<1000/30){raf=requestAnimationFrame(tick);return;}
@@ -59,8 +61,9 @@ export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], on
       drawPosition(context!,reduced ? Math.floor(position) : position);
       if(now-lastUi>=50) {onPosition(Math.min(position,images.length-1));lastUi=now;}
     } else if(seeking) {
-      const t=reduced ? 1 : Math.min(1,(now-seekStart)/140);
-      blendRadar(context!,snapshot,target,t*t*(3-2*t));
+      const t=reduced || now-seekStart>=300 ? 1 : 1-Math.exp(-Math.max(1,last?now-last:16)/65);
+      snapshotContext!.clearRect(0,0,canvas.width,canvas.height);snapshotContext!.drawImage(canvas,0,0);
+      blendRadar(context!,snapshot,target,t);
       if(t===1) seeking=false;
     }
     publish();
@@ -87,3 +90,4 @@ export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], on
     dispose() {if(raf)cancelAnimationFrame(raf);if(map.getLayer(RADAR_SOURCE))map.removeLayer(RADAR_SOURCE);if(map.getSource(RADAR_SOURCE))map.removeSource(RADAR_SOURCE);for(const image of [...images,canvas,snapshot,target]){image.width=1;image.height=1;}},
   };
 }
+

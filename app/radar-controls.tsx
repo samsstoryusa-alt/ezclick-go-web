@@ -3,6 +3,7 @@ import {useEffect,useRef,useState} from 'react';
 import type {Map as LibreMap} from 'maplibre-gl';
 import {createRadarPlayer,blendRadar} from './radar-player';
 import {typeServiceBase} from './precip-types';
+import {enhancePrecipitation} from './precip-appearance';
 import {forecastWindow,type ForecastFrame} from './forecast-time';
 
 export default function RadarControls({map,ready,onTimeChange}:{map:LibreMap|null;ready:boolean;onTimeChange:(time:number|null)=>void}) {
@@ -46,7 +47,7 @@ export default function RadarControls({map,ready,onTimeChange}:{map:LibreMap|nul
      const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=600;
      const ctx=canvas.getContext('2d');if(!ctx)throw Error('Forecast canvas unavailable');
      const mix=a===b?0:(stamp-window.source[a].time)/(window.source[b].time-window.source[a].time);
-     blendRadar(ctx,cache.get(window.source[a].url)!,cache.get(window.source[b].url)!,mix);next.push(canvas);
+     blendRadar(ctx,cache.get(window.source[a].url)!,cache.get(window.source[b].url)!,mix);enhancePrecipitation(canvas);next.push(canvas);
     }
     if(disposed)return;
     let nextIndex=0;
@@ -100,4 +101,5 @@ export default function RadarControls({map,ready,onTimeChange}:{map:LibreMap|nul
   </section>}
  </div>;
 }
+
 
