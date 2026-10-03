@@ -18,9 +18,14 @@ lock=threading.Lock()
 
 def read(url,headers=None):
     req=urllib.request.Request(url,headers={'User-Agent':'EZCLICK-weather/1.0',**(headers or {})})
-    with urllib.request.urlopen(req,timeout=45) as r:
-        if headers and 'Range' in headers and r.status!=206:raise ValueError('Range request not honoured')
-        return r.read()
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(req,timeout=45) as r:
+                if headers and 'Range' in headers and r.status!=206:raise ValueError('Range request not honoured')
+                return r.read()
+        except Exception:
+            if attempt==2:raise
+            time.sleep(1+attempt)
 
 def produce(run,valid):
     ident=f'{int(run.timestamp()*1000)}_{int(valid.timestamp()*1000)}'
@@ -84,3 +89,4 @@ def worker():
         time.sleep(600)
 
 def start():threading.Thread(target=worker,daemon=True).start()
+

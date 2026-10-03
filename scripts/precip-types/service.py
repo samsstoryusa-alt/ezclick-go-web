@@ -16,6 +16,7 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import winddata
+import forecastdata
 import numpy as np
 from osgeo import gdal
 from PIL import Image
@@ -93,7 +94,14 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_header('Vary','Origin')
         super().end_headers()
     def do_GET(self):
-        if self.path.split('?')[0]=='/wind/frames':
+        if self.path.split('?')[0]=='/forecast/frames':
+            body=json.dumps(forecastdata.catalog()).encode()
+            self.send_response(200);self.send_header('Content-Type','application/json');self.send_header('Cache-Control','no-store');self.end_headers();self.wfile.write(body)
+        elif re.fullmatch(r'/forecast/\d{13}_\d{13}\.png',self.path):
+            path=forecastdata.ROOT/self.path.rsplit('/',1)[1]
+            if not path.exists():self.send_error(404);return
+            self.send_response(200);self.send_header('Content-Type','image/png');self.send_header('Cache-Control','public,max-age=86400');self.end_headers();self.wfile.write(path.read_bytes())
+        elif self.path.split('?')[0]=='/wind/frames':
             body=json.dumps(winddata.catalog()).encode()
             self.send_response(200);self.send_header('Content-Type','application/json');self.send_header('Cache-Control','no-store');self.end_headers();self.wfile.write(body)
         elif re.fullmatch(r'/wind/\d{13}_\d{13}\.bin',self.path):
@@ -108,6 +116,9 @@ class Handler(SimpleHTTPRequestHandler):
             if not path.exists():self.send_error(404);return
             self.send_response(200);self.send_header('Content-Type','image/png');self.send_header('Cache-Control','public,max-age=3600');self.end_headers();self.wfile.write(path.read_bytes())
         else:self.send_error(404)
-winddata.start()
+winddata.publish()
+forecastdata.start()
 threading.Thread(target=worker,daemon=True).start()
 ThreadingHTTPServer(('0.0.0.0',8766),Handler).serve_forever()
+
+

@@ -30,3 +30,17 @@ Deployment verified 2026-10-03 (America/New_York): Cloudflare A record weather
 points to 40.160.37.103 with proxy enabled. Let's Encrypt certificate issued;
 HTTPS root and both data catalogs/assets return 200. Website and data no longer
 require the workstation tunnel. Internal diagnostics are bound to 127.0.0.1:8088.
+
+24-hour forecast release:
+- NOAA GFS instantaneous PRATE, CRAIN and CSNOW (not accumulated rainfall).
+- Forecast collector atomically publishes 26 consecutive hourly frames from one
+  model run, together with matching 10 m U/V wind. Browser interpolates exactly
+  now through +24h; missing/stale model runs are rejected.
+- Forecast images cover [-130,22,-60,52], 1024x600 Web Mercator. Wind is global.
+  Rain/snow only; ice pellets/freezing rain are not distinguished on this layer.
+- A model estimate also applies at Now. This replaces radar history in the UI.
+- Run check-forecast.mjs and check-forecast-live.mjs in addition to player/wind checks.
+- Backend image ezclick-weather:v3; previous stopped container
+  ezclick-precip-types-v2-backup is retained for rollback, with the same data volume.
+- Frontend release releases/weather-forecast-20261003. Existing static media was
+  copied from the preceding release; index.html/assets were replaced by the build.
