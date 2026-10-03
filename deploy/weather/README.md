@@ -26,3 +26,7 @@ Pre-deployment checks: precipitation, wind and player tests; changed-file ESLint
 targeted TypeScript; build:pages. The old, unchanged weather-layer-panel.tsx
 scaffold has a pre-existing react-hooks/set-state-in-effect lint error; it is
 not used by the new weather map.
+Deployment verified 2026-10-03 (America/New_York): Cloudflare A record weather
+points to 40.160.37.103 with proxy enabled. Let's Encrypt certificate issued;
+HTTPS root and both data catalogs/assets return 200. Website and data no longer
+require the workstation tunnel. Internal diagnostics are bound to 127.0.0.1:8088.
