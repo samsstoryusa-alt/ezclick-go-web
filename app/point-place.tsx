@@ -42,7 +42,7 @@ export default function PointPlace({map,ready}:{map:LibreMap|null;ready:boolean}
   const name=place?.city||place?.district||place?.locality||place?.name;
   return <div className={`point-place ${busy?'is-updating':''}`} aria-live="polite" aria-busy={busy}>
     <strong title="Nearest mapped place · OpenStreetMap">{busy?status:name||status||'Selected area'}</strong>
-    <span>{!busy&&place?<>{[place.state,place.countrycode!=='US'?place.country:null].filter(Boolean).join(' · ')}<b title="Postal code of the nearest mapped place">{place.postcode?`${place.countrycode==='US'?'ZIP':'Postal'} ${place.postcode}`:'ZIP unavailable'}</b></>:<>&nbsp;</>}</span>
+    <span>{!busy&&place?<><span className="point-place-region">{[place.state,place.countrycode!=='US'?place.country:null].filter(Boolean).join(' · ')}</span><b title="Postal code of the nearest mapped place">{place.postcode?`${place.countrycode==='US'?'ZIP':'Postal'} ${place.postcode}`:'ZIP unavailable'}</b></>:<>&nbsp;</>}</span>
 
   </div>;
 }

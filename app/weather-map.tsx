@@ -58,6 +58,49 @@ export default function WeatherMap() {
   const [weatherTime,setWeatherTime]=useState<number|null>(null);
   const [mobileExpanded,setMobileExpanded]=useState(false);
   const [cameraExpanded,setCameraExpanded]=useState(false);
+  const sheetRef=useRef<HTMLDivElement>(null);
+  const sheetDrag=useRef<{y:number;height:number;delta:number}|null>(null);
+  const sheetTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
+  const skipSheetClick=useRef(false);
+  useEffect(()=>()=>{if(sheetTimer.current)clearTimeout(sheetTimer.current);},[]);
+  function settleSheet(expanded:boolean){
+    const sheet=sheetRef.current;if(!sheet)return;
+    if(sheetTimer.current)clearTimeout(sheetTimer.current);
+    const start=sheet.getBoundingClientRect().height;
+    setMobileExpanded(expanded);
+    requestAnimationFrame(()=>{
+      if(!sheet.isConnected)return;
+      sheet.style.transition='none';sheet.style.height='auto';
+      const end=sheet.getBoundingClientRect().height;
+      sheet.style.height=start+'px';sheet.getBoundingClientRect();
+      sheet.style.transition=window.matchMedia('(prefers-reduced-motion: reduce)').matches?'none':'height 460ms cubic-bezier(.22,1,.36,1)';
+      sheet.style.height=end+'px';
+      sheetTimer.current=setTimeout(()=>{sheet.style.height='';sheet.style.transition='';},480);
+    });
+  }
+  function beginSheet(event:PointerEvent<HTMLButtonElement>){
+    if(event.button!==0||!sheetRef.current)return;
+    if(sheetTimer.current)clearTimeout(sheetTimer.current);
+    skipSheetClick.current=false;
+    sheetDrag.current={y:event.clientY,height:sheetRef.current.getBoundingClientRect().height,delta:0};
+    sheetRef.current.style.transition='none';event.currentTarget.setPointerCapture(event.pointerId);
+  }
+  function pullSheet(event:PointerEvent<HTMLButtonElement>){
+    const drag=sheetDrag.current,sheet=sheetRef.current;if(!drag||!sheet)return;
+    drag.delta=drag.y-event.clientY;
+    const limit=(sheet.parentElement?.clientHeight??600)*.72;
+    const desired=drag.height+drag.delta;
+    const elastic=desired<130?130+(desired-130)*.18:desired>limit?limit+(desired-limit)*.18:desired;
+    sheet.style.height=Math.max(90,elastic)+'px';
+  }
+  function releaseSheet(event:PointerEvent<HTMLButtonElement>){
+    const drag=sheetDrag.current;if(!drag)return;sheetDrag.current=null;
+    event.currentTarget.releasePointerCapture(event.pointerId);
+    skipSheetClick.current=Math.abs(drag.delta)>6;
+    if(skipSheetClick.current)settleSheet(drag.delta>30?true:drag.delta< -30?false:mobileExpanded);
+    else if(sheetRef.current)sheetRef.current.style.height='';
+  }
+
   const [ready, setReady] = useState(false);
   const windData=useWindFields(ready);
   const {units,toggle:toggleUnits}=useWeatherUnits();
@@ -229,7 +272,7 @@ export default function WeatherMap() {
         </div>
         {locationMessage&&<div className="location-feedback" role="status"><span>{locationMessage}</span>{!locating&&<button type="button" aria-label="Dismiss location message" onClick={()=>setLocationMessage('')}>×</button>}</div>}
       </div>
-      <div className="weather-center-dot" aria-hidden="true" /><div className={`weather-left-stack ${mobileExpanded?"mobile-expanded":""}`}><button type="button" className="weather-mobile-expand" aria-label={mobileExpanded?"Close weather settings":"Open weather settings"} aria-expanded={mobileExpanded} onClick={()=>setMobileExpanded(v=>!v)}><span>{mobileExpanded?"Close settings":"Weather & layers"}</span><span aria-hidden="true">{mobileExpanded?"−":"+"}</span></button><PointWeather map={radarMap} ready={ready} time={weatherTime} windFrames={windData.frames} units={units} onToggleUnits={toggleUnits} /><WindControls map={radarMap} ready={ready} time={weatherTime} frames={windData.frames} status={windData.status} units={units} /><RadarControls map={radarMap} ready={ready} onTimeChange={setWeatherTime} /></div>
+      <div className="weather-center-dot" aria-hidden="true" /><div ref={sheetRef} className={`weather-left-stack ${mobileExpanded?"mobile-expanded":""}`}><button type="button" className="weather-mobile-expand" aria-label={mobileExpanded?"Close weather settings":"Open weather settings"} aria-expanded={mobileExpanded} onPointerDown={beginSheet} onPointerMove={pullSheet} onPointerUp={releaseSheet} onPointerCancel={()=>{sheetDrag.current=null;settleSheet(mobileExpanded);}} onClick={()=>{if(skipSheetClick.current){skipSheetClick.current=false;return;}settleSheet(!mobileExpanded);}}><span className="sheet-grip" aria-hidden="true"/><span className="sheet-grip-label">{mobileExpanded?"Swipe down to close":"Swipe up for settings"}</span></button><PointWeather map={radarMap} ready={ready} time={weatherTime} windFrames={windData.frames} units={units} onToggleUnits={toggleUnits} /><WindControls map={radarMap} ready={ready} time={weatherTime} frames={windData.frames} status={windData.status} units={units} /><RadarControls map={radarMap} ready={ready} onTimeChange={setWeatherTime} /></div>
 
       {!ready && !error && <p className="weather-map-message" role="status">Loading your map…</p>}
       {error && <div className="weather-map-message" role="alert"><p>{error}</p><button type="button" onClick={() => {setReady(false); setTerrainReady(false); setThreeD(false); setError(''); setTerrainError(false); setAttempt(value => value + 1);}}>Reload map</button></div>}
