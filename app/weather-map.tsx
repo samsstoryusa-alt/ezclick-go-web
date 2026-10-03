@@ -248,7 +248,7 @@ export default function WeatherMap() {
 
   return <main className="weather-workspace map-night">
     <header className="weather-map-header">
-      <a className="weather-map-brand" href="./">EZCLICK <span>GO</span></a>
+      <a className="weather-map-brand" href="./"><img src="/media/ezclick-go-logo.png" width="2166" height="726" alt="EZCLICK GO"/></a>
       <div><h1>Explore the road ahead</h1><p>Map & terrain preview</p></div>
       <a className="weather-map-back" href="./">Back to home</a>
     </header>
