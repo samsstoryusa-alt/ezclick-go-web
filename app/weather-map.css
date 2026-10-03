@@ -145,3 +145,4 @@
 .weather-left-stack:not(.mobile-expanded){padding-bottom:5px}
 .weather-left-stack:not(.mobile-expanded) .point-weather-row{min-height:26px}
 }
+.weather-site-menu{position:relative;margin-left:auto;font-size:12px;z-index:10}.weather-site-menu summary{cursor:pointer;color:#b8cada;padding:12px 8px;list-style:none}.weather-site-menu summary::-webkit-details-marker{display:none}.weather-site-menu summary::after{content:' ☰';color:#70dcf4;margin-left:5px}.weather-site-menu nav{position:absolute;right:0;top:100%;width:230px;padding:6px;background:#091727;border:1px solid #516377;border-radius:12px;box-shadow:0 10px 25px #0005}.weather-site-menu nav a{display:block;padding:14px 12px;color:#d4e3ef;text-decoration:none;border-radius:8px}.weather-site-menu nav a:hover,.weather-site-menu nav a:focus-visible{background:#20394e;color:#a2e9f7}

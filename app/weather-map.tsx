@@ -250,7 +250,7 @@ export default function WeatherMap() {
     <header className="weather-map-header">
       <a className="weather-map-brand" href="./"><img src="/media/ezclick-go-logo.png" width="2166" height="726" alt="EZCLICK GO"/></a>
       <div><h1>Explore the road ahead</h1><p>Map & terrain preview</p></div>
-      <a className="weather-map-back" href="./">Back to home</a>
+      <details className="weather-site-menu"><summary>Menu</summary><nav aria-label="Site menu"><a href="https://ezclickgo.com/">Home</a><a href="/terms">About &amp; weather disclaimer</a></nav></details>
     </header>
     <section className="weather-map-stage" aria-label="Map and terrain preview">
       <div ref={container} className="weather-map-canvas" />
