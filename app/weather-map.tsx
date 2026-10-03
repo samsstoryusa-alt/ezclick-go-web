@@ -57,6 +57,7 @@ export default function WeatherMap() {
   const mapRef = useRef<LibreMap | null>(null);
   const [weatherTime,setWeatherTime]=useState<number|null>(null);
   const [mobileExpanded,setMobileExpanded]=useState(false);
+  const [cameraExpanded,setCameraExpanded]=useState(false);
   const [ready, setReady] = useState(false);
   const windData=useWindFields(ready);
   const {units,toggle:toggleUnits}=useWeatherUnits();
@@ -210,7 +211,9 @@ export default function WeatherMap() {
     </header>
     <section className="weather-map-stage" aria-label="Map and terrain preview">
       <div ref={container} className="weather-map-canvas" />
-      <div className="weather-globe-control">
+      <div className={`weather-globe-control ${cameraExpanded?'camera-expanded':''}`} onKeyDown={event=>{if(event.key==='Escape')setCameraExpanded(false);}}>
+        <button type="button" className="camera-menu-toggle camera-location" aria-label="Map controls" aria-expanded={cameraExpanded} aria-controls="weather-camera-tools" onClick={()=>setCameraExpanded(v=>!v)}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-dark" d="m4 22 12-6 12 6-12 6Z"/><path className="icon-mid" d="m4 16 12-6 12 6-12 6Z"/><path className="icon-light" d="m4 10 12-6 12 6-12 6Z"/></svg></button>
+        <div className="weather-camera-tools" id="weather-camera-tools">
         <button type="button" className="map-icon-button terrain-toggle" onClick={toggleTerrain} aria-pressed={threeD} aria-label="3D terrain" title={threeD ? 'Switch to 2D' : 'Switch to 3D'} disabled={!ready || !terrainReady || terrainError}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-shadow" d="m3 23 13-7 13 7-13 7Z"/><path className="icon-dark" d="m4 20 12-6 12 6-12 7Z"/><path className="icon-light" d={threeD?'m4 20 7-12 5 6 4-9 8 15-12 5Z':'m4 17 12-6 12 6-12 6Z'}/><path className="icon-mid" d={threeD?'m11 8 5 17-12-5Zm9-3 8 15-12 5Z':'m4 17 12 6v4L4 21Z'}/></svg><span>{threeD ? '3D' : '2D'}</span></button>
         <span className="globe-north">N</span>
         <button type="button" className="camera-globe" disabled={!ready} aria-label="Rotate and tilt map" aria-describedby="globe-help" onPointerDown={startGlobe} onPointerMove={moveGlobe} onPointerUp={releaseGlobe} onPointerCancel={releaseGlobe} onLostPointerCapture={() => {globeDrag.current = null;}} onKeyDown={globeKey}>
@@ -218,7 +221,7 @@ export default function WeatherMap() {
         </button>
         <span id="globe-help">Drag to rotate & tilt</span>
         <button type="button" className="map-icon-button top-view" aria-label="Top view" disabled={!ready} onClick={() => mapRef.current?.easeTo({bearing:0,pitch:0,duration:window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 600})}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-shadow" d="m4 22 12-6 12 6-12 7Z"/><path className="icon-dark" d="m4 19 12-6 12 6-12 7Z"/><path className="icon-light" d="m5 16 11-5 11 5-11 6Z"/><path d="M16 3v10m-4-4 4 4 4-4" stroke="#d1f7ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg><span>Top</span></button><RoadControls map={radarMap} ready={ready} />
-        <div className="location-control">
+        </div><div className="location-control">
           <button type="button" className="camera-location" disabled={!ready||locating} onClick={locateMe} aria-label={locating?'Finding your location':'Go to my location'} aria-describedby="location-tip" aria-busy={locating}>
             <svg viewBox="0 0 32 32" aria-hidden="true"><path className="location-arrow-shadow" d="M7 17 26 7 19 28 15 20Z"/><path className="location-arrow-light" d="m6 14 20-9-8 20-3-8Z"/><path className="location-arrow-dark" d="m26 5-11 12 3 8Z"/></svg>
           </button>
@@ -226,7 +229,7 @@ export default function WeatherMap() {
         </div>
         {locationMessage&&<div className="location-feedback" role="status"><span>{locationMessage}</span>{!locating&&<button type="button" aria-label="Dismiss location message" onClick={()=>setLocationMessage('')}>×</button>}</div>}
       </div>
-      <div className="weather-center-dot" aria-hidden="true" /><div className={`weather-left-stack ${mobileExpanded?"mobile-expanded":""}`}><button type="button" className="weather-mobile-expand" aria-expanded={mobileExpanded} onClick={()=>setMobileExpanded(v=>!v)}><span>{mobileExpanded?"Close settings":"Weather & layers"}</span><span aria-hidden="true">{mobileExpanded?"−":"+"}</span></button><PointWeather map={radarMap} ready={ready} time={weatherTime} windFrames={windData.frames} units={units} onToggleUnits={toggleUnits} /><WindControls map={radarMap} ready={ready} time={weatherTime} frames={windData.frames} status={windData.status} units={units} /><RadarControls map={radarMap} ready={ready} onTimeChange={setWeatherTime} /></div>
+      <div className="weather-center-dot" aria-hidden="true" /><div className={`weather-left-stack ${mobileExpanded?"mobile-expanded":""}`}><button type="button" className="weather-mobile-expand" aria-label={mobileExpanded?"Close weather settings":"Open weather settings"} aria-expanded={mobileExpanded} onClick={()=>setMobileExpanded(v=>!v)}><span>{mobileExpanded?"Close settings":"Weather & layers"}</span><span aria-hidden="true">{mobileExpanded?"−":"+"}</span></button><PointWeather map={radarMap} ready={ready} time={weatherTime} windFrames={windData.frames} units={units} onToggleUnits={toggleUnits} /><WindControls map={radarMap} ready={ready} time={weatherTime} frames={windData.frames} status={windData.status} units={units} /><RadarControls map={radarMap} ready={ready} onTimeChange={setWeatherTime} /></div>
 
       {!ready && !error && <p className="weather-map-message" role="status">Loading your map…</p>}
       {error && <div className="weather-map-message" role="alert"><p>{error}</p><button type="button" onClick={() => {setReady(false); setTerrainReady(false); setThreeD(false); setError(''); setTerrainError(false); setAttempt(value => value + 1);}}>Reload map</button></div>}

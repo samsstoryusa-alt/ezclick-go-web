@@ -96,3 +96,24 @@
 @media(max-width:950px) and (max-height:500px){
 .weather-map-header{height:40px}.weather-left-stack{right:auto;width:280px;max-width:calc(100% - 80px);max-height:calc(100% - 40px)}.weather-left-stack.mobile-expanded{max-height:calc(100% - 40px)}.weather-globe-control{flex-direction:row;width:auto}.weather-globe-control .camera-globe{display:none}
 }
+.weather-globe-control .camera-menu-toggle{display:none}.weather-camera-tools{display:contents}
+@media(max-width:767px), (max-width:950px) and (max-height:500px){
+.weather-globe-control .camera-menu-toggle{display:flex}
+.weather-globe-control{gap:4px;background:#091727e8}
+.weather-camera-tools{display:flex;flex-direction:column;align-items:center;gap:4px;max-height:0;opacity:0;overflow:hidden;visibility:hidden;transform:translateY(-7px) scale(.94);transform-origin:top center;transition:max-height .48s cubic-bezier(.22,1,.36,1),opacity .32s ease,transform .48s cubic-bezier(.22,1,.36,1),visibility 0s .48s}
+.camera-expanded .weather-camera-tools{max-height:210px;opacity:1;visibility:visible;transform:translateY(0) scale(1);transition-delay:0s}
+.camera-menu-toggle svg{transition:transform .48s cubic-bezier(.22,1,.36,1)}.camera-expanded .camera-menu-toggle svg{transform:rotate(-8deg) scale(1.07)}
+.weather-globe-control button:active svg{transform:scale(.9) rotate(-3deg)}
+.weather-globe-control .map-icon-button svg,.weather-globe-control .camera-location svg{width:24px;height:24px}
+.weather-left-stack:not(.mobile-expanded){padding:0 10px 6px}
+.weather-left-stack:not(.mobile-expanded) .weather-mobile-expand{position:absolute;top:2px;right:4px;width:44px;border:0;justify-content:center;background:transparent;font-size:21px}
+.weather-left-stack:not(.mobile-expanded) .weather-mobile-expand>span:first-child{display:none}
+.weather-left-stack:not(.mobile-expanded) .point-weather{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;min-height:48px;padding:5px 40px 5px 0}
+.weather-left-stack:not(.mobile-expanded) .point-place{border:0;margin:0;padding:0;min-width:0}.weather-left-stack:not(.mobile-expanded) .point-place>strong{font-size:11px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.weather-left-stack:not(.mobile-expanded) .point-weather-values{gap:7px}.weather-left-stack:not(.mobile-expanded) .point-weather-row{gap:3px}.weather-left-stack:not(.mobile-expanded) .point-weather-row strong{font-size:11px;white-space:nowrap}.weather-left-stack:not(.mobile-expanded) .point-weather-row svg{width:14px;height:14px}
+.weather-left-stack:not(.mobile-expanded) .radar-timeline{padding-top:6px}.weather-left-stack:not(.mobile-expanded) .radar-player-heading{margin-bottom:0}.weather-left-stack:not(.mobile-expanded) .radar-player-heading strong{font-size:10px}
+.weather-left-stack.mobile-expanded{animation:mobile-settings-in .42s cubic-bezier(.22,1,.36,1)}
+@keyframes mobile-settings-in{from{opacity:.8;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+}
+@media(max-width:950px) and (max-height:500px){.weather-globe-control{flex-direction:column}.camera-expanded .weather-camera-tools{max-height:150px}}
+@media(prefers-reduced-motion:reduce){.weather-camera-tools,.camera-menu-toggle svg{transition:none}.weather-left-stack.mobile-expanded{animation:none}}
