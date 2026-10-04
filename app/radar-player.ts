@@ -46,7 +46,13 @@ export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], on
   const source=map.getSource(RADAR_SOURCE) as ImageSource;
   // ImageSource's public updateImage path invalidates all draped terrain tiles.
   // CanvasSource updates only invalidate its canonical tile in MapLibre 6.11.
-  function publish() {source.updateImage({image:canvas});map.triggerRepaint();}
+  function publish() {
+    // Keep the last draped frame while the camera moves, avoiding terrain-tile rebuilds.
+    if(map.isMoving()||map.getContainer().dataset.globeRotating)return;
+    source.updateImage({image:canvas});map.triggerRepaint();
+  }
+  const resumePublish=()=>publish();
+  map.on('moveend',resumePublish);
   publish();
   const frameInterval=1000/30;
   let lastDraw:number|null=null;
@@ -95,7 +101,7 @@ export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], on
       seeking=true;seekStart=performance.now();onPosition(position);wake();
     },
     opacity(value:number) {if(map.getLayer(RADAR_SOURCE))map.setPaintProperty(RADAR_SOURCE,'raster-opacity',value);},
-    dispose() {motion?.dispose();if(raf)cancelAnimationFrame(raf);if(map.getLayer(RADAR_SOURCE))map.removeLayer(RADAR_SOURCE);if(map.getSource(RADAR_SOURCE))map.removeSource(RADAR_SOURCE);for(const image of [...images,canvas,snapshot,target]){image.width=1;image.height=1;}},
+    dispose() {map.off('moveend',resumePublish);motion?.dispose();if(raf)cancelAnimationFrame(raf);if(map.getLayer(RADAR_SOURCE))map.removeLayer(RADAR_SOURCE);if(map.getSource(RADAR_SOURCE))map.removeSource(RADAR_SOURCE);for(const image of [...images,canvas,snapshot,target]){image.width=1;image.height=1;}},
   };
 }
 

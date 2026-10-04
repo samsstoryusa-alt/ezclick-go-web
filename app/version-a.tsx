@@ -1,0 +1,105 @@
+"use client";
+import {weatherUrl} from './site-links';
+import {useEffect,useRef,useState} from 'react';
+import {ArrowUpRight,ArrowRight,Search,Calculator,Route,CloudRain,Fuel,FileText,Headphones,Check,Menu,X,Monitor,Smartphone,ShieldCheck,Truck,MapPin,Building2,ClipboardCheck,Leaf,Zap,Crown} from 'lucide-react';
+import {FeaturePanel} from './feature-panel';
+import './version-a.css';
+import {PhoneStory} from './version-a-phone';
+import {EarthScroll} from './version-a-earth';
+import {plans,comparison} from './pricing-data';
+const featurePoints:Record<string,string[]>={hotzones:['Explore load and truck demand by market','Compare areas before choosing your next lane','Plan repositioning with more context'],setup:['Review incoming carrier setup requirements','Match required forms with company documents','Check the package before preparing a reply'],brokers:['Keep broker contacts in one place','Review approval and watchlist status','Find the right company before booking'],find:['Compare lanes and trailer types','See rates alongside total mileage','Review a load before planning'],calculator:['Include fuel, tolls and commissions','Adjust the rate and compare estimates','Separate trip earnings from gross pay'],trip:['Keep pickup and delivery together','Review the route and driving estimate','Bring trip decisions into one workspace'],weather:['Explore wind, precipitation and temperature','Move through a 24-hour forecast','Check conditions at the map center'],fuel:['Compare sample stop options','Consider the detour alongside the price','Estimate fuel costs for the trip'],documents:['Preview organized company and trip records','See document status at a glance','Keep paperwork alongside the workflow'],dispatcher:['Explore suggested next steps','Review the reasoning before acting','Keep the final decision with you'],security:['Planned document access controls','Planned sign-in verification','Planned protection for stored and shared files']};
+const features=[
+ {key:'find',image:'/media/find-load-terminal-v1.png',name:'Find Load',icon:Search,title:'Your next move. A clearer view.',copy:'Explore lanes, compare loads, and see the numbers before you make your next move.'},
+ {key:'hotzones',image:'/media/journey/02/0128.webp',name:'Hot Zones',icon:MapPin,title:'Find where opportunity moves.',copy:'Explore market demand and compare areas before choosing your next load or repositioning a truck.'},
+ {key:'calculator',image:'/media/journey/12-statement/0240.webp',name:'Calculator',icon:Calculator,title:'Know what you keep.',copy:'Adjust the gross rate and see estimated trip expenses, net earnings, and the cost breakdown before you roll.'},
+ {key:'trip',image:'/media/journey/00-smooth/0001.webp',name:'Planning',icon:Route,title:'Every mile, thought through.',copy:'Keep pickup, delivery, route details, and stops together in one trip workspace.'},
+ {key:'weather',image:'/media/weather-night-storm-v2.png',name:'Weather',icon:CloudRain,title:'See what lies ahead.',copy:'Explore the live weather map, with wind, precipitation, and a 24-hour forecast.'},
+ {key:'fuel',image:'/media/journey/03/0128.webp',name:'Fuel',icon:Fuel,title:'Small decisions. Better margins.',copy:'Compare fuel options alongside your trip and understand the tradeoffs.'},
+ {key:'documents',image:'/media/journey/04/0128.webp',name:'Documents',icon:FileText,title:'Less searching. More moving.',copy:'Bring your trip paperwork into a clear, organized workspace.'},
+ {key:'dispatcher',image:'/media/ai-dispatcher-scene-v1.png',name:'AI Assistant',icon:Headphones,title:'A second pair of eyes.',copy:'Explore a preview of assisted dispatch workflows, with you in control of the decisions.'},
+ {key:'setup',image:'/media/quick-setup-calm-v2.png',name:'Quick Setup',icon:ClipboardCheck,title:'From packet to ready.',copy:'Review broker requirements, match company documents, and prepare a carrier setup package in one place.'},
+ {key:'brokers',image:'/media/broker-office-v1.png',name:'Broker Database',icon:Building2,title:'Know who you work with.',copy:'Explore an organized broker directory with contacts, approval status, and notes for your team.'},
+ {key:'security',image:'/media/security-server-v1.png',name:'Security',icon:ShieldCheck,title:'Your documents. Your control.',copy:'A preview of the access and protection features planned for the platform. These controls are not active in this demo.'},
+];
+export default function VersionA(){
+ const [selectedPlatform,setSelectedPlatform]=useState<string|null>(null);
+
+ const plansRef=useRef<HTMLElement>(null);
+ const [plansVisible,setPlansVisible]=useState(false);
+ useEffect(()=>{const el=plansRef.current;if(!el)return;const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)){setPlansVisible(true);observer.disconnect();}},{threshold:.12});observer.observe(el);return()=>observer.disconnect();},[]);
+ const roleRef=useRef<HTMLDivElement>(null);
+ const [rolesVisible,setRolesVisible]=useState(false);
+ useEffect(()=>{const el=roleRef.current;if(!el)return;const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)){setRolesVisible(true);observer.disconnect();}},{threshold:.2});observer.observe(el);return()=>observer.disconnect();},[]);
+ const tabsRef=useRef<HTMLDivElement>(null);
+ const [tabsVisible,setTabsVisible]=useState(false);
+ useEffect(()=>{
+  const element=tabsRef.current;if(!element)return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){setTabsVisible(true);return;}
+  const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){setTabsVisible(true);observer.disconnect();}},{threshold:.35});
+  observer.observe(element);return()=>observer.disconnect();
+ },[]);
+ const [roleInteracted,setRoleInteracted]=useState(false);
+ const [role,setRole]=useState<'driver'|'dispatcher'>('driver');
+ const [heroSelected,setHeroSelected]=useState('find');
+ const [selected,setSelected]=useState('find');const [menu,setMenu]=useState(false);
+ const hero=useRef<HTMLElement>(null),devices=useRef<HTMLDivElement>(null);
+ const visibleFeatures=features.filter(f=>role==='dispatcher'||!['setup','brokers'].includes(f.key));
+ const feature=features.find(f=>f.key===selected)!;
+ useEffect(()=>{
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)');let frame=0,position=0,target=0;
+  const paint=()=>{position+=(target-position)*.085;devices.current?.style.setProperty('--travel',String(position));if(Math.abs(target-position)>.0005)frame=requestAnimationFrame(paint);else frame=0;};
+  const update=()=>{if(!hero.current)return;target=reduced.matches?0:Math.max(0,Math.min(1,-hero.current.getBoundingClientRect().top/Math.max(1,hero.current.offsetHeight*.75)));if(!frame)frame=requestAnimationFrame(paint);};
+  window.addEventListener('scroll',update,{passive:true});window.addEventListener('resize',update);reduced.addEventListener('change',update);update();
+  return()=>{cancelAnimationFrame(frame);window.removeEventListener('scroll',update);window.removeEventListener('resize',update);reduced.removeEventListener('change',update);};
+ },[]);
+ return <main className="version-a">
+  <a className="va-skip" href="#product">Skip to product</a>
+  <header className="va-header"><a href="/version-a" aria-label="EZCLICK GO home"><img src="/media/ezclick-go-logo.png" alt="EZCLICK GO" width="168" height="46"/></a>
+   <nav aria-label="Main navigation" className={menu?'va-nav is-open':'va-nav'}><a href="#product" onClick={()=>setMenu(false)}>Platform</a><a href="#workflow" onClick={()=>setMenu(false)}>How it works</a><a href="#plans" onClick={()=>setMenu(false)}>Plans</a><a href="/experience?play=1">The story <ArrowUpRight size={13}/></a></nav>
+   <a className="va-header-cta" href="#product">Explore the platform <ArrowUpRight size={15}/></a><button className="va-menu" aria-label={menu?'Close menu':'Open menu'} aria-expanded={menu} onClick={()=>setMenu(!menu)}>{menu?<X/>:<Menu/>}</button>
+  </header>
+  <section className="va-hero" ref={hero}>
+   <div className="va-landscape" aria-hidden="true"/><svg className="va-route-lines" viewBox="0 0 1400 800" fill="none" aria-hidden="true"><path d="M560 800C600 630 920 720 980 510S750 280 1400 130"/><path d="M650 800C720 620 1010 740 1070 520S840 260 1400 210"/></svg>
+   <div className="va-hero-copy"><p className="va-eyebrow"><span/> BUILT AROUND THE WAY YOU MOVE</p><h1>Your road.<br/>Your business.<br/><em>One clear view.</em></h1><p className="va-intro">From the next load to the last mile.<br/>Your trucking day, brought together.</p>
+    <div className="va-actions"><a className="va-primary" href="#product">Explore EZCLICK GO <ArrowRight size={18}/></a><a className="va-weather-cta" href={weatherUrl} target="_blank" rel="noopener noreferrer">Try live weather <ArrowUpRight size={17}/></a></div>
+    <p className="va-availability">Platform preview · Live weather available now</p>
+   </div>
+   <div className="va-device-scene" ref={devices}>
+    <div className="va-orbit" aria-hidden="true"/>
+    <div className="va-desktop"><div className="va-window-bar"><span className="va-window-dots">● ● ●</span><span>EZCLICK GO / WORKSPACE</span><Monitor size={13}/></div><div className="va-desktop-content"><aside><img src="/media/ezclick-go-logo.png" alt=""/>{features.filter(f=>['find','calculator','trip','weather','fuel','documents'].includes(f.key)).map(f=><button key={f.key} className={heroSelected===f.key?'va-side-active':''} aria-pressed={heroSelected===f.key} aria-label={'Preview '+f.name} onClick={()=>setHeroSelected(f.key)}><span className="va-nav-icon"><f.icon size={16}/></span>{f.key==='trip'?'My Trip':f.name}</button>)}<small>YOUR NEXT MOVE<br/><b>Starts here.</b></small></aside><div className="va-workspace-visual"><div className="va-road-banner"><img src="/media/journey/00-smooth/0001.webp" alt="Truck on a mountain highway at sunset"/><div><span>THE ROAD IS YOURS</span><strong>Make your next move.</strong></div></div><div className="va-screen-native" key={heroSelected}><FeaturePanel kind={heroSelected}/></div></div></div></div>
+    <div className="va-phone"><div className="va-phone-island" aria-hidden="true"/><div className="va-phone-top"><span>EZCLICK GO</span><Smartphone size={13}/></div><div className="va-phone-native" inert><FeaturePanel kind="trip" mobile/></div><div className="va-phone-home" aria-hidden="true"/></div>
+    <div className="va-device-caption"><span/> ONE WORKSPACE. WHEREVER THE ROAD TAKES YOU.</div>
+   </div>
+  </section>
+  <div className="va-capabilities"><span>ONE CONNECTED WORKFLOW</span><p>Find. Plan. Drive. <strong>Stay in control.</strong></p><span>DESKTOP + MOBILE</span></div>
+  <section id="product" className="va-product">
+   <div className="va-section-heading"><div><p className="va-eyebrow">THE PLATFORM</p><h2>A little less switching.<br/><em>A lot more clarity.</em></h2></div><div ref={roleRef} className={`va-role-choice${rolesVisible?' is-visible':''}`}><span className="va-role-label">CHOOSE YOUR WORKSPACE</span><div className="va-role" role="group" aria-label="Choose your role"><button aria-pressed={role==='driver'} onClick={()=>{setRoleInteracted(true);setRole('driver');if(['setup','brokers'].includes(selected))setSelected('find');}}><span className="va-role-icon"><Truck size={23}/></span><span><strong>Driver</strong><small>Your road. Your next load.</small></span><Check className="va-role-check" size={15}/></button><button aria-pressed={role==='dispatcher'} onClick={()=>{setRoleInteracted(true);setRole('dispatcher');setSelected('setup');}}><span className="va-role-icon"><Headphones size={23}/></span><span><strong>Dispatcher</strong><small>Your drivers. One workspace.</small></span><Check className="va-role-check" size={15}/></button></div></div></div>
+   <p className="va-role-copy">{role==='driver'?'Loads, hot zones, routes and the details that keep your day moving.':'Hot zones, carrier setup and your broker database — alongside every trip.'}</p>
+   <div ref={tabsRef} className={`va-tabs va-tabs-entrance${tabsVisible?' is-visible':''}${roleInteracted?' is-role-switch':''}`} role="tablist" aria-label="Platform features">{visibleFeatures.map(f=><button key={f.key} id={'tab-'+f.key} role="tab" aria-selected={selected===f.key} aria-controls="va-feature" onClick={()=>setSelected(f.key)} onKeyDown={e=>{if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();const i=visibleFeatures.indexOf(f),n=e.key==='Home'?0:e.key==='End'?visibleFeatures.length-1:(i+(e.key==='ArrowRight'?1:-1)+visibleFeatures.length)%visibleFeatures.length;setSelected(visibleFeatures[n].key);document.getElementById('tab-'+visibleFeatures[n].key)?.focus();}}} tabIndex={selected===f.key?0:-1}><span className="va-tab-icon"><f.icon size={18}/></span>{f.name}</button>)}</div>
+   <p className="va-tabs-hint">Choose a tool. Try it below.</p>
+   <div id="va-feature" role="tabpanel" aria-labelledby={'tab-'+selected} className="va-feature-layout"><div className="va-feature-backdrop" aria-hidden="true">{features.map(f=><img key={f.key} data-scene={f.key} src={f.image} alt="" className={selected===f.key?'is-active':''} decoding="async"/>)}</div><div className="va-feature-copy"><span className="va-feature-icon"><feature.icon size={27}/></span><h3>{feature.title}</h3><p>{feature.copy}</p><ul className="va-feature-points">{featurePoints[selected].map(point=><li key={point}><Check size={14}/>{point}</li>)}</ul><span className="va-demo-note">{selected==='weather'?'Available now · Live weather workspace':selected==='security'?'Planned capabilities · Not active in this demo':'Interactive product preview · Sample data'}</span>{selected==='weather'&&<a className="va-primary" href={weatherUrl}>Open live weather <ArrowUpRight size={17}/></a>}</div><div className="va-feature-demo" key={selected}><FeaturePanel kind={selected}/></div></div>
+  </section>
+  <section className="va-release-note"><span className="va-eyebrow">AVAILABLE TODAY</span><p>Explore <a href={weatherUrl}>live weather <ArrowUpRight size={14}/></a> now. The other tools on this page are interactive previews with sample data.</p></section>
+  <PhoneStory/>
+  <section id="workflow" className="va-workflow"><p className="va-eyebrow">FROM OPPORTUNITY TO ARRIVAL</p><h2>Keep the whole trip<br/><em>in perspective.</em></h2><div className="va-steps">{[['01','Find your next move','Compare a load with the trip behind it.'],['02','Connect the details','Bring planning, weather, fuel, and paperwork together.'],['03','Keep moving forward','Return to one workspace as your day changes.']].map(([n,t,c])=><article key={n}><span>{n}</span><h3>{t}</h3><p>{c}</p></article>)}</div></section>
+  <section id="plans" ref={plansRef} className={`va-plans${plansVisible?' is-visible':''}`} aria-labelledby="va-plans-title">
+   <p className="va-eyebrow">ROOM FOR YOUR NEXT CHAPTER</p><div className="va-section-heading"><h2 id="va-plans-title">Built for your road.<br/><em>Ready to grow with you.</em></h2><p className="va-plans-intro">One driver or a growing team.<br/>Explore the plans we’re shaping.</p></div>
+   <p className="va-plans-disclaimer">Preview pricing · Paid plans are coming soon. Included features may change before launch.</p>
+   <div className="va-plan-grid">{plans.map((plan,i)=>{const Icon=[Leaf,Zap,Crown][i];return <article key={plan.name} className={`va-plan-card${i===1?' is-featured':''}`}><div className="va-plan-top"><span className="va-feature-icon"><Icon size={25}/></span><span>{plan.tagline}</span></div><h3>{plan.name}</h3><p>{plan.caption}</p><div className="va-plan-price">{plan.price===0?'Free':`$${plan.price}`}{plan.price>0&&<span className="va-price-period"> / month</span>}<small>{plan.price===0?'No subscription fee':'USD · Per workspace · Coming soon'}</small></div>{i>0&&<p className="va-plan-includes">Everything in {i===1?'Free':'Plus'}, plus:</p>}<ul>{plan.features.map(([title,description])=><li key={title}><Check size={15}/><div><strong>{title}</strong><p>{description}</p></div></li>)}</ul>{i===2&&<p className="va-plan-limits">Included trucks and AI usage limits will be confirmed before launch.</p>}<a href="#product" className={i===1?'va-primary':'va-plan-link'}>Explore the tools <ArrowUpRight size={16}/></a><small className="va-plan-note">Planned launch features · No checkout</small></article>})}</div>
+   <p className="va-pricing-roles">For drivers, dispatchers and company owners. One account can combine roles; your plan unlocks tools for your workspace.</p>
+   <details className="va-plan-comparison"><summary>Compare all features <span aria-hidden="true">+</span></summary><div className="va-plan-table-wrap"><table><caption>Planned launch features. Availability and usage limits are being finalized.</caption><thead><tr><th scope="col">Features</th>{plans.map(p=><th key={p.name} scope="col">{p.name}</th>)}</tr></thead><tbody><tr><th scope="row">Monthly price</th><td>Free</td><td>$19 USD</td><td>$39 USD</td></tr>{comparison.map(([label,...values])=><tr key={label}><th scope="row">{label}</th>{values.map((value,i)=><td key={i}>{value}</td>)}</tr>)}</tbody></table></div></details>
+  </section>
+  <section className="va-faq" aria-labelledby="va-faq-title"><p className="va-eyebrow">A FEW USEFUL DETAILS</p><h2 id="va-faq-title">Before your next move.</h2>{[
+ ['What can I use today?','The live weather workspace is available now. Find Load, Hot Zones, Calculator, Planning, Fuel, Documents, Quick Setup, Broker Database and AI Assistant are demonstrations, not connected production services.'],
+ ['Are the loads and earnings real?','Loads, rates and trip figures shown here are sample data. Calculator results are estimates based on the displayed assumptions and do not guarantee earnings.'],
+ ['How should I use the weather map?','Use it to explore forecast conditions. Weather can change and data may be delayed or incomplete. Check official alerts and current road conditions before travel.'],
+ ['Can I use EZCLICK GO on my phone?','The weather workspace and this platform preview support mobile screens. You can explore the same tools from a phone or desktop.'],
+ ['Can I upload sensitive documents here?','This page is a product demonstration. Security controls are planned, and the preview should not be used to store sensitive documents.']
+ ].map(([question,answer])=><details key={question}><summary>{question}<span aria-hidden="true">+</span></summary><p>{answer}</p></details>)}<a className="va-text-link" href="https://weather.ezclickgo.com/terms">Weather information and limitations <ArrowUpRight size={14}/></a></section>
+  <EarthScroll><section className="va-story-downloads is-visible" aria-label="Coming soon on your devices">
+   <div className="final-brand"><img className="final-logo" src="/media/ezclick-go-logo.png" width="2166" height="726" alt="EZCLICK GO"/><h2>Your next move.<br/>One click away.</h2></div>
+   <div className="download-area"><div className="download-buttons">{[{name:'App Store',icon:'appstore',platform:'iOS'},{name:'Google Play',icon:'googleplay',platform:'Android'},{name:'Windows',icon:'windows11',platform:'PC'},{name:'macOS',icon:'apple',platform:'Mac'}].map(({name,icon,platform})=><button key={name} className="download-button" aria-pressed={selectedPlatform===name} onClick={()=>setSelectedPlatform(name)} aria-label={`${name} for ${platform} — coming soon`}><img className="platform-logo" src={`/media/platforms/${icon}.svg`} width={28} height={28} alt="" aria-hidden="true"/><span><small>Coming soon</small><strong>{name}</strong></span></button>)}</div><p className="va-platform-status" aria-live="polite">{selectedPlatform?`${selectedPlatform} · Coming soon. Downloads are not available yet.`:'Choose your platform · Coming soon'}</p><a className="final-pricing-link" href="#plans">Explore plans</a><a className="replay" href="/experience?play=1">Replay the journey <ArrowUpRight size={15}/></a></div>
+  </section></EarthScroll>
+  <footer className="va-footer"><img src="/media/ezclick-go-logo.png" alt="EZCLICK GO" width="145"/><span>Built for the road ahead.</span><a href="/experience?play=1">Story / Experience</a><a href="https://weather.ezclickgo.com/terms">Weather information</a><small>© {new Date().getFullYear()} EZCLICK GO</small></footer>
+ </main>;
+}

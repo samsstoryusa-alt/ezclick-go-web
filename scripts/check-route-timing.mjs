@@ -1,0 +1,23 @@
+import fs from "node:fs";
+import assert from "node:assert/strict";
+import ts from "typescript";
+const source=fs.readFileSync("app/route-weather.tsx","utf8");
+const fn=source.slice(source.indexOf("export function sampleRoute"),source.indexOf("export default function RouteWeather"));
+const js=ts.transpileModule(fn,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const exports={};new Function("exports",js)(exports);
+const route={key:"test",coordinates:[[-105,40],[-104,40],[-103,40]],distance:160000,duration:3600,elapsedSeconds:[0,600,3600]};
+const departure=Date.UTC(2026,9,3,12);
+const points=exports.sampleRoute(route,departure,60);
+assert.equal(points.length,3);
+assert.equal(points[0].eta,departure);
+assert.ok(Math.abs(points[1].eta-(departure+600000+1800000))<1,"Arrival must use road segment time, not average speed");
+assert.equal(points.at(-1).eta,departure+7200000);
+assert.deepEqual([points[0].lon,points[0].lat],route.coordinates[0]);
+assert.deepEqual([points.at(-1).lon,points.at(-1).lat],route.coordinates.at(-1));
+assert.equal(exports.sampleRoute({...route,distance:4000000},departure,0).length,16);
+console.log("Route sampling: endpoints, per-step timing, breaks, and request cap PASS");
+
+const north=exports.sampleRoute({...route,coordinates:[[-105,25],[-105,35],[-105,45]]},departure,0);
+assert.ok(north[1].mapFraction<.5,'Map colors must follow projected line distance');
+assert.equal(north[0].mapFraction,0);assert.equal(north.at(-1).mapFraction,1);
+console.log('Projected gradient alignment PASS');

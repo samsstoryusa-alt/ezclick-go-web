@@ -1,12 +1,16 @@
 "use client";
+import {platformUrl} from './site-links';
 
 import {useEffect, useRef, useState, type PointerEvent, type KeyboardEvent} from 'react';
 import type {Map as LibreMap} from 'maplibre-gl';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './weather-map.css';
+import {applyMapPalette} from './map-night-palette';
 import RadarControls from './radar-controls';
 import RoadControls from './road-controls';
+import {WeatherRoute} from './weather-route';
+import {WeatherCenterMarker} from './weather-center-marker';
 
 import PointWeather from './point-weather';
 import WindControls from './wind-controls';
@@ -18,41 +22,8 @@ const INITIAL_VIEW = {center: [-105.6, 39.65] as [number, number], zoom: 8};
 const TERRAIN_URL = 'https://tiles.mapterhorn.com/tilejson.json';
 
 
-// Apply the permanent night palette without changing sources or terrain.
-function applyMapPalette(map: LibreMap) {
-  const paint = (id: string, property: Parameters<LibreMap['setPaintProperty']>[1], color: string | number) => {
-    map.setPaintProperty(id, property, color);
-  };
-  for (const layer of map.getStyle().layers ?? []) {
-    const id = layer.id;
-    if (id === 'soft-vegetation') continue;
-    if (layer.type === 'background') paint(id, 'background-color', '#14283d');
-    if (layer.type === 'fill') {
-      const color = id === 'water' ? '#08192c' : /park|wood/.test(id) ? '#1a3043' : /glacier|ice/.test(id) ? '#345069' : /building/.test(id) ? '#284359' : '#1b3147';
-      paint(id, 'fill-color', color);
-      if (id === 'park' || id === 'landcover_wood') paint(id, 'fill-opacity', 0);
-      if (layer.paint && 'fill-outline-color' in layer.paint) paint(id, 'fill-outline-color', '#344f64');
-    }
-    if (layer.type === 'line') {
-      const color = /water/.test(id) ? '#265269' : /boundary/.test(id) ? '#304458' : /casing/.test(id) ? '#102235' : /motorway.*inner/.test(id) ? '#c5bda8' : /major.*inner/.test(id) ? '#a59f90' : /railway/.test(id) ? '#405a70' : '#49677f';
-      paint(id, 'line-color', color);
-    }
-    if (layer.type === 'symbol' && layer.layout && 'text-field' in layer.layout) {
-      paint(id, 'text-color', /water/.test(id) ? '#91bdce' : /highway|shield|road_shield/.test(id) ? '#c1d2df' : '#e0ebf3');
-      paint(id, 'text-halo-color', '#102338');
-      paint(id, 'text-halo-width', 1.5);
-    }
-    if (id === 'terrain-shading') {
-      paint(id, 'hillshade-shadow-color', '#030c1b');
-      paint(id, 'hillshade-highlight-color', '#66839b');
-      paint(id, 'hillshade-accent-color', '#36566e');
-      // Hillshade intensity only; terrain geometry and elevation resolution are unchanged.
-      paint(id, 'hillshade-exaggeration', 0.4);
-    }
-  }
-}
-
 export default function WeatherMap() {
+  const embeddedTrip = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("embed") === "trip";
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LibreMap | null>(null);
   const [weatherTime,setWeatherTime]=useState<number|null>(null);
@@ -101,7 +72,9 @@ export default function WeatherMap() {
     else if(sheetRef.current)sheetRef.current.style.height='';
   }
 
+  const [routeActive,setRouteActive]=useState(false);
   const [ready, setReady] = useState(false);
+  const [mapVisible,setMapVisible]=useState(false);
   const windData=useWindFields(ready);
   const {units,toggle:toggleUnits}=useWeatherUnits();
   const [radarMap, setRadarMap] = useState<LibreMap | null>(null);
@@ -113,6 +86,9 @@ export default function WeatherMap() {
   const [locationMessage,setLocationMessage]=useState('');
   const [attempt, setAttempt] = useState(0);
   const globeDrag = useRef<{id: number; x: number; y: number; bearing: number; pitch: number} | null>(null);
+  const globeFrame=useRef(0);
+  const globeTarget=useRef<{bearing:number;pitch:number}|null>(null);
+  useEffect(()=>()=>{cancelAnimationFrame(globeFrame.current);delete mapRef.current?.getContainer().dataset.globeRotating;},[]);
   const [camera, setCamera] = useState({bearing: 0, pitch: 0});
 
   useEffect(() => {
@@ -120,6 +96,7 @@ export default function WeatherMap() {
     let map: LibreMap | undefined;
     let observer: ResizeObserver | undefined;
     let loaded = false;
+    setMapVisible(false);
     let disposeVegetation:(()=>void)|undefined;
 
     const timeout = window.setTimeout(() => {
@@ -135,19 +112,23 @@ export default function WeatherMap() {
           style: 'https://tiles.openfreemap.org/styles/positron',
           ...(new URLSearchParams(window.location.search).get('motion')==='1'?{center:[-91,28] as [number,number],zoom:5}:INITIAL_VIEW),
           maxPitch: 65,
+          pixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
           dragPan: true,
           scrollZoom: true,
           touchZoomRotate: true,
           attributionControl: false,
         });
         mapRef.current = map;
-        map.on('move', () => {if (!disposed && map) setCamera({bearing: map.getBearing(), pitch: map.getPitch()});});
+        // Apply the night palette before tiles become visible, not after the light map loads.
+        map.on('style.load',()=>{if(!disposed&&map)applyMapPalette(map);});
+        map.on('move', () => {if (!disposed && map) setCamera(previous=>{const bearing=map!.getBearing(),pitch=map!.getPitch();return Math.abs(previous.bearing-bearing)<.05&&Math.abs(previous.pitch-pitch)<.05?previous:{bearing,pitch};});});
 
         map.addControl(new lib.ScaleControl({unit: 'imperial'}), 'bottom-left');
         map.addControl(new lib.AttributionControl({compact: false, customAttribution: '<a href="https://github.com/cwdaniel/RadrView" target="_blank" rel="noopener noreferrer">Wind animation: RadrView</a>'}), 'bottom-right');
         map.getCanvas().setAttribute('aria-label', 'Interactive EZCLICK map. Drag to move; use arrow keys to pan and plus or minus to zoom.');
         map.on('error', event => {
           if (disposed) return;
+          console.error('[EZCLICK map]', event.error?.message, (event as unknown as {sourceId?: string}).sourceId ?? 'style');
           const source = (event as unknown as {sourceId?: string}).sourceId;
           if (source === 'elevation' || source === 'relief') {
             setTerrainError(true); setTerrainReady(false); setThreeD(false);
@@ -173,6 +154,36 @@ export default function WeatherMap() {
           }}, before);
           disposeVegetation=installSoftVegetation(map,lib);
           applyMapPalette(map);
+          map.once('render',()=>{if(!disposed)setMapVisible(true);});
+          // Interstate references are already in the vector tiles; expose shields at regional zoom.
+          const shield='highway-shield-us-interstate';
+          if(map.getLayer(shield)){
+            // Interstate shield: red header, blue field, white border; route number comes from map data.
+            const badge=document.createElement('canvas');badge.width=72;badge.height=80;
+            const ctx=badge.getContext('2d');
+            if(ctx){
+              ctx.scale(2,2);
+              const shape=new Path2D('M3 5 Q10 7 18 3 Q26 7 33 5 L32 21 Q30 31 18 37 Q6 31 4 21 Z');
+              ctx.save();ctx.clip(shape);ctx.fillStyle='#174a8b';ctx.fillRect(0,0,36,40);
+              ctx.fillStyle='#c83b43';ctx.fillRect(0,0,36,14);
+              ctx.strokeStyle='#ffffff';ctx.lineWidth=.8;ctx.beginPath();ctx.moveTo(3,14);ctx.lineTo(33,14);ctx.stroke();
+              ctx.fillStyle='#ffffff';ctx.font='bold 4.5px Arial';ctx.textAlign='center';ctx.fillText('INTERSTATE',18,11.5);ctx.restore();
+              ctx.strokeStyle='#ffffff';ctx.lineWidth=1.3;ctx.stroke(shape);
+              map.addImage('ezclick-interstate-shield',ctx.getImageData(0,0,72,80),{pixelRatio:2});
+              map.setLayoutProperty(shield,'icon-image','ezclick-interstate-shield');
+              map.setLayoutProperty(shield,'text-offset',[0,.25]);
+            }
+            map.setLayerZoomRange(shield,6,24);
+            map.setLayoutProperty(shield,'symbol-spacing',1120);
+            map.setLayoutProperty(shield,'text-padding',12);
+            map.setLayoutProperty(shield,'icon-padding',12);
+            map.setLayoutProperty(shield,'icon-size',.85);
+            map.setLayoutProperty(shield,'text-size',11);
+            map.setLayoutProperty(shield,'text-pitch-alignment','viewport');
+            map.setLayoutProperty(shield,'icon-pitch-alignment','viewport');
+            map.setPaintProperty(shield,'text-color','#ffffff');
+            map.setPaintProperty(shield,'text-halo-width',0);
+          }
         });
         map.on('sourcedata', event => {
           if (!disposed && event.sourceId === 'relief' && event.isSourceLoaded) setTerrainReady(true);
@@ -187,22 +198,74 @@ export default function WeatherMap() {
     return () => {disposed = true; window.clearTimeout(timeout); observer?.disconnect(); mapRef.current = null; map?.remove();disposeVegetation?.();};
   }, [attempt]);
 
+  useEffect(() => {
+    const sheet = sheetRef.current;
+    const stage = sheet?.closest<HTMLElement>('.weather-map-stage');
+    if (!sheet || !stage) return;
+    const measure = () => {
+      const box=stage.getBoundingClientRect(),panel=sheet.getBoundingClientRect();
+      stage.style.setProperty('--weather-sheet-height', `${panel.height}px`);
+      const compact=window.matchMedia('(max-width:767px), (max-width:950px) and (max-height:500px)').matches;
+      const bottom=compact?Math.max(0,Math.min(box.height-80,box.bottom-panel.top)):0;
+      stage.style.setProperty('--weather-map-bottom-inset', `${bottom}px`);
+      // Keep the point-weather coordinates at the same visual center as the marker.
+      const map=mapRef.current;
+      if(map){
+        const inset=map.getPadding();
+        const changed=Math.abs(inset.bottom-bottom)>.5||inset.top!==0||inset.right!==0||inset.left!==0;
+        // setPadding calls jumpTo and cancels a flight, even for unchanged insets.
+        // Let an active flight finish; moveend applies the latest measured sheet size.
+        if(changed&&!map.isMoving()&&!map.getContainer().dataset.globeRotating)map.setPadding({top:0,right:0,bottom,left:0});
+      }
+    };
+    const observer = new ResizeObserver(measure);
+    const map=mapRef.current;
+    map?.on('moveend',measure);
+    observer.observe(sheet); observer.observe(stage); measure();
+    return () => {map?.off('moveend',measure);observer.disconnect(); stage.style.removeProperty('--weather-sheet-height'); stage.style.removeProperty('--weather-map-bottom-inset');};
+  }, [ready]);
+
+  function animateGlobe() {
+    if(globeFrame.current)return;
+    let last=performance.now();
+    const tick=(now:number)=>{
+      globeFrame.current=0;
+      const map=mapRef.current,target=globeTarget.current;if(!map||!target)return;
+      const dt=Math.min(50,Math.max(0,now-last));last=now;
+      const blend=window.matchMedia('(prefers-reduced-motion: reduce)').matches?1:1-Math.exp(-dt/55);
+      const difference=((target.bearing-map.getBearing()+540)%360+360)%360-180;
+      const pitchDifference=target.pitch-map.getPitch();
+      const settled=Math.abs(difference)+Math.abs(pitchDifference)<.03;
+      if(settled&&!globeDrag.current){
+        delete map.getContainer().dataset.globeRotating;
+        globeTarget.current=null;
+        map.jumpTo({bearing:target.bearing,pitch:target.pitch});
+        return;
+      }
+      if(!settled)map.jumpTo({bearing:map.getBearing()+difference*blend,pitch:map.getPitch()+pitchDifference*blend});
+      globeFrame.current=requestAnimationFrame(tick);
+    };
+    globeFrame.current=requestAnimationFrame(tick);
+  }
   function startGlobe(event: PointerEvent<HTMLButtonElement>) {
     const map = mapRef.current;
     if (!map || !ready) return;
-    event.preventDefault(); map.stop();
+    event.preventDefault();map.stop();
     event.currentTarget.setPointerCapture(event.pointerId);
-    globeDrag.current = {id: event.pointerId, x: event.clientX, y: event.clientY, bearing: map.getBearing(), pitch: map.getPitch()};
+    globeDrag.current={id:event.pointerId,x:event.clientX,y:event.clientY,bearing:map.getBearing(),pitch:map.getPitch()};
+    globeTarget.current={bearing:map.getBearing(),pitch:map.getPitch()};
+    map.getContainer().dataset.globeRotating='true';
+    animateGlobe();
   }
   function moveGlobe(event: PointerEvent<HTMLButtonElement>) {
-    const start = globeDrag.current, map = mapRef.current;
-    if (!start || start.id !== event.pointerId || !map) return;
-    map.jumpTo({bearing: start.bearing + (event.clientX - start.x) * 1.8, pitch: Math.max(0, Math.min(65, start.pitch - (event.clientY - start.y) * 0.8))});
+    const start=globeDrag.current;
+    if(!start||start.id!==event.pointerId)return;
+    globeTarget.current={bearing:start.bearing+(event.clientX-start.x)*1.8,pitch:Math.max(0,Math.min(65,start.pitch-(event.clientY-start.y)*.8))};
   }
   function releaseGlobe(event: PointerEvent<HTMLButtonElement>) {
-    if (globeDrag.current?.id !== event.pointerId) return;
-    globeDrag.current = null;
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    if(globeDrag.current?.id!==event.pointerId)return;
+    globeDrag.current=null;
+    if(event.currentTarget.hasPointerCapture(event.pointerId))event.currentTarget.releasePointerCapture(event.pointerId);
   }
   function globeKey(event: KeyboardEvent<HTMLButtonElement>) {
     const map = mapRef.current;
@@ -241,38 +304,40 @@ export default function WeatherMap() {
     const map = mapRef.current;
     if (!map || !ready || !terrainReady || terrainError) return;
     const next = !threeD;
-    map.setTerrain(next ? {source: 'elevation', exaggeration: 1.2} : null);
+    map.setTerrain(next ? {source: 'elevation', exaggeration: 4.8} : null);
     map.easeTo({pitch: next ? 55 : 0, duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 850});
     setThreeD(next);
   }
 
-  return <main className="weather-workspace map-night">
+  return <main className={`weather-workspace map-night${embeddedTrip ? " weather-trip-embed" : ""}`}>
     <header className="weather-map-header">
-      <a className="weather-map-brand" href="./"><img src="/media/ezclick-go-logo.png" width="2166" height="726" alt="EZCLICK GO"/></a>
+      <a className="weather-map-brand" href={platformUrl}><img src="/media/ezclick-go-logo.png" width="2166" height="726" alt="EZCLICK GO"/></a>
       <div><h1>Explore the road ahead</h1><p>Map & terrain preview</p></div>
-      <details className="weather-site-menu"><summary>Menu</summary><nav aria-label="Site menu"><a href="https://ezclickgo.com/">Home</a><a href="/terms">About &amp; weather disclaimer</a></nav></details>
+      <details className="weather-site-menu"><summary>Menu</summary><nav aria-label="Site menu"><a href={platformUrl}>Home</a><a href="/terms">About &amp; weather disclaimer</a></nav></details>
     </header>
     <section className="weather-map-stage" aria-label="Map and terrain preview">
-      <div ref={container} className="weather-map-canvas" />
+      <div ref={container} className={`weather-map-canvas${mapVisible?" is-map-visible":""}`} />
       <div className={`weather-globe-control ${cameraExpanded?'camera-expanded':''}`} onKeyDown={event=>{if(event.key==='Escape')setCameraExpanded(false);}}>
         <button type="button" className="camera-menu-toggle camera-location" aria-label="Map controls" aria-expanded={cameraExpanded} aria-controls="weather-camera-tools" onClick={()=>setCameraExpanded(v=>!v)}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-dark" d="m4 22 12-6 12 6-12 6Z"/><path className="icon-mid" d="m4 16 12-6 12 6-12 6Z"/><path className="icon-light" d="m4 10 12-6 12 6-12 6Z"/></svg></button>
         <div className="weather-camera-tools" id="weather-camera-tools">
-        <button type="button" className="map-icon-button terrain-toggle" onClick={toggleTerrain} aria-pressed={threeD} aria-label="3D terrain" title={threeD ? 'Switch to 2D' : 'Switch to 3D'} disabled={!ready || !terrainReady || terrainError}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-shadow" d="m3 23 13-7 13 7-13 7Z"/><path className="icon-dark" d="m4 20 12-6 12 6-12 7Z"/><path className="icon-light" d={threeD?'m4 20 7-12 5 6 4-9 8 15-12 5Z':'m4 17 12-6 12 6-12 6Z'}/><path className="icon-mid" d={threeD?'m11 8 5 17-12-5Zm9-3 8 15-12 5Z':'m4 17 12 6v4L4 21Z'}/></svg><span>{threeD ? '3D' : '2D'}</span></button>
+        <button type="button" className="map-icon-button terrain-toggle" onClick={toggleTerrain} aria-pressed={threeD} aria-label="3D terrain" data-tooltip={threeD ? 'Switch to 2D' : 'Switch to 3D'} disabled={!ready || !terrainReady || terrainError}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-shadow" d="m3 23 13-7 13 7-13 7Z"/><path className="icon-dark" d="m4 20 12-6 12 6-12 7Z"/><path className="icon-light" d={threeD?'m4 20 7-12 5 6 4-9 8 15-12 5Z':'m4 17 12-6 12 6-12 6Z'}/><path className="icon-mid" d={threeD?'m11 8 5 17-12-5Zm9-3 8 15-12 5Z':'m4 17 12 6v4L4 21Z'}/></svg><span>{threeD ? '3D' : '2D'}</span></button>
+        <button type="button" className="map-icon-button top-view" aria-label="Top view" data-tooltip="Top view" disabled={!ready} onClick={() => mapRef.current?.easeTo({bearing:0,pitch:0,duration:window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 600})}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-shadow" d="m4 22 12-6 12 6-12 7Z"/><path className="icon-dark" d="m4 19 12-6 12 6-12 7Z"/><path className="icon-light" d="m5 16 11-5 11 5-11 6Z"/><path d="M16 3v10m-4-4 4 4 4-4" stroke="#d1f7ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg><span>Top</span></button><RoadControls map={radarMap} ready={ready} />
+        </div><button type="button" className="map-icon-button route-mode-toggle" aria-label="Plan route" data-tooltip="Plan route" aria-pressed={routeActive} disabled={!ready} onClick={()=>setRouteActive(v=>!v)}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-shadow" d="m11 7 10 0 8 23H3Z"/><path className="icon-dark" d="M12 4h8l7 23H5Z"/><path className="icon-light" d="M12 4h2L9 27H5Zm6 0h2l7 23h-4Z"/><path className="icon-mid" d="M5 27h22v2H5Z"/><path d="M16 6v4m0 4v4m0 4v4" fill="none" stroke="#d1f7ff" strokeWidth="1.5" strokeLinecap="round"/></svg><span>Route</span></button><div className="location-control">
+          <button type="button" className="camera-location" disabled={!ready||locating} onClick={locateMe} aria-label={locating?'Finding your location':'Go to my location'} data-tooltip="My location" aria-busy={locating}>
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path className="location-arrow-shadow" d="M7 17 26 7 19 28 15 20Z"/><path className="location-arrow-light" d="m6 14 20-9-8 20-3-8Z"/><path className="location-arrow-dark" d="m26 5-11 12 3 8Z"/></svg>
+          </button>
+
+        </div>
+        {locationMessage&&<div className="location-feedback" role="status"><span>{locationMessage}</span>{!locating&&<button type="button" aria-label="Dismiss location message" onClick={()=>setLocationMessage('')}>×</button>}</div>}
+      </div>
+      <div className="weather-corner-globe">
         <span className="globe-north">N</span>
         <button type="button" className="camera-globe" disabled={!ready} aria-label="Rotate and tilt map" aria-describedby="globe-help" onPointerDown={startGlobe} onPointerMove={moveGlobe} onPointerUp={releaseGlobe} onPointerCancel={releaseGlobe} onLostPointerCapture={() => {globeDrag.current = null;}} onKeyDown={globeKey}>
           <svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="33"/><g style={{transform: 'rotate(' + (-camera.bearing) + 'deg)', transformOrigin: '40px 40px'}}><ellipse cx="40" cy="40" rx="16" ry="33"/><path d="M7 40h66M12 23q28 15 56 0M12 57q28-15 56 0"/><path className="globe-land" d="M22 18l13 5 4 12-8 6 2 12-9 9-5-18 4-9-5-7zM48 25l12 3 4 11-10 6-7-8z"/></g><circle className="globe-camera-dot" cx="40" cy={65 - camera.pitch * 0.65} r="3"/></svg>
         </button>
         <span id="globe-help">Drag to rotate & tilt</span>
-        <button type="button" className="map-icon-button top-view" aria-label="Top view" disabled={!ready} onClick={() => mapRef.current?.easeTo({bearing:0,pitch:0,duration:window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 600})}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-shadow" d="m4 22 12-6 12 6-12 7Z"/><path className="icon-dark" d="m4 19 12-6 12 6-12 7Z"/><path className="icon-light" d="m5 16 11-5 11 5-11 6Z"/><path d="M16 3v10m-4-4 4 4 4-4" stroke="#d1f7ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg><span>Top</span></button><RoadControls map={radarMap} ready={ready} />
-        </div><div className="location-control">
-          <button type="button" className="camera-location" disabled={!ready||locating} onClick={locateMe} aria-label={locating?'Finding your location':'Go to my location'} aria-describedby="location-tip" aria-busy={locating}>
-            <svg viewBox="0 0 32 32" aria-hidden="true"><path className="location-arrow-shadow" d="M7 17 26 7 19 28 15 20Z"/><path className="location-arrow-light" d="m6 14 20-9-8 20-3-8Z"/><path className="location-arrow-dark" d="m26 5-11 12 3 8Z"/></svg>
-          </button>
-          <span className="location-tooltip" id="location-tip">My location</span>
-        </div>
-        {locationMessage&&<div className="location-feedback" role="status"><span>{locationMessage}</span>{!locating&&<button type="button" aria-label="Dismiss location message" onClick={()=>setLocationMessage('')}>×</button>}</div>}
       </div>
-      <div className="weather-center-dot" aria-hidden="true" /><div ref={sheetRef} className={`weather-left-stack ${mobileExpanded?"mobile-expanded":""}`}><button type="button" className="weather-mobile-expand" aria-label={mobileExpanded?"Close weather settings":"Open weather settings"} aria-expanded={mobileExpanded} onPointerDown={beginSheet} onPointerMove={pullSheet} onPointerUp={releaseSheet} onPointerCancel={()=>{sheetDrag.current=null;settleSheet(mobileExpanded);}} onClick={()=>{if(skipSheetClick.current){skipSheetClick.current=false;return;}settleSheet(!mobileExpanded);}}><span className="sheet-grip" aria-hidden="true"/><span className="sheet-grip-label">{mobileExpanded?"Swipe down to close":"Swipe up for settings"}</span></button><PointWeather map={radarMap} ready={ready} time={weatherTime} windFrames={windData.frames} units={units} onToggleUnits={toggleUnits} /><WindControls map={radarMap} ready={ready} time={weatherTime} frames={windData.frames} status={windData.status} units={units} /><RadarControls map={radarMap} ready={ready} onTimeChange={setWeatherTime} /></div>
+      <WeatherCenterMarker /><div ref={sheetRef} className={`weather-left-stack ${routeActive?"route-active":""} ${mobileExpanded?"mobile-expanded":""}`}><button type="button" className="weather-mobile-expand" aria-label={mobileExpanded?"Close weather settings":"Open weather settings"} aria-expanded={mobileExpanded} onPointerDown={beginSheet} onPointerMove={pullSheet} onPointerUp={releaseSheet} onPointerCancel={()=>{sheetDrag.current=null;settleSheet(mobileExpanded);}} onClick={()=>{if(skipSheetClick.current){skipSheetClick.current=false;return;}settleSheet(!mobileExpanded);}}><span className="sheet-grip" aria-hidden="true"/><span className="sheet-grip-label">{mobileExpanded?"Swipe down to close":"Swipe up for settings"}</span></button><WeatherRoute map={radarMap} active={routeActive} onClose={()=>setRouteActive(false)}/><PointWeather map={radarMap} ready={ready} time={weatherTime} windFrames={windData.frames} units={units} onToggleUnits={toggleUnits} /><WindControls map={radarMap} ready={ready} time={weatherTime} frames={windData.frames} status={windData.status} units={units} /><RadarControls map={radarMap} ready={ready} onTimeChange={setWeatherTime} /></div>
 
       {!ready && !error && <p className="weather-map-message" role="status">Loading your map…</p>}
       {error && <div className="weather-map-message" role="alert"><p>{error}</p><button type="button" onClick={() => {setReady(false); setTerrainReady(false); setThreeD(false); setError(''); setTerrainError(false); setAttempt(value => value + 1);}}>Reload map</button></div>}

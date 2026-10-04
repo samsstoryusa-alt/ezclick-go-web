@@ -335,3 +335,85 @@
  .final-scene .download-button small{font-size:11px}
  .final-scene .download-button strong{font-size:15px}
 }
+
+.experience .story-back-platform{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;min-height:44px;padding:10px 14px;border:1px solid #acd7dc45;border-radius:10px;color:#c7e8e4;background:#10233080;font-size:12px;text-decoration:none;transition:background .3s,border-color .3s}
+.experience .story-back-platform:hover,.experience .story-back-platform:focus-visible{background:#27443eaa;border-color:#b5f5dc88}
+@media(max-width:1100px){.experience .site-nav{gap:12px}.experience .site-nav nav{gap:14px}.experience .site-nav nav button{font-size:12px}}
+@media(max-width:600px){.experience .site-nav>.nav-cta{display:none}.experience .story-back-platform{font-size:11px;padding:8px 11px}}
+
+.trip-live-map{position:relative;overflow:hidden;border-radius:18px;border:1px solid #78bbce33;background:#081d2b;margin:14px 0}.trip-live-map iframe{display:block;width:100%;height:520px;border:0}.trip-live-map>a{display:block;text-align:center;padding:12px;color:#a5e7f3;background:#102a3e;font-size:12px;text-decoration:none;transition:background .3s}.trip-live-map>a:hover{background:#1b4157}
+
+.route-map-snapshot{aspect-ratio:600/330;overflow:hidden;border-radius:10px;margin:12px 0;background:#14283d;pointer-events:none}
+.route-map-snapshot>.load-geographic-map{margin:0;width:100%;height:100%}
+.route-map-snapshot>img{display:block;width:100%;height:100%;object-fit:contain;animation:route-snapshot-in .6s ease-out}
+.route-map-sources{display:block;font-size:9px;color:#9ab2c4;margin-top:4px}
+@keyframes route-snapshot-in{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.route-map-snapshot>img{animation:none}}
+
+/* Keep the expanded load board compact, with one consistent type scale. */
+@media(min-width:801px){
+ .feature-dialog.feature-dialog-find{width:min(1000px,92vw);margin:auto}
+ .feature-dialog-find .expanded-panel{padding:22px}
+ .feature-dialog-find .detail-heading{padding:20px 22px}
+ .feature-dialog-find .detail-heading h3{font-size:24px;line-height:1.25}
+ .feature-dialog-find .find-demo{font-size:13px;line-height:1.5}
+ .feature-dialog-find .trailer-picker button{min-height:108px;padding:10px 8px}
+ .feature-dialog-find .trailer-picker img{height:52px;object-fit:contain}
+ .feature-dialog-find .load-choices button{padding:14px}
+ .feature-dialog-find .load-choice-title{min-height:40px;font-size:14px;line-height:1.4}
+ .feature-dialog-find .load-choice-cargo{min-height:18px;margin:4px 0 6px;font-size:12px}
+ .feature-dialog-find .load-choice-miles{min-height:18px;margin:7px 0 10px;font-size:12px}
+ .feature-dialog-find .load-choice-rate>strong{font-size:23px;line-height:1.25}
+ .feature-dialog-find .load-choice-net b{font-size:17px}
+ .feature-dialog-find .load-profit-hero>strong{font-size:30px}
+ .feature-dialog-find .load-cost-summary h4{font-size:15px}
+ .feature-dialog-find .route-endpoints strong{font-size:13px}
+ .feature-dialog-find .load-profit-hero{padding:13px}
+}
+
+/* Lower load offers: compact tiles, independent of the first three offers. */
+.more-load-list{grid-template-columns:1fr;gap:8px}
+.more-load-list button{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 14px;padding:14px 16px}
+.more-load-list .more-load-route{grid-column:1 / -1;gap:3px;padding-bottom:8px;border-bottom:1px solid #a5cee51a}
+.more-load-list button>span{gap:3px}
+.more-load-list .more-selected-badge[data-selected=false]{display:none}
+.more-load-list .more-selected-badge[data-selected=true]{align-self:flex-start;margin:3px 0 0}
+.more-load-list small{font-size:11px}
+.more-load-list strong{font-size:14px;line-height:1.4}
+.more-load-list .more-load-net{grid-column:span 2;align-self:center;align-items:flex-end}
+.more-load-list .more-load-net strong{font-size:18px}
+.find-changing .find-selected{transition:opacity .35s ease}
+.find-changing[data-fading=true] .find-selected{opacity:.72}
+.route-map-snapshot>img{animation:none}
+@container(max-width:560px){.more-load-list{grid-template-columns:1fr}}
+@media(max-width:600px){.more-load-list{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.find-changing .find-selected{transition:none}}
+
+/* Lower offers read as compact rows in the expanded load board. */
+@media(min-width:801px){
+ .feature-dialog-find .more-load-list{grid-template-columns:1fr;gap:8px}
+ .feature-dialog-find .more-load-list button{grid-template-columns:minmax(220px,2.6fr) repeat(4,minmax(68px,.85fr)) minmax(100px,1.1fr);align-items:center;gap:12px;padding:12px 14px}
+ .feature-dialog-find .more-load-list .more-load-route{grid-column:auto;border:0;padding:0;gap:3px}
+ .feature-dialog-find .more-load-list .more-selected-badge{display:none}
+ .feature-dialog-find .more-load-list .more-load-net{grid-column:auto;align-items:flex-end}
+ .feature-dialog-find .more-load-list strong{font-size:13px;line-height:1.4}
+ .feature-dialog-find .more-load-list .more-load-net strong{font-size:16px}
+ .feature-dialog-find .more-load-list button>span:not(.more-load-route){white-space:nowrap}
+}
+
+/* Use compact offer rows in the inline preview as well as the dialog. */
+@container(min-width:620px){
+ .more-load-list button{grid-template-columns:minmax(180px,2.6fr) repeat(4,minmax(58px,.85fr)) minmax(84px,1.1fr);align-items:center;gap:9px;padding:10px 12px}
+ .more-load-list .more-load-route{grid-column:auto;border:0;padding:0;gap:3px}
+ .more-load-list .more-selected-badge{display:none}
+ .more-load-list .more-load-net{grid-column:auto;align-items:flex-end}
+ .more-load-list strong{font-size:13px;line-height:1.4}
+ .more-load-list .more-load-net strong{font-size:16px}
+ .more-load-list button>span:not(.more-load-route){white-space:nowrap}
+}
+
+/* Profit is the green accent in the lower load offers. */
+.more-load-list .more-load-net strong{color:#9debc1;text-shadow:0 0 12px #72dfa526}
+.more-load-list .more-load-net small{color:#acd4bc}
+
+.glass-trip .route-map-snapshot{width:100%;max-width:550px;margin:12px auto}

@@ -1,0 +1,17 @@
+[Unit]
+Description=EZCLICK route and forecast gateway
+After=network-online.target docker.service
+[Service]
+User=ubuntu
+WorkingDirectory=/opt/ezclick/trip
+ExecStart=/usr/bin/python3 /opt/ezclick/trip/service.py
+Restart=on-failure
+Environment=VALHALLA_URL=http://127.0.0.1:8003
+Environment=ROUTING_COVERAGE=contiguous-us
+MemoryMax=256M
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target

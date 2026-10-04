@@ -2,6 +2,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {Check,ArrowUpRight,MapPin,ChevronDown} from 'lucide-react';
 import {Select as SortSelect} from 'radix-ui';
+import {prepareRouteSnapshot} from './route-map-snapshot';
 import {LoadMiniMap} from './load-mini-map';
 import equipment from './find-load-data.json';
 import {money} from './demo-model';
@@ -23,10 +24,14 @@ export function FindLoadDemo({selection,onSelect}:{selection:LoadSelection;onSel
  },[shown,fading]);
  useEffect(()=>{
   if(first.current){first.current=false;return;}
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches){setShown(selection);return;}
+  let cancelled=false;
+  const [origin,destination]=equipment[selection.equipment].loads[selection.load].route.split(' → ');
   setFading(true);
-  const timer=setTimeout(()=>{setShown(selection);setFading(false);},180);
-  return()=>clearTimeout(timer);
+  // Keep the current route and its labels together until the next image is decoded.
+  prepareRouteSnapshot(origin,destination).catch(()=>undefined).then(()=>{
+   if(!cancelled){setShown(selection);setFading(false);}
+  });
+  return()=>{cancelled=true;};
  },[selection.equipment,selection.load]);
  const trailer=equipment[shown.equipment],load=trailer.loads[shown.load],cost=loadEstimate(load),[origin,destination]=load.route.split(' → ');
  const more=trailer.loads.map((item,index)=>({item,index})).slice(3).sort((a,b)=>{const value=(x:typeof load)=>sort==='net'?loadEstimate(x).net:sort==='rpm'?x.rate/x.miles:x.rate;return value(b.item)-value(a.item);});
@@ -50,11 +55,11 @@ export function FindLoadDemo({selection,onSelect}:{selection:LoadSelection;onSel
    </div>
    <div ref={summary} className="find-selected" aria-live="polite" aria-atomic="true">
     <figure className="load-route-illustration">
-     <div className="route-label"><MapPin size={14}/><span>Selected route</span><small>{load.id}</small></div>
+     <div className="route-label"><MapPin size={14}/><span>{fading?'Updating route…':'Selected route'}</span><small>{load.id}</small></div>
      <LoadMiniMap origin={origin} destination={destination}/>
      <div className="route-endpoints"><span><small>A · PICKUP</small><strong>{origin}</strong></span><span><small>B · DELIVERY</small><strong>{destination}</strong></span></div>
      <figcaption>Road preview · Not truck-specific</figcaption>
-     <a className="mini-map-credit" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors</a>
+     <a className="mini-map-credit" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors</a><span className="route-map-sources">OpenFreeMap · OpenMapTiles · Elevation © Mapterhorn</span>
     </figure>
     <section className="load-cost-summary" aria-label="Selected load estimate">
      <h4>Know what you keep</h4><div className="load-profit-hero"><span>ESTIMATED TRIP NET</span><strong>{money(cost.net)}</strong><small>After the trip costs below</small></div>

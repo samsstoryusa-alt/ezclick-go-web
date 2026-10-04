@@ -1,5 +1,11 @@
 weather.ezclickgo.com {
  encode zstd gzip
+ handle_path /trip-api/* {
+  request_body {
+   max_size 16KB
+  }
+  reverse_proxy 127.0.0.1:8767
+ }
  handle_path /weather-types/* {
   reverse_proxy 127.0.0.1:8766
  }
@@ -12,6 +18,12 @@ weather.ezclickgo.com {
 }
 http://127.0.0.1:8088 {
  bind 127.0.0.1
+ handle_path /trip-api/* {
+  request_body {
+   max_size 16KB
+  }
+  reverse_proxy 127.0.0.1:8767
+ }
  handle_path /weather-types/* {
   reverse_proxy 127.0.0.1:8766
  }

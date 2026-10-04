@@ -4,7 +4,7 @@ import {gsap} from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {Play,Pause,RotateCcw,Home as HomeIcon,Search,Calculator,Route,CloudRain,Flame,Fuel,FileText,Headphones,Building2,ClipboardCheck,Receipt,ShieldCheck,Download} from 'lucide-react';
 import {AmbientInteractions} from './ambient-interactions';
-import {BrandIntro} from './brand-intro';
+
 import {Pricing} from './pricing';
 import {SiteDetails} from './site-details';
 import {sceneWindows} from './scene-motion';
@@ -23,11 +23,17 @@ export default function Home(){
  const root=useRef<HTMLElement>(null),trigger=useRef<ScrollTrigger|null>(null);
  const demo=useRef<gsap.core.Tween|null>(null),time=useRef(0);
  const navigation=useRef<gsap.core.Animation|null>(null),navigationVeil=useRef<HTMLDivElement>(null);
- const [active,setActive]=useState(0),[intro,setIntro]=useState(true),[playing,setPlaying]=useState(false),[reduced,setReduced]=useState(false);
+ const [active,setActive]=useState(0),[playing,setPlaying]=useState(false),[reduced,setReduced]=useState(false);
  const [mobile,setMobile]=useState(false);
+ const autoStarted=useRef(false);
  const mobileNav=useRef<HTMLDivElement>(null);
  const [leadPlan,setLeadPlan]=useState('Undecided'),[joinRequest,setJoinRequest]=useState(0);
  const stop=()=>{demo.current?.kill();demo.current=null;navigation.current?.kill();navigation.current=null;if(navigationVeil.current)gsap.set(navigationVeil.current,{autoAlpha:0});setPlaying(false);};
+ const leaveStory=()=>{
+  stop();
+  trigger.current?.disable(false);
+  window.location.assign('/version-a');
+ };
  const travelTo=(target:number)=>{
   stop();const max=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);
   const destination=Math.min(max,Math.max(0,target)),distance=Math.abs(destination-window.scrollY);
@@ -120,7 +126,8 @@ export default function Home(){
       timeline.fromTo(`${scene} .scene-copy`,{y:mobile?6:10},{y:0,force3D:false,duration:1.4,ease:'sine.out'},c.start);
       timeline.fromTo(`${scene} .scene-copy .eyebrow`,{autoAlpha:0},{autoAlpha:1,duration:.9,ease:'sine.inOut'},c.start+.1);
       timeline.fromTo(`${scene} .scene-copy h2`,{autoAlpha:0},{autoAlpha:1,duration:1.1,ease:'sine.inOut'},c.start+.25);
-      timeline.fromTo(`${scene} .product-card`,{y:mobile?30:58,x:mobile?0:sign*25,scale:.96,rotationY:mobile?0:sign*4},{y:0,x:0,scale:1,rotationY:0,duration:1.5,ease:'power2.out'},c.start+.1);
+      // Keep the percentage anchor explicit: GSAP normalizes CSS translate when animating.
+      timeline.fromTo(`${scene} .product-card`,{yPercent:-50,y:mobile?30:58,x:mobile?0:sign*25,scale:.96,rotationY:mobile?0:sign*4},{yPercent:-50,y:0,x:0,scale:1,rotationY:0,duration:1.5,ease:'power2.out'},c.start+.1);
       timeline.fromTo(`${scene} .rich-panel > .panel-heading`,{autoAlpha:0,y:8},{autoAlpha:1,y:0,duration:.6},c.start+.35);
       if(c.card!=='calculator'){
        const panel=sceneElements[i].querySelector('.rich-panel')!;
@@ -148,10 +155,20 @@ export default function Home(){
    },root);
    return()=>{trigger.current=null;scope.revert();root.current?.querySelectorAll('[data-motion-visible]').forEach(el=>el.removeAttribute('data-motion-visible'));};
   });
+  // Measure the pinned story after layout settles, independently of the removed intro.
+  let disposed=false,startFrame=0;
+  const ready=()=>{if(disposed)return;startFrame=requestAnimationFrame(()=>{
+   if(disposed)return;ScrollTrigger.refresh();
+   if(!autoStarted.current&&new URLSearchParams(window.location.search).get('play')==='1'){
+    autoStarted.current=true;
+    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)play();
+   }
+  });};
+  document.fonts.ready.then(ready);window.addEventListener('pageshow',ready);
   const cancel=()=>stop();const key=(e:KeyboardEvent)=>{if(['Escape','ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' '].includes(e.key))cancel();};
   window.addEventListener('wheel',cancel,{passive:true});window.addEventListener('touchstart',cancel,{passive:true});window.addEventListener('keydown',key);
   const visibility=()=>{if(document.hidden)stop();};document.addEventListener('visibilitychange',visibility);
-  return()=>{media.revert();demo.current?.kill();navigation.current?.kill();window.removeEventListener('wheel',cancel);window.removeEventListener('touchstart',cancel);window.removeEventListener('keydown',key);document.removeEventListener('visibilitychange',visibility);};
+  return()=>{disposed=true;cancelAnimationFrame(startFrame);window.removeEventListener('pageshow',ready);media.revert();demo.current?.kill();navigation.current?.kill();window.removeEventListener('wheel',cancel);window.removeEventListener('touchstart',cancel);window.removeEventListener('keydown',key);document.removeEventListener('visibilitychange',visibility);};
  },[]);
  useEffect(()=>{
   if(!mobile)return;
@@ -175,14 +192,15 @@ export default function Home(){
  return <main ref={root} className={`experience ${reduced?'reduced':''}`}>
   <div ref={navigationVeil} className="navigation-veil" aria-hidden="true"/>
   <AmbientInteractions/>
-  {intro&&<BrandIntro onFinish={()=>{setIntro(false);requestAnimationFrame(()=>ScrollTrigger.refresh());}}/>}
+
   <a className="skip" href="#scene-1" onClick={e=>{e.preventDefault();go(1);}}>Skip to features</a>
-  <header className="site-nav" inert={intro}>
-   <button className="brand" aria-label="EZCLICK GO home" onClick={()=>go(0)}><img src="/media/ezclick-go-logo.png" width="2166" height="726" alt="EZCLICK GO"/></button>
+  <header className="site-nav">
+   <a className="brand" aria-label="EZCLICK GO platform home" href="/version-a" onPointerDown={stop} onClick={e=>{if(!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&!e.altKey){e.preventDefault();leaveStory();}}}><img src="/media/ezclick-go-logo.png" width="2166" height="726" alt="EZCLICK GO"/></a>
    <nav aria-label="Explore EZCLICK GO"><button onClick={()=>go(1)}>Find Load</button><button onClick={()=>go(2)}>Plan & earn</button><button onClick={()=>go(8)}>AI Dispatcher</button><button onClick={goPricing}>Pricing</button></nav>
+   <a className="story-back-platform" href="/version-a" onPointerDown={stop} onClick={e=>{if(!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&!e.altKey){e.preventDefault();leaveStory();}}}>← Back to platform</a>
    <button className="nav-cta" onClick={()=>joinLaunch()}>Join the launch list</button>
   </header>
-  <div className="stage" inert={intro}>
+  <div className="stage">
    <nav className="mobile-chapters" aria-label="Journey sections"><div ref={mobileNav} className="mobile-chapter-list"><i className="chapter-highlight" aria-hidden="true"/>{chapters.map((chapter,i)=>{const Icon=chapterIcons[i];return <button key={chapter.name} aria-label={chapter.name} aria-current={active===i?'step':undefined} onClick={()=>go(i)}><Icon size={17} strokeWidth={1.7}/><span aria-hidden={active!==i}>{chapter.name}</span></button>;})}</div></nav>
    <div className="environments" aria-hidden="true"><img className="film-poster" src={mobile?frameUrl(chapters[active].clip,active===0?0:Math.min(30,clips[chapters[active].clip].frames-1)):frameUrl(0,0)} alt="" fetchPriority="high"/><JourneyCanvas time={time} enabled={!reduced}/><div className="vignette"/></div>
    {chapters.map((c,i)=><section id={`scene-${i}`} key={c.name} className={`scene ${i===0?'hero-scene':i===chapters.length-1?'final-scene':`feature-scene ${i%2===0?'reverse':''}`} ${c.card==='find'?'find-scene':''} ${c.name==='City'?'city-scene':''}`} aria-label={c.name} aria-hidden={!mobile&&!reduced&&active!==i}>

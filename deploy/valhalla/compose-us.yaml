@@ -1,0 +1,17 @@
+services:
+  routing:
+    image: ghcr.io/valhalla/valhalla-scripted@sha256:1bfd648c6140ed64d488eb1505bbff608749b39ea81be3f87d1220d253c200c0
+    container_name: ezclick-valhalla-us
+    restart: unless-stopped
+    mem_limit: 8g
+    cpus: 3
+    ports:
+      - "127.0.0.1:8003:8002"
+    volumes:
+      - ./data:/custom_files
+    environment:
+      server_threads: "2"
+      # Existing completed tiles must not trigger a rebuild at service startup.
+      use_tiles_ignore_pbf: "True"
+      build_elevation: "False"
+      build_transit: "False"
