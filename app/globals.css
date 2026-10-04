@@ -352,7 +352,7 @@
 
 /* Keep the expanded load board compact, with one consistent type scale. */
 @media(min-width:801px){
- .feature-dialog.feature-dialog-find{width:min(1000px,92vw);margin:auto}
+ .feature-dialog.feature-dialog-find{width:min(1000px,92vw);margin:0}
  .feature-dialog-find .expanded-panel{padding:22px}
  .feature-dialog-find .detail-heading{padding:20px 22px}
  .feature-dialog-find .detail-heading h3{font-size:24px;line-height:1.25}

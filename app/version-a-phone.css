@@ -28,3 +28,24 @@
 .va-phone-scene{position:absolute;inset:0 10px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .4s ease,visibility 0s .4s}
 .va-phone-scene.is-active{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .4s ease,visibility 0s}
 @media(prefers-reduced-motion:reduce){.va-phone-scene,.va-phone-scene.is-active{transition:none}}
+
+/* Silver iPhone-style enclosure; preserve the interactive screen's dimensions. */
+.va-solid-front{border:5px solid #080a0d;border-radius:43px;transform:translateZ(10px);background:#080e16;box-shadow:0 0 0 1px #e1e5e8,0 0 0 3px #9ba4ac,0 0 0 4px #454e56,inset 0 0 0 1px #232930,12px 22px 45px #0005}
+.va-phone-back{border-radius:43px;transform:rotateY(180deg) translateZ(10px);background:linear-gradient(130deg,#eceeed,#b7bdc1 48%,#e0e3e4);border-color:#e4e8eb;color:#687078}
+.va-phone-edge{background:linear-gradient(90deg,#89949e,#f0f2f4 24%,#c1c9cf 58%,#87939e 88%,#dce2e7);border-color:#b9c2c9}
+.va-edge-left,.va-edge-right{width:20px}
+.va-edge-left{left:-10px}.va-edge-right{right:-10px}
+.va-edge-top,.va-edge-bottom{height:20px}
+.va-edge-top{top:-10px}.va-edge-bottom{bottom:-10px}
+.va-solid-island{width:78px;height:22px;top:11px;background:#010203;box-shadow:inset 0 0 0 1px #11171e,0 1px 1px #ffffff08}
+.va-solid-island i{width:8px;height:8px;right:7px;top:7px;background:radial-gradient(circle at 35% 35%,#32618a 0%,#101c2e 30%,#020509 70%);border-color:#111e2b}
+.va-solid-front::before{content:'';position:absolute;z-index:4;top:2px;left:50%;transform:translateX(-50%);width:44px;height:2px;background:#22282c;border-radius:4px;pointer-events:none}
+.va-phone-volume,.va-phone-power{width:4px;background:linear-gradient(90deg,#59636c,#dde2e5 50%,#818b93);box-shadow:0 0 0 1px #252e36;border-radius:3px;transform:translateZ(0)}
+.va-phone-volume{left:-6px;top:110px;height:30px}
+.va-phone-volume::before,.va-phone-volume::after{content:'';position:absolute;left:0;width:4px;border-radius:3px;background:inherit;box-shadow:inherit}
+.va-phone-volume::before{top:-37px;height:17px}.va-phone-volume::after{top:40px;height:30px}
+.va-phone-power{right:-6px;top:132px;height:48px}
+.va-camera-cluster{background:linear-gradient(135deg,#dfe3e5,#a0a8ae);border-color:#f0f3f5;box-shadow:2px 4px 8px #0003}
+.va-camera-cluster i{border-color:#79838b;box-shadow:0 0 0 1px #e5eaed,1px 2px 3px #0006}
+.va-glass-reflection{border-radius:37px;opacity:.25}
+.va-solid-home{width:91px;height:4px;bottom:7px;background:#e5e9ed}

@@ -4,7 +4,7 @@ import {useRef,useEffect,useState} from 'react';
 import {createPortal} from 'react-dom';
 import {gsap} from 'gsap';
 import type {PointerEvent} from 'react';
-import {Check,FileText,Fuel,CloudRain,Truck,Route,Building2,Search,Headphones,Calculator,MapPin,Maximize2,X,Receipt,Wrench,Package,Coins,ShieldCheck,Mail,CircleCheck,Clock3,TriangleAlert,ClipboardCheck} from 'lucide-react';
+import {Check,FileText,Fuel,CloudRain,Truck,Route,Building2,Search,Headset,Calculator,MapPin,Maximize2,X,Receipt,Wrench,Package,Coins,ShieldCheck,Mail,CircleCheck,Clock3,TriangleAlert,ClipboardCheck} from 'lucide-react';
 import type {ReactNode} from 'react';
 import {FindLoadDemo,initialLoadSelection,type LoadSelection} from './find-load-demo';
 import {LoadMiniMap} from './load-mini-map';
@@ -12,7 +12,7 @@ import tripPreview from './trip-preview-data.json';
 import {StatementPreview} from './statement-preview';
 import {money,tripEstimate,markets,fuelOptions,fuelGallons} from './demo-model';
 type DemoState={selection:LoadSelection;setSelection:(value:LoadSelection)=>void;rate:number;setRate:(n:number)=>void;market:number;setMarket:(n:number)=>void;fuel:number;setFuel:(n:number)=>void};
-const icons={find:Search,calculator:Calculator,trip:Route,weather:CloudRain,hotzones:MapPin,fuel:Fuel,documents:FileText,dispatcher:Headphones,brokers:Building2,setup:ClipboardCheck,statement:Receipt,security:ShieldCheck};
+const icons={find:Search,calculator:Calculator,trip:Route,weather:CloudRain,hotzones:MapPin,fuel:Fuel,documents:FileText,dispatcher:Headset,brokers:Building2,setup:ClipboardCheck,statement:Receipt,security:ShieldCheck};
 const names={find:'Find Load',calculator:'Trip Calculator',trip:'My Trip',weather:'Route Weather',hotzones:'Hot Zones',fuel:'Fuel Intelligence',documents:'Documents',dispatcher:'AI Dispatcher',brokers:'Broker Database',setup:'Quick Setup',statement:'Statement',security:'Document Security'};
 function rowIcon(label:string){
  if(/fuel|diesel|pilot|loveâ€™s|flying j|ta express/i.test(label))return Fuel;
@@ -20,7 +20,7 @@ function rowIcon(label:string){
  if(/fees|fines|factoring|gross|rate|share/i.test(label))return Receipt;
  if(/maintenance|repair/i.test(label))return Wrench;
  if(/other expenses|equipment|cargo/i.test(label))return Package;
- if(/dispatch/i.test(label))return Headphones;
+ if(/dispatch/i.test(label))return Headset;
  if(/insurance|coi|authority/i.test(label))return ShieldCheck;
  if(/w-9|agreement|document|license|registration|cab card/i.test(label))return FileText;
  if(/contact|email|subject/i.test(label))return Mail;

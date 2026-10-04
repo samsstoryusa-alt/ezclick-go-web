@@ -212,3 +212,14 @@
 .va-hero .va-weather-cta:hover{background:#215f47;border-color:#a1edbe;box-shadow:0 6px 24px #69dba330;transform:translateY(-2px)}
 .va-hero .va-actions>a:focus-visible{outline:2px solid #c4ebff;outline-offset:4px}
 @media(prefers-reduced-motion:reduce){.va-hero .va-actions>a{transition:none}.va-hero .va-actions>a:hover{transform:none}}
+
+/* Shared tracks reserve space for every tool; changing tabs cannot move the copy. */
+.va-feature-copy{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(6,auto);align-self:start;min-width:0;width:100%}
+.va-feature-copy-panel{display:grid;grid-area:1 / 1 / 7 / 2;grid-template-rows:subgrid;align-items:start;min-width:0;visibility:hidden;pointer-events:none}
+.va-feature-copy-panel[aria-hidden="false"]{visibility:visible;pointer-events:auto}
+
+/* Fade the outgoing scenery fully to the dark page before revealing its replacement. */
+.va-feature-backdrop img{transition:opacity .2s ease-in-out;transition-delay:0s;filter:brightness(.8)}
+.va-feature-backdrop img.is-active{opacity:.68;transition-duration:.38s;transition-delay:.16s}
+@media(max-width:767px){.va-feature-backdrop img.is-active{opacity:.58}}
+@media(prefers-reduced-motion:reduce){.va-feature-backdrop img,.va-feature-backdrop img.is-active{transition:none;transition-delay:0s}}
