@@ -1,5 +1,5 @@
 .weather-workspace{height:100svh;min-height:420px;display:flex;flex-direction:column;background:#07111e;color:#edf5ff;font-family:Arial,Helvetica,sans-serif}
-.weather-map-header{display:flex;align-items:center;gap:32px;padding:18px 28px;flex-shrink:0;border-bottom:1px solid #1e3348}
+.weather-map-header{position:relative;z-index:10;background:#07111e;display:flex;align-items:center;gap:32px;padding:18px 28px;flex-shrink:0;border-bottom:1px solid #1e3348}
 .weather-map-brand{text-decoration:none;font-size:22px;font-weight:900;letter-spacing:1px;white-space:nowrap}.weather-map-brand span{color:#70dcf4}
 .weather-map-header h1{font-size:18px;margin:0 0 5px}.weather-map-header p{margin:0;color:#93a9bf;font-size:12px}.weather-map-back{margin-left:auto;font-size:13px;color:#b8cada;text-underline-offset:4px}
 .weather-map-stage{position:relative;flex:1;min-height:0;isolation:isolate}.weather-map-canvas{position:absolute;inset:0;background:#08192c}

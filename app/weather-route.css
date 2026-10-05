@@ -540,3 +540,6 @@
  .weather-left-stack.mobile-route-shell:has(.is-weather-enabled) .mobile-route-workflow.mobile-initial-stage>.mobile-route-status{padding-top:0;padding-bottom:2px}
  .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-timeline{padding-top:1px}
 }
+
+/* Keep route points inside the map, including during mobile pan/zoom. */
+.route-markers{overflow:hidden}

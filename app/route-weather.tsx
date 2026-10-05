@@ -150,8 +150,9 @@ export default function RouteWeather({route,map,units,active,compactMobile=false
    const covered=panel?(mobile?Math.max(0,canvas.bottom-panel.top):Math.max(0,panel.right-canvas.left)):0;
    const padding=map.getPadding();
    const offset:[number,number]=mobile?[0,-Math.max(0,covered-(padding.bottom??0))/2]:[Math.max(0,covered-(padding.left??0))/2,0];
-   // Target about 12 miles across 100px; the scale control rounds its displayed label.
-   const overviewZoom=Math.log2(40075016.686*Math.cos(p.lat*Math.PI/180)*100/(512*12*1609.344));
+   // Mobile keeps a wider overview (30-mile scale); desktop retains its closer view.
+   const scaleMiles=mobile?36:12;
+   const overviewZoom=Math.log2(40075016.686*Math.cos(p.lat*Math.PI/180)*100/(512*scaleMiles*1609.344));
    map.flyTo({center:[p.lon,p.lat],zoom:Math.max(map.getMinZoom(),Math.min(map.getMaxZoom(),overviewZoom)),offset,duration:matchMedia('(prefers-reduced-motion: reduce)').matches?0:1500});
   });});
   return()=>cancelAnimationFrame(frame);

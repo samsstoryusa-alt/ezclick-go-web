@@ -46,15 +46,30 @@ export function WeatherRoute({map,active,onClose,compactMobile=false,onExpand,mo
  const pinElements=useRef<Array<HTMLButtonElement|null>>([]);
  useLayoutEffect(()=>{
   if(!map||!stage||!active)return;
+  const motion=matchMedia('(prefers-reduced-motion: reduce)');
+  const displayed:Array<{x:number;y:number}|undefined>=[];
+  let lastFrame=performance.now();
   const position=()=>{
+   const now=performance.now(),blend=1-Math.exp(-Math.max(1,now-lastFrame)/45);lastFrame=now;
+   let settling=false;
    const box=map.getContainer().getBoundingClientRect(),parent=stage.getBoundingClientRect();
    const size=mobilePresentation?22:18+8*Math.max(0,Math.min(1,(map.getZoom()-3)/8));
    current.current.forEach((point,i)=>{
     const el=pinElements.current[i];if(!el||!point)return;
     const p=map.project(point);
-    el.style.transform=`translate3d(${box.left-parent.left+p.x-24}px,${box.top-parent.top+p.y-24}px,0)`;
+    const target={x:box.left-parent.left+p.x-24,y:box.top-parent.top+p.y-24};
+    const previous=displayed[i];
+    let x=target.x,y=target.y;
+    if(mobilePresentation&&!motion.matches&&previous){
+     const dx=(previous.x-x)*(1-blend),dy=(previous.y-y)*(1-blend);
+     const distance=Math.hypot(dx,dy),limit=Math.min(1,3/Math.max(distance,0.001));
+     if(distance>0.1){x+=dx*limit;y+=dy*limit;settling=true;}
+    }
+    displayed[i]={x,y};
+    el.style.transform=`translate3d(${x}px,${y}px,0)`;
     el.style.setProperty('--route-pin-scale',String(size/26));
    });
+   if(settling)map.triggerRepaint();
   };
   position();map.on('render',position);map.on('resize',position);
   return()=>{map.off('render',position);map.off('resize',position);};
