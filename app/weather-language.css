@@ -28,3 +28,13 @@
 .weather-workspace[data-language=ar] .mobile-forecast-wind-reading{direction:ltr;unicode-bidi:isolate}
 .weather-workspace .weather-language-menu .weather-language-toggle{font-family:inherit}
 
+
+/* Keep language names aligned independently of their writing direction. */
+.weather-workspace .weather-language-list button{direction:ltr;display:grid;grid-template-columns:minmax(0,1fr) 16px;text-align:left}
+.weather-workspace .weather-language-list bdi{min-width:0;text-align:left;white-space:normal;overflow-wrap:anywhere}
+.weather-workspace .weather-language-list button>span{width:16px;text-align:center}
+.weather-workspace .weather-language-toggle{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,auto) 12px}
+.weather-workspace .weather-language-toggle>span{min-width:0;white-space:normal;overflow-wrap:anywhere}
+.weather-workspace .weather-language-toggle>span:nth-child(2){margin-inline-start:0}
+.weather-workspace .map-icon-button>span{max-width:100%;letter-spacing:0}
+.weather-workspace .mobile-route-icon>span{letter-spacing:0}

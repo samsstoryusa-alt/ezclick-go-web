@@ -61,7 +61,7 @@ const catalog: Record<string, Translations> = {
   "Route": ["Ruta", "Маршрут", "Маршрут", "路线", "मार्ग", "ਰਸਤਾ", "Itinéraire", "Route", "Rota", "المسار"],
   "Top": ["Arriba", "Наверх", "Угору", "顶部", "ऊपर", "ਉੱਪਰ", "Haut", "Nach oben", "Topo", "أعلى"],
   "Navigate": ["Navegar", "Навигатор", "Навігація", "导航", "नेविगेट करें", "ਨੇਵੀਗੇਟ ਕਰੋ", "Naviguer", "Navigieren", "Navegar", "الملاحة"],
-  "Edit": ["Editar", "Правка", "Змінити", "编辑", "बदलें", "ਸੋਧੋ", "Modifier", "Bearbeiten", "Editar", "تعديل"],
+  "Edit": ["Editar", "Правка", "Змінити", "编辑", "बदलें", "ਸੋਧੋ", "Modifier", "Ändern", "Editar", "تعديل"],
   "Forecast": ["Pronóstico", "Прогноз", "Прогноз", "预报", "पूर्वानुमान", "ਪੂਰਵ ਅਨੁਮਾਨ", "Prévisions", "Vorhersage", "Previsão", "التوقعات"],
   "Set A": ["Fijar A", "Задать A", "Задати A", "设置A点", "A तय करें", "A ਸੈੱਟ ਕਰੋ", "Définir A", "A festlegen", "Definir A", "تعيين A"],
   "Set B": ["Fijar B", "Задать B", "Задати B", "设置B点", "B तय करें", "B ਸੈੱਟ ਕਰੋ", "Définir B", "B festlegen", "Definir B", "تعيين B"],
@@ -102,13 +102,15 @@ const languageIndexes: Record<TranslatedLanguage, number> = Object.fromEntries(
 
 /** Translate an exact UI source string; preserve unknown strings unchanged. */
 export function translateWeather(text: string, lang: WeatherLanguage): string {
-  if (lang === "en") return text === "Clear route" ? "Clear" : text;
+  if (lang === "en") return text === "Clear route" ? "Clear" : text.endsWith(" button") ? text.slice(0, -7) : text;
   if (!Object.prototype.hasOwnProperty.call(catalog, text)) return text;
   return catalog[text][languageIndexes[lang]] ?? text;
 }
 
 const additionalCatalog: Record<string, Translations> = {
-  "Clear route": ["Borrar", "Сброс", "Скинути", "清除路线", "मार्ग हटाएँ", "ਰਸਤਾ ਮਿਟਾਓ", "Effacer l’itinéraire", "Route löschen", "Limpar rota", "مسح المسار"],
+  "Legend button": ["Leyenda", "Легенда", "Легенда", "图例", "संकेत", "ਸੰਕੇਤ", "Légende", "Legende", "Legenda", "الرموز"],
+  "Navigate button": ["Navegar", "Навиг.", "Навіг.", "导航", "नेविगेट", "ਨੈਵੀਗੇਟ", "Naviguer", "Navi", "Navegar", "الملاحة"],
+  "Clear route": ["Borrar", "Сброс", "Скинути", "清除路线", "मार्ग हटाएँ", "ਮਿਟਾਓ", "Effacer", "Löschen", "Limpar", "مسح"],
   "On": ["Activado", "Вкл.", "Увімк.", "开", "चालू", "ਚਾਲੂ", "Activé", "Ein", "Ativado", "تشغيل"],
   "Off": ["Desactivado", "Выкл.", "Вимк.", "关", "बंद", "ਬੰਦ", "Désactivé", "Aus", "Desativado", "إيقاف"],
   "Play": ["Reproducir", "Воспроизвести", "Відтворити", "播放", "चलाएँ", "ਚਲਾਓ", "Lire", "Abspielen", "Reproduzir", "تشغيل"],

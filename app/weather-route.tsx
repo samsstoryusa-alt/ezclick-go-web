@@ -185,7 +185,7 @@ export function WeatherRoute({map,active,onClose,compactMobile=false,onExpand,mo
 
  </div>
  {stage&&desktopPresentation&&createPortal(<div className={`desktop-route-actions ${active&&route?'is-visible':''}`} inert={!active||!route} aria-hidden={!active||!route}>
-  <button type="button" className="mobile-route-icon mobile-route-undo" aria-label="Clear route points" onClick={()=>{change([null,null]);setRouteSettings(false);}}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 10v7m4-7v7" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg><span>{t('Clear route')}</span></button>
+  <button type="button" className="mobile-route-icon mobile-route-undo" aria-label={t("Clear points")} title={t("Clear points")} onClick={()=>{change([null,null]);setRouteSettings(false);}}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 10v7m4-7v7" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg><span>{t('Clear route')}</span></button>
   <RouteNavigator available={active&&!!route&&!busy&&!routeSettings}/>
   <button type="button" className="mobile-route-icon mobile-route-set" aria-label={routeSettings?t('Show route forecast'):t('Edit route')} aria-pressed={routeSettings} onClick={()=>{setPointsOpen(false);select(null);edit(null);setRouteSettings(v=>!v);}}><SlidersHorizontal size={24}/><span>{routeSettings?t('Forecast'):t('Edit')}</span></button>
  </div>,stage)}
