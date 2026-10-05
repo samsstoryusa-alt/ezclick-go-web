@@ -543,3 +543,19 @@
 
 /* Keep route points inside the map, including during mobile pan/zoom. */
 .route-markers{overflow:hidden}
+
+/* Keep the mobile truck confirmation aligned with the existing glass controls. */
+@media(max-width:767px),(max-width:950px) and (max-height:500px){
+ .mobile-route-workflow.mobile-truck-stage>.truck-profile{border-top:0;padding:4px 0 8px}
+ .mobile-route-workflow.mobile-truck-stage .truck-profile-toggle{min-height:44px;padding:8px 10px;border-radius:10px;gap:9px;background:#a5d7e90b;border-color:#92c9da38}
+ .mobile-route-workflow.mobile-truck-stage>.truck-confirm{display:flex;align-items:center;justify-content:flex-start;gap:10px;width:100%;min-height:48px;margin:0;padding:10px;border:1px solid #92c9da50;border-radius:10px;background:#a5d7e90b;color:#d7edf4;font-size:12px;line-height:1.4;text-align:left}
+ .mobile-route-workflow.mobile-truck-stage>.truck-confirm input{display:block;flex:0 0 18px;width:18px;height:18px;margin:0;accent-color:#8ddbe9}
+ .mobile-route-workflow.mobile-truck-stage>.truck-confirm::before{display:none}
+ .mobile-route-workflow.mobile-truck-stage>.truck-confirm:hover{background:#a5d7e91c;border-color:#a5d7e96b}
+ .mobile-route-workflow.mobile-truck-stage>.mobile-route-status{padding:6px 8px 8px;font-size:11px;line-height:1.45}
+}
+
+@media(max-width:767px),(max-width:950px) and (max-height:500px){
+ .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-truck-stage){height:160px;overflow-y:auto;overscroll-behavior:contain}
+ .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-truck-stage>.truck-profile.is-expanded){height:360px}
+}
