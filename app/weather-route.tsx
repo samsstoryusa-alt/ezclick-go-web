@@ -25,6 +25,7 @@ function TruckWheel({enabled,label,value,min,max,step,factor,format,onChange}:{e
  </div></div></div>;
 }
 export function WeatherRoute({map,active,onClose,compactMobile=false,onExpand,mobilePresentation=false,onShowInfo}:{map:MapLibre|null;active:boolean;onClose:()=>void;compactMobile?:boolean;onExpand?:()=>void;mobilePresentation?:boolean;onShowInfo?:()=>void}){
+ const desktopPresentation=!mobilePresentation&&standaloneWeather();
  const [restored]=useState(readTrip);
  const [points,setPoints]=useState<Pair>(()=>restored?.points??(standaloneWeather()?defaultTripPoints():typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('demo')==='nashville-jacksonville'?[[-86.7816,36.1627],[-81.6557,30.3322]]:[null,null])),[selected,select]=useState<number|null>(null),[editing,edit]=useState<number|null>(null),[undo,setUndo]=useState<Pair|null>(null),[dragging,setDragging]=useState<number|null>(null);
  const [pointsOpen,setPointsOpen]=useState(false);
@@ -148,7 +149,7 @@ export function WeatherRoute({map,active,onClose,compactMobile=false,onExpand,mo
  const {units}=useWeatherUnits();
  const needsTruckCheck=active&&!!points[0]&&!!points[1]&&!truckConfirmed&&editing===null&&selected===null;
  return <>
- <div className={`route-sheet ${active?'is-open':''} ${closing?'is-closing':''} ${route?'has-route':''} ${mobilePresentation?'mobile-route-workflow':''} ${mobilePlacing?'mobile-point-stage':''} ${mobileNeedsTruck?'mobile-truck-stage':''} ${mobileInitialStage?'mobile-initial-stage':''} ${route&&!routeSettings&&selected===null&&editing===null&&!pointsOpen?'route-summary-view':''}`} aria-hidden={!active} inert={!active}>
+ <div className={`route-sheet ${active?'is-open':''} ${closing?'is-closing':''} ${route?'has-route':''} ${mobilePresentation?'mobile-route-workflow':''} ${desktopPresentation?'desktop-route-workflow':''} ${mobilePlacing?'mobile-point-stage':''} ${mobileNeedsTruck?'mobile-truck-stage':''} ${mobileInitialStage?'mobile-initial-stage':''} ${route&&!routeSettings&&selected===null&&editing===null&&!pointsOpen?'route-summary-view':''}`} aria-hidden={!active} inert={!active}>
   <div className="mobile-route-status" role="status">{mobileNeedsTruck?'Check your truck settings before calculating.':busy||autoWaiting&&autoBuildPoints===pointsKey?'Calculating your route…':error?error:mobilePlacementIndex===1?'Move the map · tap Set B to confirm':'Move the map · tap Set A to confirm'}{error&&!busy&&!autoWaiting&&<button type="button" className="mobile-route-retry" onClick={retryMobileRoute}>Retry route</button>}</div>
   <div className="route-navigation"><div className="route-heading"><strong className="route-heading-title"><Route size={18} aria-hidden="true"/><span>{route?'Your route':'Plan your route'}</span></strong>{route&&<button className="route-settings-toggle" aria-expanded={routeSettings} onClick={()=>{onExpand?.();setRouteSettings(v=>!v);}}>{routeSettings?<CloudSun size={16} aria-hidden="true"/>:<SlidersHorizontal size={16} aria-hidden="true"/>}<span>{routeSettings?'Forecast':'Edit route'}</span></button>}<button onClick={close} aria-label="Close route"><X size={17} aria-hidden="true"/></button></div>
   <div className="route-primary-actions">
@@ -171,7 +172,7 @@ export function WeatherRoute({map,active,onClose,compactMobile=false,onExpand,mo
     {route&&<div className="route-summary" role="status"><strong>{Math.round(route.distance/(units==='us'?1609.344:1000)).toLocaleString()} {units==='us'?'mi':'km'}</strong><span>·</span><strong>{Math.floor(Math.round(route.duration/60)/60)}h {Math.round(route.duration/60)%60}m</strong></div>}
     {needsTruckCheck&&<p id="truck-check-hint" className="truck-check-hint" role="status">Check the box above to enable Build route.</p>}
     <button aria-describedby={needsTruckCheck?'truck-check-hint':undefined} className={`route-place ${busy?'is-building':''}`} onClick={build} disabled={busy||!truckConfirmed||!validTruck(truck)} aria-busy={busy}>{busy?'Building route…':hasPrevious?'Update route':'Build route'}</button>
-    {route&&!pointsOpen&&<RouteWeather route={route} map={map} units={units} active={active} mobilePresentation={mobilePresentation} compactMobile={!mobilePresentation&&compactMobile&&!routeSettings} onExpand={onExpand}/>}
+    {route&&!pointsOpen&&<RouteWeather route={route} map={map} units={units} active={active} mobilePresentation={mobilePresentation} desktopPresentation={desktopPresentation} compactMobile={!mobilePresentation&&compactMobile&&!routeSettings} onExpand={onExpand}/>}
     {error&&<p className="route-error" role="alert">{error}</p>}
     <p className="route-disclaimer">Mapped truck restrictions. Check road signs.<br/>Weather colors indicate forecast concern, not road safety.</p>
    </>}
@@ -180,6 +181,11 @@ export function WeatherRoute({map,active,onClose,compactMobile=false,onExpand,mo
   </div>}
 
  </div>
+ {stage&&desktopPresentation&&createPortal(<div className={`desktop-route-actions ${active&&route?'is-visible':''}`} inert={!active||!route} aria-hidden={!active||!route}>
+  <button type="button" className="mobile-route-icon mobile-route-undo" aria-label="Clear route points" onClick={()=>{change([null,null]);setRouteSettings(false);}}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 10v7m4-7v7" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg><span>Clear</span></button>
+  <RouteNavigator available={active&&!!route&&!busy&&!routeSettings}/>
+  <button type="button" className="mobile-route-icon mobile-route-set" aria-label={routeSettings?'Show route forecast':'Edit route'} aria-pressed={routeSettings} onClick={()=>{setPointsOpen(false);select(null);edit(null);setRouteSettings(v=>!v);}}><SlidersHorizontal size={24}/><span>{routeSettings?'Forecast':'Edit'}</span></button>
+ </div>,stage)}
  {stage&&createPortal(<div className={`mobile-route-actions ${mobilePresentation?'is-visible':''}`} inert={!mobilePresentation} aria-hidden={!mobilePresentation}>
   <button className="mobile-route-icon mobile-route-undo" type="button" aria-label={mobileEditing&&mobileStep!==null?'Cancel point edit':'Clear route points'} disabled={!points[0]&&!points[1]&&!(mobileEditing&&mobileStep!==null)} onClick={clearMobileRoute}>{mobileEditing&&mobileStep!==null?<svg viewBox="0 0 32 32" aria-hidden="true"><path d="m11 8-6 6 6 6M6 14h12a8 8 0 0 1 0 16" transform="translate(1 -3)" fill="none" stroke="#a8eaf4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>:<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 10v7m4-7v7" fill="none" stroke="#a8eaf4" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>}<span>{mobileEditing&&mobileStep!==null?'Cancel':'Clear'}</span></button>
   <RouteNavigator available={mobilePresentation&&active&&!!route&&!busy&&!autoWaiting&&mobileStep===null&&!mobileChoices}/>

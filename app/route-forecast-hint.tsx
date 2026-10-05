@@ -11,7 +11,7 @@ export function ForecastHintContent({point,index,units,distance}:{point:Forecast
  const weather=point.available?(point.condition||'Forecast unavailable'):'Forecast unavailable';
  return <><span className="hint-heading"><WeatherSymbol kind={kind} size={32}/><span><strong title={point.place}>{point.place||`Checkpoint ${index+1}`}</strong><span className="hint-time">Arrival · <time dateTime={new Date(point.eta).toISOString()}>{new Date(point.eta).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}</time> <small>your time</small></span></span></span><span className="hint-weather"><span className="hint-condition" title={weather}>{weather}</span>{point.available&&point.temperatureC!=null&&<b>{temperature(point.temperatureC,units)}°{units==='us'?'F':'C'}</b>}</span><span className="hint-wind"><WeatherSymbol kind="wind" size={14}/>Wind <b>{speed}</b>{distance&&<small className="hint-distance">{distance}</small>}</span></>;
 }
-export default function RouteForecastHint({map,point,index,units,onSelect,compact=false,open=true,distance}:{map:LibreMap;units:WeatherUnits;point:ForecastHint;index:number;onSelect:()=>void;compact?:boolean;open?:boolean;distance?:string}){
+export default function RouteForecastHint({map,point,index,units,onSelect,compact=false,controlled=false,open=true,distance}:{map:LibreMap;units:WeatherUnits;point:ForecastHint;index:number;onSelect:()=>void;compact?:boolean;controlled?:boolean;open?:boolean;distance?:string}){
  const ref=useRef<HTMLButtonElement>(null);
  const [entered,setEntered]=useState(false);
  useEffect(()=>{const frame=requestAnimationFrame(()=>setEntered(true));return()=>cancelAnimationFrame(frame);},[]);
@@ -46,7 +46,7 @@ export default function RouteForecastHint({map,point,index,units,onSelect,compac
   return()=>{map.off('render',position);observer.disconnect();};
  },[map,point,stage,compact]);
  if(!stage)return null;
- return createPortal(<button ref={ref} type="button" className={`route-forecast-hint hint-${point.level} ${compact?'is-mobile-hint':''} ${open&&entered?'is-visible':''}`} inert={compact&&!open} aria-hidden={compact&&!open} onClick={e=>{e.stopPropagation();onSelect();}} aria-label={`Forecast checkpoint ${index+1}: ${point.condition||label}, near ${point.place||'selected location'}. ${compact?'Close forecast':'Open details'}`}>
+ return createPortal(<button ref={ref} type="button" className={`route-forecast-hint hint-${point.level} ${compact?'is-mobile-hint':''} ${controlled?'is-controlled-hint':''} ${open&&entered?'is-visible':''}`} inert={(compact||controlled)&&!open} aria-hidden={(compact||controlled)&&!open} onClick={e=>{e.stopPropagation();onSelect();}} aria-label={`Forecast checkpoint ${index+1}: ${point.condition||label}, near ${point.place||'selected location'}. ${compact||controlled?'Close forecast':'Open details'}`}>
   <ForecastHintContent point={point} index={index} units={units} distance={distance}/>
  </button>,stage);
 }

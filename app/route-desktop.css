@@ -1,0 +1,65 @@
+/* Desktop uses the shared compact forecast, without mobile camera or gesture rules. */
+.desktop-route-ui .weather-left-stack.route-active{top:auto;bottom:34px;left:24px;right:auto;width:440px;max-width:calc(100% - 126px);max-height:calc(100% - 115px);padding:12px;box-sizing:border-box;overscroll-behavior:contain}
+.desktop-route-ui .weather-left-stack.route-active:has(.route-summary-view){height:316px;overflow:hidden}
+.desktop-route-ui .weather-left-stack.route-active:not(:has(.route-summary-view)){max-height:min(520px,calc(100% - 115px));overflow-y:auto}
+.desktop-route-workflow.route-summary-view>.route-navigation,.desktop-route-workflow.route-summary-view .route-body>.route-summary{display:none}
+.desktop-route-workflow.route-summary-view .route-body{padding:0;animation:none}
+.desktop-route-workflow:not(.route-summary-view) .route-weather{display:none}
+.desktop-route-workflow .route-weather{margin:0;padding:0;border:0}
+.route-sheet .has-desktop-carousel{display:grid;grid-template-rows:48px 200px 42px;gap:0}
+.route-sheet .has-desktop-carousel>.route-timing-toggle{height:44px;min-height:44px;padding:4px 10px;margin-bottom:4px}
+.route-sheet .has-desktop-carousel .route-departure-copy strong{font-size:13px;line-height:17px}
+.route-sheet .has-desktop-carousel .route-departure-copy small{font-size:13px;line-height:17px}
+.has-desktop-carousel>.route-mobile-carousel{height:200px;min-height:200px;grid-area:2/1}
+.has-desktop-carousel .mobile-forecast-status{height:30px}
+.has-desktop-carousel .mobile-route-totals>strong{font-size:17px}
+.has-desktop-carousel .mobile-route-totals>small{font-size:12px}
+.has-desktop-carousel .mobile-forecast-viewport,.has-desktop-carousel .mobile-forecast-placeholder{height:120px}
+.has-desktop-carousel .mobile-forecast-card{padding:6px 10px}
+.has-desktop-carousel .mobile-forecast-place{height:43px;grid-template-columns:40px minmax(0,1fr) 40px}
+.has-desktop-carousel .mobile-forecast-place strong{font-size:16px;line-height:22px}
+.has-desktop-carousel .mobile-forecast-condition{height:30px;font-size:13px}
+.has-desktop-carousel .mobile-forecast-wind{height:34px;font-size:14px}
+.has-desktop-carousel .mobile-forecast-wind>span:last-child{font-size:13px}
+.has-desktop-carousel .mobile-checkpoint-rail-frame{height:50px;padding-inline:22px;box-sizing:border-box}
+.has-desktop-carousel .mobile-checkpoint-rail{height:50px;gap:3px}
+.route-sheet .has-desktop-carousel .mobile-checkpoint-rail>button{flex-basis:42px;height:46px;font-size:12px}
+.has-desktop-carousel .mobile-checkpoint-rail-frame::before{left:22px}.has-desktop-carousel .mobile-checkpoint-rail-frame::after{right:22px}
+.route-sheet .desktop-rail-arrow{position:absolute;top:3px;width:22px;height:44px;padding:0;border:0;background:transparent;box-shadow:none;font-size:26px;color:#9cdce9}
+.desktop-rail-arrow.previous{left:0}.desktop-rail-arrow.next{right:0}
+.route-sheet .desktop-rail-arrow:disabled{opacity:.3;cursor:default}
+.desktop-forecast-tools{grid-area:3/1;display:flex;align-items:center;gap:7px;opacity:1;transition:opacity .3s ease,visibility 0s}
+.route-sheet .desktop-forecast-tools>button{height:34px;min-height:34px;font-size:12px;padding:5px 10px;flex:1;white-space:nowrap}
+.route-sheet .desktop-forecast-tools>button:first-child{flex:0 0 54px}
+.route-sheet .desktop-forecast-tools>button[aria-pressed=true]{border-color:#83cbdc;background:#1d4254}
+.route-sheet .desktop-forecast-tools>button:disabled{opacity:.4;cursor:default}
+.has-desktop-carousel.is-timing-open>.desktop-forecast-tools{opacity:0;visibility:hidden;transition:opacity .3s ease,visibility 0s .3s}
+.route-sheet .has-desktop-carousel>.route-options-collapse{grid-area:2/1/4/2;height:242px;max-height:242px}
+.has-desktop-carousel>.route-options-collapse>div{height:242px;max-height:242px}
+.has-desktop-carousel.is-all-sections>.route-mobile-carousel{opacity:0;visibility:hidden;transform:translateY(5px);transition:opacity .3s,transform .32s,visibility 0s .32s}
+.route-sheet .has-desktop-carousel>.route-forecast-details{display:block!important;grid-area:2/1;min-height:0;height:200px;max-height:200px;overflow:hidden;opacity:0;visibility:hidden;transform:translateY(5px);transition:opacity .3s ease,transform .32s ease,visibility 0s .32s}
+.route-sheet .has-desktop-carousel.is-all-sections:not(.is-timing-open)>.route-forecast-details{opacity:1;visibility:visible;transform:translateY(0);transition-delay:0s}
+.has-desktop-carousel>.route-forecast-details>div{height:100%;min-height:0;overflow:hidden}
+.has-desktop-carousel .forecast-results{height:100%;display:block}
+.has-desktop-carousel .route-forecast-details :is(.route-weather-legend,.forecast-refresh-status,.forecast-overview,.forecast-tools,.forecast-count,.route-about-toggle,.route-options-collapse),.has-desktop-carousel .route-forecast-details>div>a{display:none}
+.has-desktop-carousel .forecast-stack{height:100%;max-height:100%;overflow-y:auto;padding:3px 3px 5px 0;box-sizing:border-box}
+.desktop-route-actions{position:absolute;z-index:5;left:24px;bottom:calc(var(--weather-sheet-height,316px) + 42px);width:440px;max-width:calc(100% - 126px);height:44px;pointer-events:none;opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity .35s,transform .45s,visibility 0s .45s}
+.desktop-route-actions.is-visible{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+.desktop-route-actions .mobile-route-icon{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:44px;height:44px;padding:3px 0;border:1px solid #516377;border-radius:10px;background:linear-gradient(145deg,#203b51,#091727 75%);color:#b9d9e7;cursor:pointer;box-shadow:inset 0 1px 0 #a9e8ff22,0 3px 8px #0003;pointer-events:auto;transition:border-color .3s,box-shadow .3s,opacity .3s}
+.desktop-route-actions .mobile-route-icon svg{width:23px;height:23px}.desktop-route-actions .mobile-route-icon span{font-size:9px;line-height:11px;font-weight:600}
+.desktop-route-actions .mobile-route-icon:hover{border-color:#9ae9f6;box-shadow:inset 0 0 12px #70dcf42b,0 0 12px #70dcf422}
+.desktop-route-actions .mobile-route-icon:focus-visible{outline:2px solid #8ee6f8;outline-offset:2px}
+.desktop-route-actions .mobile-route-undo{left:0}.desktop-route-actions .mobile-route-set{right:0}
+.desktop-route-actions .route-navigator{display:block;position:absolute;right:52px;bottom:0;width:44px;height:44px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s,visibility 0s .3s}
+.desktop-route-actions .route-navigator.is-available{opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s}
+.desktop-route-actions .mobile-route-navigate{inset:0}
+.desktop-route-actions .navigator-availability{right:0;bottom:54px}
+@media(prefers-reduced-motion:reduce){.desktop-route-actions,.desktop-route-actions .mobile-route-icon,.has-desktop-carousel>.route-forecast-details,.has-desktop-carousel>.route-mobile-carousel,.desktop-forecast-tools{transition:none!important;transform:none!important}}
+.desktop-route-actions .route-navigator{left:auto}
+
+.route-forecast-hint.is-controlled-hint{animation:none;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s ease,visibility 0s .3s}
+.route-forecast-hint.is-controlled-hint.is-visible{opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s}
+.has-desktop-carousel>.route-forecast-details>div{display:flex;flex-direction:column}
+.has-desktop-carousel .forecast-results{flex:1;min-height:0;height:auto}
+.has-desktop-carousel .route-forecast-details [role=alert]{flex:none;margin:4px 0;font-size:12px}
+@media(prefers-reduced-motion:reduce){.route-forecast-hint.is-controlled-hint{transition:none}}
