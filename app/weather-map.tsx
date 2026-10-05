@@ -243,6 +243,24 @@ export default function WeatherMap() {
     return () => {map?.off('moveend',measure);observer.disconnect(); stage.style.removeProperty('--weather-sheet-height'); stage.style.removeProperty('--weather-map-bottom-inset'); stage.style.removeProperty('--weather-map-left-inset');};
   }, [ready]);
 
+  // Follow the menu's animated height without resizing or moving the map camera.
+  useEffect(()=>{
+    const stage=sheetRef.current?.closest<HTMLElement>('.weather-map-stage');
+    const menu=stage?.querySelector<HTMLElement>('.weather-globe-control');
+    const actions=stage?.querySelector<HTMLElement>('.mobile-route-actions');
+    if(!stage||!menu||!actions||!mobilePresentation)return;
+    const measure=()=>{
+      const box=stage.getBoundingClientRect(),tools=menu.getBoundingClientRect();
+      const overlapsHorizontally=tools.right>box.left+actions.offsetLeft&&tools.left<box.left+actions.offsetLeft+actions.offsetWidth;
+      const shift=overlapsHorizontally?Math.max(0,tools.bottom-box.top+12-actions.offsetTop):0;
+      stage.style.setProperty('--weather-tools-shift',`${shift}px`);
+    };
+    const observer=new ResizeObserver(measure);
+    observer.observe(menu);observer.observe(stage);if(sheetRef.current)observer.observe(sheetRef.current);
+    measure();
+    return()=>{observer.disconnect();stage.style.removeProperty('--weather-tools-shift');};
+  },[mobilePresentation,ready,routeActive]);
+
   function animateGlobe() {
     if(globeFrame.current)return;
     let last=performance.now();
