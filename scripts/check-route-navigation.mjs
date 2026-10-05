@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import ts from 'typescript';
+const js=ts.transpileModule(fs.readFileSync('app/route-navigation-link.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText;
+const exports={};new Function('exports',js)(exports);
+const url=exports.destinationGeoUrl;
+assert.equal(url([-81.6557,30.3322]),'geo:0,0?q=30.332200,-81.655700');
+assert.equal(url([278.3443,30.3322]),url([-81.6557,30.3322]));
+for(const point of [null,[NaN,30],[1,Infinity],[0,91]])assert.equal(url(point),null);
+assert.equal(url([0,0]),'geo:0,0?q=0.000000,0.000000');
+console.log('Navigation: coordinate order, wrapped longitude, invalid points PASS');

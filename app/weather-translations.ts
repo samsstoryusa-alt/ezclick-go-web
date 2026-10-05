@@ -19,6 +19,7 @@ type TranslatedLanguage = Exclude<WeatherLanguage, "en" | "ro">;
 const translatedLanguages = ["es", "ru", "uk", "zh", "hi", "pa", "fr", "de", "pt", "ar"] as const;
 type Translations = readonly [string, string, string, string, string, string, string, string, string, string];
 const catalog: Record<string, Translations> = {
+  "Android test: open destination B in a navigation app. The app calculates its own route.": ["Prueba en Android: abre el destino B en una app de navegación. La app calcula su propia ruta.", "Тест на Android: открыть точку B в навигаторе. Навигатор рассчитает свой маршрут.", "Тест на Android: відкрити точку B у навігаторі. Навігатор розрахує власний маршрут.", "Android 测试：在导航应用中打开目的地 B。该应用会自行计算路线。", "Android परीक्षण: नेविगेशन ऐप में गंतव्य B खोलें। ऐप अपना मार्ग बनाएगा।", "Android ਟੈਸਟ: ਨੈਵੀਗੇਸ਼ਨ ਐਪ ਵਿੱਚ ਮੰਜ਼ਿਲ B ਖੋਲ੍ਹੋ। ਐਪ ਆਪਣਾ ਰਸਤਾ ਬਣਾਏਗੀ।", "Test Android : ouvrir la destination B dans une application de navigation. Elle calcule son propre itinéraire.", "Android-Test: Ziel B in einer Navigations-App öffnen. Die App berechnet ihre eigene Route.", "Teste no Android: abra o destino B em um app de navegação. O app calcula sua própria rota.", "اختبار Android: افتح الوجهة B في تطبيق ملاحة. سيحسب التطبيق مساره الخاص."],
   "Last checked": ["Última consulta", "Последняя проверка", "Остання перевірка", "上次检查", "अंतिम जाँच", "ਆਖਰੀ ਜਾਂਚ", "Dernière vérification", "Zuletzt geprüft", "Última verificação", "آخر تحقق"],
   "Menu": ["Menú", "Меню", "Меню", "菜单", "मेन्यू", "ਮੀਨੂ", "Menu", "Menü", "Menu", "القائمة"],
   "Language": ["Idioma", "Язык", "Мова", "语言", "भाषा", "ਭਾਸ਼ਾ", "Langue", "Sprache", "Idioma", "اللغة"],
@@ -222,6 +223,7 @@ for (const [key, source] of Object.entries(aliases)) catalog[key] = catalog[sour
 
 
 const romanianCatalog: Record<string, string> = {
+  "Android test: open destination B in a navigation app. The app calculates its own route.": "Test Android: deschide destinația B într-o aplicație de navigație. Aplicația calculează propriul traseu.",
   "Last checked": "Ultima verificare",
   "Menu": "Meniu",
   "Language": "Limbă",
