@@ -3,6 +3,18 @@ function Wheel({label,items,index,onChange}:{label:string;items:string[];index:n
  const ref=useRef<HTMLDivElement>(null),timer=useRef<ReturnType<typeof setTimeout>|null>(null);
  useEffect(()=>{const el=ref.current;if(el&&Math.abs(el.scrollTop-index*32)>1)el.scrollTo({top:index*32,behavior:'instant'});},[index]);
  useEffect(()=>()=>{if(timer.current)clearTimeout(timer.current);},[]);
+ useEffect(()=>{
+  const el=ref.current;if(!el)return;
+  const isolate=(event:Event)=>event.stopPropagation();
+  const wheel=(event:WheelEvent)=>{
+   event.stopPropagation();
+   if((event.deltaY<0&&el.scrollTop<=0)||(event.deltaY>0&&el.scrollTop+el.clientHeight>=el.scrollHeight-1))event.preventDefault();
+  };
+  el.addEventListener('wheel',wheel,{passive:false});
+  for(const type of ['pointerdown','touchstart','touchmove'])el.addEventListener(type,isolate,{passive:true});
+  return()=>{el.removeEventListener('wheel',wheel);for(const type of ['pointerdown','touchstart','touchmove'])el.removeEventListener(type,isolate);};
+ },[]);
+
  const choose=(n:number)=>{const next=Math.max(0,Math.min(items.length-1,n));onChange(next);ref.current?.scrollTo({top:next*32,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});};
  return <div className="departure-inline-column"><span>{label}</span><div className="departure-inline-wheel-frame"><div ref={ref} className="departure-inline-wheel" tabIndex={0} role="spinbutton" aria-label={label} aria-valuemin={0} aria-valuemax={items.length-1} aria-valuenow={index} aria-valuetext={items[index]} onKeyDown={e=>{if(['ArrowDown','ArrowUp','Home','End'].includes(e.key)){e.preventDefault();choose(e.key==='Home'?0:e.key==='End'?items.length-1:index+(e.key==='ArrowDown'?1:-1));}}} onScroll={()=>{if(timer.current)clearTimeout(timer.current);timer.current=setTimeout(()=>{const n=Math.max(0,Math.min(items.length-1,Math.round((ref.current?.scrollTop??0)/32)));if(n!==index)onChange(n);},180);}}>{items.map((text,n)=><button type="button" tabIndex={-1} className={n===index?'is-chosen':''} key={n} onClick={()=>choose(n)}>{text}</button>)}</div></div></div>;
 }

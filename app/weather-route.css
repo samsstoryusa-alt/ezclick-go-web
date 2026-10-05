@@ -559,3 +559,12 @@
  .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-truck-stage){height:160px;overflow-y:auto;overscroll-behavior:contain}
  .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-truck-stage>.truck-profile.is-expanded){height:360px}
 }
+
+/* Keep wheel gestures and the selection glow inside the departure picker. */
+.departure-inline-wheel{overscroll-behavior:none;touch-action:pan-y}
+.departure-inline-wheel-frame{isolation:isolate;border:1px solid #85bed32b;transition:border-color .35s ease,box-shadow .35s ease}
+.departure-inline-wheel-frame:before{z-index:1;background:#8bdce510;box-shadow:inset 0 0 12px #8bdce514;transition:background .35s ease,box-shadow .35s ease,border-color .35s ease}
+.departure-inline-wheel-frame:focus-within,.departure-inline-wheel-frame:hover{border-color:#8bdce563;box-shadow:0 0 12px #70d6e51a}
+.departure-inline-wheel-frame:focus-within:before,.departure-inline-wheel-frame:hover:before{background:#8bdce51b;border-color:#9ad9e469;box-shadow:inset 0 0 14px #8bdce522,0 0 10px #8bdce514}
+.route-sheet .departure-inline-wheel button:hover{background:transparent}
+@media(prefers-reduced-motion:reduce){.departure-inline-wheel-frame,.departure-inline-wheel-frame:before{transition:none}}
