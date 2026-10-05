@@ -15,3 +15,8 @@
 @media(prefers-reduced-motion:reduce){.route-forecast-hint.is-mobile-hint{transition:none}}
 
 .route-forecast-hint.is-mobile-hint .hint-distance{margin-left:auto;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:8px;font-weight:400;color:#9db9c7;flex:none}
+
+/* At the top edge keep the mobile hint above, rather than flipping across the marker. */
+.route-forecast-hint.is-mobile-hint[data-pinned=true]::after{opacity:0}
+.route-forecast-hint.is-mobile-hint::after{transition:opacity 180ms ease-out}
+@media(prefers-reduced-motion:reduce){.route-forecast-hint.is-mobile-hint::after{transition:none}}

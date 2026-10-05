@@ -35,9 +35,10 @@ export default function RouteForecastHint({map,point,index,units,onSelect,compac
    if(compact){el.dataset.inView=String(!outside);}else el.hidden=outside;
    if(outside)return;
    const x=Math.max(left,Math.min(right-width,p.x-width/2));
-   const above=p.y-height-18>=top;
+   const above=compact||p.y-height-18>=top;
    const y=Math.max(top,Math.min(bottom-height,above?p.y-height-18:p.y+18));
    el.dataset.side=above?'above':'below';
+   el.dataset.pinned=String(compact&&p.y-height-18<top);
    el.style.setProperty('--hint-tail',Math.max(12,Math.min(width-12,p.x-x))+'px');
    el.style.transform=`translate3d(${box.left-parent.left+x}px,${box.top-parent.top+y}px,0)`;
   };

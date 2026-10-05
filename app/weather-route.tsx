@@ -1,5 +1,5 @@
 "use client";
-import {useEffect,useEffectEvent,useLayoutEffect,useRef,useState,type CSSProperties} from 'react';
+import {useEffect,useEffectEvent,useLayoutEffect,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
 import {Route,SlidersHorizontal,CloudSun,X} from 'lucide-react';
 import type {Map as MapLibre} from 'maplibre-gl';
@@ -26,7 +26,7 @@ function TruckWheel({enabled,label,value,min,max,step,factor,format,onChange}:{e
 }
 export function WeatherRoute({map,active,onClose,compactMobile=false,onExpand,mobilePresentation=false,onShowInfo}:{map:MapLibre|null;active:boolean;onClose:()=>void;compactMobile?:boolean;onExpand?:()=>void;mobilePresentation?:boolean;onShowInfo?:()=>void}){
  const [restored]=useState(readTrip);
- const [points,setPoints]=useState<Pair>(()=>restored?.points??(standaloneWeather()?defaultTripPoints():typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('demo')==='nashville-jacksonville'?[[-86.7816,36.1627],[-81.6557,30.3322]]:[null,null])),[selected,select]=useState<number|null>(null),[editing,edit]=useState<number|null>(null),[undo,setUndo]=useState<Pair|null>(null),[dragging,setDragging]=useState<number|null>(null),[,redraw]=useState(0);
+ const [points,setPoints]=useState<Pair>(()=>restored?.points??(standaloneWeather()?defaultTripPoints():typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('demo')==='nashville-jacksonville'?[[-86.7816,36.1627],[-81.6557,30.3322]]:[null,null])),[selected,select]=useState<number|null>(null),[editing,edit]=useState<number|null>(null),[undo,setUndo]=useState<Pair|null>(null),[dragging,setDragging]=useState<number|null>(null);
  const [pointsOpen,setPointsOpen]=useState(false);
  const [mobileStep,setMobileStep]=useState<0|1|null>(null);
  const [mobileEditing,setMobileEditing]=useState(false);
@@ -43,7 +43,22 @@ export function WeatherRoute({map,active,onClose,compactMobile=false,onExpand,mo
  const gesture=useRef<{id:number;index:number;x:number;y:number;armed:boolean;timer:number;before:Pair;moved:boolean}|null>(null);
  const suppress=useRef(false);
  const stage=map?.getContainer().parentElement;
- useEffect(()=>{if(!map||!active)return;const update=()=>redraw(n=>n+1);map.on('move',update);map.on('resize',update);return()=>{map.off('move',update);map.off('resize',update);};},[map,active]);
+ const pinElements=useRef<Array<HTMLButtonElement|null>>([]);
+ useLayoutEffect(()=>{
+  if(!map||!stage||!active)return;
+  const position=()=>{
+   const box=map.getContainer().getBoundingClientRect(),parent=stage.getBoundingClientRect();
+   const size=mobilePresentation?22:18+8*Math.max(0,Math.min(1,(map.getZoom()-3)/8));
+   current.current.forEach((point,i)=>{
+    const el=pinElements.current[i];if(!el||!point)return;
+    const p=map.project(point);
+    el.style.transform=`translate3d(${box.left-parent.left+p.x-24}px,${box.top-parent.top+p.y-24}px,0)`;
+    el.style.setProperty('--route-pin-scale',String(size/26));
+   });
+  };
+  position();map.on('render',position);map.on('resize',position);
+  return()=>{map.off('render',position);map.off('resize',position);};
+ },[map,stage,active,mobilePresentation,points]);
  useEffect(()=>{if(!undo||mobilePresentation)return;const t=setTimeout(()=>setUndo(null),8000);return()=>clearTimeout(t);},[undo,mobilePresentation]);
  useEffect(()=>{if(!map)return;const close=()=>select(null);map.on('click',close);return()=>{map.off('click',close);};},[map]);
  const cancel=()=>{const g=gesture.current;if(g){clearTimeout(g.timer);setPoints(g.before);}gesture.current=null;setDragging(null);};
@@ -117,8 +132,6 @@ export function WeatherRoute({map,active,onClose,compactMobile=false,onExpand,mo
  },[points,truck,truckConfirmed,route,tripKey,dragging,restored]);
  const {units}=useWeatherUnits();
  const needsTruckCheck=active&&!!points[0]&&!!points[1]&&!truckConfirmed&&editing===null&&selected===null;
- const zoomProgress=Math.max(0,Math.min(1,((map?.getZoom()??7)-3)/8));
- const pinSize=18+8*zoomProgress;
  return <>
  <div className={`route-sheet ${active?'is-open':''} ${closing?'is-closing':''} ${route?'has-route':''} ${mobilePresentation?'mobile-route-workflow':''} ${mobilePlacing?'mobile-point-stage':''} ${mobileNeedsTruck?'mobile-truck-stage':''} ${mobileInitialStage?'mobile-initial-stage':''} ${route&&!routeSettings&&selected===null&&editing===null&&!pointsOpen?'route-summary-view':''}`} aria-hidden={!active} inert={!active}>
   <div className="mobile-route-status" role="status">{mobileNeedsTruck?'Check your truck settings before calculating.':busy||autoWaiting&&autoBuildPoints===pointsKey?'Calculating your route…':error?error:mobilePlacementIndex===1?'Move the map · tap Set B to confirm':'Move the map · tap Set A to confirm'}{error&&!busy&&!autoWaiting&&<button type="button" className="mobile-route-retry" onClick={retryMobileRoute}>Retry route</button>}</div>
@@ -162,8 +175,8 @@ export function WeatherRoute({map,active,onClose,compactMobile=false,onExpand,mo
   <button className="mobile-route-icon mobile-route-set" type="button" aria-label={mobileComplete&&mobileStep===null?'Edit route points':mobilePlacementIndex===1?'Set destination B at map center':'Set start A at map center'} aria-expanded={mobileComplete&&mobileStep===null?mobileChoices:undefined} disabled={!map||busy||autoWaiting} onClick={()=>{if(mobileComplete&&mobileStep===null)setMobileChoices(v=>!v);else setMobilePoint();}}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-dark" d="M16 29S5 18 5 12a11 11 0 0 1 22 0c0 6-11 17-11 17Z"/><path d="M16 28S7 18 7 12a9 9 0 0 1 18 0c0 6-9 16-9 16Z" fill="none" stroke="#adf0fa" strokeWidth="1.7"/><circle cx="16" cy="12" r="3" fill="#a8eaf4"/></svg><span>{mobileComplete&&mobileStep===null?'Edit':mobilePlacementIndex===1?'Set B':'Set A'}</span></button>
  </div>,stage)}
  {stage&&createPortal(<div className={`route-markers ${active?'is-open':''}`} aria-hidden={!active}>{points.map((p,i)=>{
-  if(!p||!map)return null;const pos=map.project(p);
-  return <button key={i} className={`route-pin ${selected===i?'is-selected':''} ${dragging===i?'is-dragging':''} ${removing===i?'is-removing':''}`} style={{left:pos.x,top:pos.y,'--route-pin-scale':pinSize/26} as CSSProperties} aria-label={'Route point '+labels[i]} tabIndex={active?0:-1}
+  if(!p||!map)return null;
+  return <button key={i} ref={el=>{pinElements.current[i]=el;}} className={`route-pin ${selected===i?'is-selected':''} ${dragging===i?'is-dragging':''} ${removing===i?'is-removing':''}`} style={{left:0,top:0}} aria-label={'Route point '+labels[i]} tabIndex={active?0:-1}
    onClick={e=>{e.stopPropagation();if(suppress.current){suppress.current=false;return;}if(mobilePresentation){chooseMobilePoint(i as 0|1);}else{select(i);edit(null);}}}
    onPointerDown={e=>{if(mobilePresentation||e.button!==0||gesture.current)return;e.stopPropagation();e.currentTarget.setPointerCapture(e.pointerId);suppress.current=false;const g={id:e.pointerId,index:i,x:e.clientX,y:e.clientY,armed:e.pointerType==='mouse',timer:0,before:current.current,moved:false};gesture.current=g;if(g.armed)setDragging(i);else g.timer=window.setTimeout(()=>{if(gesture.current===g){g.armed=true;setDragging(i);}},450);}}
    onPointerMove={e=>{const g=gesture.current;if(!g||g.id!==e.pointerId)return;const distance=Math.hypot(e.clientX-g.x,e.clientY-g.y);if(!g.armed){if(distance>9){clearTimeout(g.timer);suppress.current=true;}return;}if(distance<3&&!g.moved)return;g.moved=true;suppress.current=true;const r=map.getContainer().getBoundingClientRect(),c=map.unproject([e.clientX-r.left,e.clientY-r.top]);const next=[...current.current] as Pair;next[i]=[c.lng,c.lat];setPoints(next);}}
