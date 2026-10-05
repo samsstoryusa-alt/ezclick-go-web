@@ -39,6 +39,15 @@ export default function WeatherMap() {
   const [routeInfoOpen,setRouteInfoOpen]=useState(true);
   const [cameraExpanded,setCameraExpanded]=useState(false);
   const [legendOpen,setLegendOpen]=useState(false);
+  const [siteMenuOpen,setSiteMenuOpen]=useState(false);
+  const siteMenuRef=useRef<HTMLDivElement>(null);
+  useEffect(()=>{
+    if(!siteMenuOpen)return;
+    const outside=(event:globalThis.PointerEvent)=>{if(event.target instanceof Node&&!siteMenuRef.current?.contains(event.target))setSiteMenuOpen(false);};
+    const escape=(event:globalThis.KeyboardEvent)=>{if(event.key==='Escape'){setSiteMenuOpen(false);siteMenuRef.current?.querySelector('button')?.focus();}};
+    document.addEventListener('pointerdown',outside);document.addEventListener('keydown',escape);
+    return()=>{document.removeEventListener('pointerdown',outside);document.removeEventListener('keydown',escape);};
+  },[siteMenuOpen]);
   const sheetRef=useRef<HTMLDivElement>(null);
   const sheetDrag=useRef<{y:number;height:number;delta:number}|null>(null);
   const sheetTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
@@ -353,7 +362,7 @@ export default function WeatherMap() {
       <a className="weather-map-brand" href={platformUrl}><img src="/media/ezclick-go-logo.png" width="2166" height="726" alt="EZCLICK GO"/></a>
       <div><h1>Explore the road ahead</h1><p>Map & terrain preview</p></div>
       <button type="button" className="weather-header-units" onClick={toggleUnits} aria-label={units==='us'?'Units: Fahrenheit and miles. Switch to Celsius and kilometers':'Units: Celsius and kilometers. Switch to Fahrenheit and miles'} title={units==='us'?'Switch to °C · km':'Switch to °F · mi'}><span>{units==='us'?'°F · mi':'°C · km'}</span></button>
-      <details className="weather-site-menu"><summary>Menu</summary><nav aria-label="Site menu"><a href={platformUrl}>Home</a><a href="/terms">About &amp; weather disclaimer</a></nav></details>
+      <div ref={siteMenuRef} className={`weather-site-menu ${siteMenuOpen?"is-open":""}`}><button type="button" className="weather-site-menu-toggle" aria-expanded={siteMenuOpen} aria-controls="weather-site-links" onClick={()=>setSiteMenuOpen(v=>!v)}>Menu<span aria-hidden="true">☰</span></button><nav id="weather-site-links" aria-label="Site menu" inert={!siteMenuOpen} aria-hidden={!siteMenuOpen}><a href={platformUrl}>Home</a><a href="/terms">About &amp; weather disclaimer</a></nav></div>
     </header>
     <section className="weather-map-stage" aria-label="Map and terrain preview">
       <div ref={container} className={`weather-map-canvas${mapVisible?" is-map-visible":""}`} />
