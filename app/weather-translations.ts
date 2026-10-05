@@ -19,6 +19,17 @@ type TranslatedLanguage = Exclude<WeatherLanguage, "en" | "ro">;
 const translatedLanguages = ["es", "ru", "uk", "zh", "hi", "pa", "fr", "de", "pt", "ar"] as const;
 type Translations = readonly [string, string, string, string, string, string, string, string, string, string];
 const catalog: Record<string, Translations> = {
+  "Search route": ["Buscar ruta", "Поиск маршрута", "Пошук маршруту", "搜索路线", "मार्ग खोजें", "ਰਸਤਾ ਖੋਜੋ", "Chercher un itinéraire", "Route suchen", "Buscar rota", "البحث عن مسار"],
+  "From": ["Desde", "Откуда", "Звідки", "出发地", "कहाँ से", "ਕਿੱਥੋਂ", "Départ", "Von", "Origem", "من"],
+  "To": ["Hasta", "Куда", "Куди", "目的地", "कहाँ तक", "ਕਿੱਥੇ", "Arrivée", "Nach", "Destino", "إلى"],
+  "From \u00b7 city, ZIP or address": ["Desde · ciudad, ZIP o dirección", "Откуда · город, ZIP или адрес", "Звідки · місто, ZIP або адреса", "出发地 · 城市、邮编或地址", "कहाँ से · शहर, ZIP या पता", "ਕਿੱਥੋਂ · ਸ਼ਹਿਰ, ZIP ਜਾਂ ਪਤਾ", "Départ · ville, code postal ou adresse", "Von · Stadt, PLZ oder Adresse", "Origem · cidade, CEP ou endereço", "من · مدينة أو رمز بريدي أو عنوان"],
+  "To \u00b7 city, ZIP or address": ["Hasta · ciudad, ZIP o dirección", "Куда · город, ZIP или адрес", "Куди · місто, ZIP або адреса", "目的地 · 城市、邮编或地址", "कहाँ तक · शहर, ZIP या पता", "ਕਿੱਥੇ · ਸ਼ਹਿਰ, ZIP ਜਾਂ ਪਤਾ", "Arrivée · ville, code postal ou adresse", "Nach · Stadt, PLZ oder Adresse", "Destino · cidade, CEP ou endereço", "إلى · مدينة أو رمز بريدي أو عنوان"],
+  "Type at least 3 characters": ["Escribe al menos 3 caracteres", "Введите минимум 3 символа", "Введіть щонайменше 3 символи", "请至少输入3个字符", "कम से कम 3 अक्षर लिखें", "ਘੱਟੋ-ਘੱਟ 3 ਅੱਖਰ ਲਿਖੋ", "Saisissez au moins 3 caractères", "Mindestens 3 Zeichen eingeben", "Digite pelo menos 3 caracteres", "أدخل 3 أحرف على الأقل"],
+  "Searching\u2026": ["Buscando…", "Ищем…", "Шукаємо…", "搜索中…", "खोज रहे हैं…", "ਖੋਜ ਜਾਰੀ…", "Recherche…", "Suche…", "Buscando…", "جارٍ البحث…"],
+  "Search results": ["Resultados", "Результаты поиска", "Результати пошуку", "搜索结果", "खोज परिणाम", "ਖੋਜ ਨਤੀਜੇ", "Résultats", "Suchergebnisse", "Resultados", "نتائج البحث"],
+  "No matches. Add a state or ZIP.": ["Sin resultados. Añade estado o ZIP.", "Ничего не найдено. Добавьте штат или ZIP.", "Нічого не знайдено. Додайте штат або ZIP.", "无结果。请添加州名或邮编。", "कोई परिणाम नहीं। राज्य या ZIP जोड़ें।", "ਨਤੀਜੇ ਨਹੀਂ। ਰਾਜ ਜਾਂ ZIP ਜੋੜੋ।", "Aucun résultat. Ajoutez un État ou code postal.", "Keine Treffer. Bundesstaat oder PLZ ergänzen.", "Sem resultados. Adicione estado ou CEP.", "لا توجد نتائج. أضف الولاية أو الرمز البريدي."],
+  "Search unavailable. Try again or set points on the map.": ["Búsqueda no disponible. Reintenta o elige puntos en el mapa.", "Поиск недоступен. Повторите ввод или поставьте точки на карте.", "Пошук недоступний. Спробуйте ще або виберіть точки на карті.", "搜索不可用。请重试或在地图上设置地点。", "खोज उपलब्ध नहीं। फिर कोशिश करें या मानचित्र पर बिंदु चुनें।", "ਖੋਜ ਉਪਲਬਧ ਨਹੀਂ। ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ ਜਾਂ ਨਕਸ਼ੇ ਉੱਤੇ ਬਿੰਦੂ ਚੁਣੋ।", "Recherche indisponible. Réessayez ou choisissez sur la carte.", "Suche nicht verfügbar. Erneut versuchen oder Kartenpunkte setzen.", "Busca indisponível. Tente novamente ou selecione no mapa.", "البحث غير متاح. حاول مجددًا أو حدد النقاط على الخريطة."],
+
   "Android test: open destination B in a navigation app. The app calculates its own route.": ["Prueba en Android: abre el destino B en una app de navegación. La app calcula su propia ruta.", "Тест на Android: открыть точку B в навигаторе. Навигатор рассчитает свой маршрут.", "Тест на Android: відкрити точку B у навігаторі. Навігатор розрахує власний маршрут.", "Android 测试：在导航应用中打开目的地 B。该应用会自行计算路线。", "Android परीक्षण: नेविगेशन ऐप में गंतव्य B खोलें। ऐप अपना मार्ग बनाएगा।", "Android ਟੈਸਟ: ਨੈਵੀਗੇਸ਼ਨ ਐਪ ਵਿੱਚ ਮੰਜ਼ਿਲ B ਖੋਲ੍ਹੋ। ਐਪ ਆਪਣਾ ਰਸਤਾ ਬਣਾਏਗੀ।", "Test Android : ouvrir la destination B dans une application de navigation. Elle calcule son propre itinéraire.", "Android-Test: Ziel B in einer Navigations-App öffnen. Die App berechnet ihre eigene Route.", "Teste no Android: abra o destino B em um app de navegação. O app calcula sua própria rota.", "اختبار Android: افتح الوجهة B في تطبيق ملاحة. سيحسب التطبيق مساره الخاص."],
   "Last checked": ["Última consulta", "Последняя проверка", "Остання перевірка", "上次检查", "अंतिम जाँच", "ਆਖਰੀ ਜਾਂਚ", "Dernière vérification", "Zuletzt geprüft", "Última verificação", "آخر تحقق"],
   "Menu": ["Menú", "Меню", "Меню", "菜单", "मेन्यू", "ਮੀਨੂ", "Menu", "Menü", "Menu", "القائمة"],
@@ -225,6 +236,17 @@ for (const [key, source] of Object.entries(aliases)) catalog[key] = catalog[sour
 const romanianCatalog: Record<string, string> = {
   "Android test: open destination B in a navigation app. The app calculates its own route.": "Test Android: deschide destinația B într-o aplicație de navigație. Aplicația calculează propriul traseu.",
   "Last checked": "Ultima verificare",
+  "Search route": "Caută traseul",
+  "From": "De la",
+  "To": "Până la",
+  "From \u00b7 city, ZIP or address": "De la · oraș, cod poștal sau adresă",
+  "To \u00b7 city, ZIP or address": "Până la · oraș, cod poștal sau adresă",
+  "Type at least 3 characters": "Introdu cel puțin 3 caractere",
+  "Searching\u2026": "Se caută…",
+  "Search results": "Rezultatele căutării",
+  "No matches. Add a state or ZIP.": "Niciun rezultat. Adaugă statul sau codul poștal.",
+  "Search unavailable. Try again or set points on the map.": "Căutare indisponibilă. Încearcă din nou sau alege puncte pe hartă.",
+
   "Menu": "Meniu",
   "Language": "Limbă",
   "Home": "Acasă",

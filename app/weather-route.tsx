@@ -9,6 +9,8 @@ import {useWeatherLanguage} from './weather-language';
 import {useWeatherUnits} from './weather-units';
 import RouteWeather from './route-weather';
 import RouteNavigator from './route-navigator';
+import RoutePlaceSearch from './route-place-search';
+import type {SearchPlace} from './route-search-data';
 import {readTrip,saveTrip,standaloneWeather,defaultTripPoints} from './weather-trip-storage';
 type Point=[number,number];
 type Pair=[Point|null,Point|null];
@@ -102,7 +104,7 @@ export function WeatherRoute({map,active,onClose,compactMobile=false,onExpand,mo
  const pointsKey=JSON.stringify(points);
  const latestBuild=useEffectEvent(()=>{setAutoWaiting(false);void build();});
  useEffect(()=>{
-  if(!mobilePresentation||!active||!map||!autoBuildPoints||autoBuildPoints!==pointsKey||!truckConfirmed||!validTruck(truck)||!points[0]||!points[1])return;
+  if(!active||!map||!autoBuildPoints||autoBuildPoints!==pointsKey||!truckConfirmed||!validTruck(truck)||!points[0]||!points[1])return;
   const requestKey=autoBuildPoints+tripKey+autoAttempt;
   if(autoBuildStarted.current===requestKey)return;
   const timer=setTimeout(()=>{autoBuildStarted.current=requestKey;latestBuild();},1150);
@@ -120,6 +122,13 @@ export function WeatherRoute({map,active,onClose,compactMobile=false,onExpand,mo
   change(next);setMobileChoices(false);onShowInfo?.();
   if(next[0]&&next[1]){setMobileStep(null);setMobileEditing(false);autoBuildStarted.current=null;setAutoBuildPoints(JSON.stringify(next));setAutoWaiting(true);}
   else{setMobileStep(next[0]?1:0);setMobileEditing(false);setAutoBuildPoints(null);setAutoWaiting(false);}
+ }
+ function chooseSearchPlace(index:0|1,place:SearchPlace){
+  const next:Pair=[...current.current];next[index]=place.point;
+  change(next);setMobileChoices(false);setMobileEditing(false);setRouteSettings(false);onShowInfo?.();
+  map?.easeTo({center:place.point,duration:matchMedia('(prefers-reduced-motion: reduce)').matches?0:600});
+  if(next[0]&&next[1]){setMobileStep(null);autoBuildStarted.current=null;setAutoBuildPoints(JSON.stringify(next));setAutoWaiting(true);}
+  else{setMobileStep(next[0]?1:0);setAutoBuildPoints(null);setAutoWaiting(false);}
  }
  function clearMobileRoute(){
   if(mobileEditing&&mobileStep!==null){setMobileStep(null);setMobileEditing(false);setMobileChoices(false);return;}
@@ -160,6 +169,7 @@ export function WeatherRoute({map,active,onClose,compactMobile=false,onExpand,mo
    {undo&&<button className="route-undo-top" onClick={()=>{setPoints(undo);setUndo(null);select(null);edit(null);setPointsOpen(false);}}>{t('Undo last change')}</button>}
   </div></div>
   <div className={`route-options-collapse ${pointsOpen?'is-expanded':''}`} inert={!pointsOpen}><div><div className="route-point-choices">{points.map((p,i)=>p&&<button key={i} onClick={()=>{setPointsOpen(false);select(i);edit(null);}}>{t("Point")} {labels[i]} · {i===0?t('Start'):t('Finish')} <span>{t('Edit / delete →')}</span></button>)}</div></div></div>
+  <RoutePlaceSearch points={points} open={active&&!busy&&!autoWaiting&&!mobileNeedsTruck&&(!route||routeSettings||mobileChoices||pointsOpen)} disabled={busy||autoWaiting} onChoose={chooseSearchPlace}/>
   <div className={`truck-profile ${truckOpen?'is-expanded':''}`}>
    <button className="truck-profile-toggle" aria-expanded={truckOpen} aria-controls="truck-profile-content" onClick={()=>setTruckOpen(v=>!v)}><svg className="truck-settings-icon" aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M4 7h6m4 0h6M4 17h10m4 0h2"/><circle cx="12" cy="7" r="2"/><circle cx="16" cy="17" r="2"/></svg><span className="truck-settings-title">{t('Truck settings')}</span><span className="truck-settings-chevron" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
    <div className="truck-profile-collapse" id="truck-profile-content" inert={!truckOpen} aria-hidden={!truckOpen}><div className="truck-profile-inner"><p>{t('Scroll to adjust your loaded truck.')}</p><div className="truck-fields">
