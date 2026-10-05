@@ -150,8 +150,18 @@ export default function RouteWeather({route,map,units,active,compactMobile=false
    const covered=panel?(mobile?Math.max(0,canvas.bottom-panel.top):Math.max(0,panel.right-canvas.left)):0;
    const padding=map.getPadding();
    const offset:[number,number]=mobile?[0,-Math.max(0,covered-(padding.bottom??0))/2]:[Math.max(0,covered-(padding.left??0))/2,0];
-   // Mobile keeps a wider overview (30-mile scale); desktop retains its closer view.
-   const scaleMiles=mobile?36:12;
+   if(mobile&&canvas.height>canvas.width){
+    const stage=map.getContainer().parentElement;
+    const hintHeight=stage?.querySelector<HTMLElement>('.route-forecast-hint')?.offsetHeight||110;
+    const controls=stage?.querySelector('.mobile-route-actions')?.getBoundingClientRect();
+    const bottom=Math.min(panel?panel.top-canvas.top:canvas.height,controls?controls.top-canvas.top:canvas.height);
+    const center=(canvas.height+(padding.top??0)-(padding.bottom??0))/2;
+    // Leave room above the checkpoint for the hint, rather than pinning it over the point.
+    const desired=Math.min(bottom-24,Math.max(center+offset[1],64+hintHeight+30));
+    if(bottom-24>=64+hintHeight+30)offset[1]=desired-center;
+   }
+   // Mobile keeps a wider overview (50-mile scale); desktop retains its closer view.
+   const scaleMiles=mobile?60:12;
    const overviewZoom=Math.log2(40075016.686*Math.cos(p.lat*Math.PI/180)*100/(512*scaleMiles*1609.344));
    map.flyTo({center:[p.lon,p.lat],zoom:Math.max(map.getMinZoom(),Math.min(map.getMaxZoom(),overviewZoom)),offset,duration:matchMedia('(prefers-reduced-motion: reduce)').matches?0:1500});
   });});

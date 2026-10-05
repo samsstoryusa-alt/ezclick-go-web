@@ -182,8 +182,8 @@
 
 .weather-camera-tools-inner{display:contents}
 @media(max-width:767px),(max-width:950px) and (max-height:500px){
- .weather-globe-control .weather-camera-tools{display:grid;grid-template-rows:0fr;max-height:none;min-height:0;gap:0;opacity:0;overflow:hidden;visibility:hidden;transform:none;transition:grid-template-rows .35s cubic-bezier(.22,1,.36,1),opacity .28s ease,visibility 0s .35s}
- .weather-globe-control.camera-expanded .weather-camera-tools{grid-template-rows:1fr;max-height:none;opacity:1;visibility:visible;transition:grid-template-rows .35s cubic-bezier(.22,1,.36,1),opacity .28s ease,visibility 0s}
+ .weather-globe-control .weather-camera-tools{display:grid;grid-template-rows:0fr;max-height:none;min-height:0;gap:0;opacity:0;overflow:hidden;visibility:hidden;transform:none;transition:grid-template-rows .65s cubic-bezier(.45,0,.2,1),opacity .5s ease-in-out,visibility 0s .65s}
+ .weather-globe-control.camera-expanded .weather-camera-tools{grid-template-rows:1fr;max-height:none;opacity:1;visibility:visible;transition:grid-template-rows .65s cubic-bezier(.45,0,.2,1),opacity .5s ease-in-out,visibility 0s}
  .weather-camera-tools-inner{display:flex;flex-direction:column;align-items:center;gap:4px;min-height:0;overflow:hidden}.weather-camera-tools-inner>button{flex-shrink:0}
  .weather-globe-control .map-icon-button,.weather-globe-control .camera-location{width:44px;height:44px;min-height:44px;flex-shrink:0}
 }
