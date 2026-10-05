@@ -2,7 +2,7 @@ import {validTruck,type TruckProfile,type RoutePoint} from './road-route';
 
 export const TRIP_STORAGE_KEY='ezclick-weather-trip-v1';
 export type TripPoints=[RoutePoint|null,RoutePoint|null];
-type SavedTrip={version:1;points:TripPoints;truck?:TruckProfile;confirmed:boolean;builtKey:string|null;departure:string;departureZone?:string;stops:number};
+type SavedTrip={pointLabels?:Record<string,string>;version:1;points:TripPoints;truck?:TruckProfile;confirmed:boolean;builtKey:string|null;departure:string;departureZone?:string;stops:number};
 export const defaultTripPoints=():TripPoints=>[null,null];
 export function standaloneWeather(){return typeof document!=='undefined'&&document.documentElement.dataset.weatherStandalone==='true';}
 function point(p:unknown):p is RoutePoint|null{return p===null||(Array.isArray(p)&&p.length===2&&Number.isFinite(p[0])&&Number.isFinite(p[1])&&Math.abs(p[0])<=180&&Math.abs(p[1])<=85);}
@@ -24,7 +24,7 @@ export function readTrip():SavedTrip|null{
   // Legacy wall-clock values have no recoverable original zone. Anchor once in
   // the current device zone, then persist the instant before any later travel.
   if(departure&&v.departure!==departure){try{localStorage.setItem(TRIP_STORAGE_KEY,JSON.stringify({...v,departure,departureZone:zone}));}catch{/* Storage may be unavailable. */}}
-  return {version:1,points:v.points,truck,confirmed:!!truck&&v.confirmed===true,builtKey:typeof v.builtKey==='string'?v.builtKey:null,
+  return {pointLabels:Object.fromEntries(Object.entries(v.pointLabels??{}).filter(([k,label])=>k.length<80&&typeof label==='string'&&label.length<=400).slice(-12)) as Record<string,string>,version:1,points:v.points,truck,confirmed:!!truck&&v.confirmed===true,builtKey:typeof v.builtKey==='string'?v.builtKey:null,
    departure,departureZone:zone,
    stops:Number.isFinite(v.stops)&&v.stops>=0&&v.stops<=4320?v.stops:0};
  }catch{return null;}
@@ -38,4 +38,11 @@ export function saveTrip(patch:Partial<Omit<SavedTrip,'version'>>){
 export function currentDeparture(value:string,now:number):string{
  const instant=Date.parse(value);
  return value&&Number.isFinite(instant)&&instant>now?value:'';
+}
+
+export function pointLabelKey(p:RoutePoint){return `${p[0]},${p[1]}`;}
+export function savePointLabel(p:RoutePoint,label:string){
+ if(!label||label.length>400)return;
+ const labels={...readTrip()?.pointLabels};const key=pointLabelKey(p);delete labels[key];labels[key]=label;
+ saveTrip({pointLabels:Object.fromEntries(Object.entries(labels).slice(-12))});
 }

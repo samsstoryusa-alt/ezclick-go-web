@@ -50,3 +50,10 @@ assert.equal(e.currentDeparture('2026-10-05T23:12:00Z',clock),'');
 assert.equal(e.currentDeparture('2026-10-06T08:00:00-04:00',clock),'2026-10-06T08:00:00-04:00');
 assert.equal(e.currentDeparture('',clock),'');assert.equal(e.currentDeparture('bad',clock),'');
 console.log('PASS: expired departure rolls to now, exact boundary, future plan preserved');
+
+doc.documentElement.dataset.weatherStandalone='true';data=null;
+e.saveTrip({points:[[-86.78,36.16],null]});e.savePointLabel([-86.78,36.16],'Nashville, Tennessee');
+e.saveTrip({departure:''});assert.equal(e.readTrip().pointLabels[e.pointLabelKey([-86.78,36.16])],'Nashville, Tennessee');
+assert.equal(e.readTrip().pointLabels[e.pointLabelKey([-86.79,36.16])],undefined);
+for(let i=0;i<20;i++)e.savePointLabel([-80,i],'Place '+i);assert.equal(Object.keys(e.readTrip().pointLabels).length,12);
+console.log('PASS: selected names persist, moved points do not reuse old names, label cache bounded');

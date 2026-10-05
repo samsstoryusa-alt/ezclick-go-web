@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useId,useState} from 'react';
+import {readTrip,savePointLabel,pointLabelKey} from './weather-trip-storage';
 import type {RoutePoint} from './road-route';
 import {useWeatherLanguage} from './weather-language';
 import {parsePlaces,parseZipPlaces,type SearchPlace} from './route-search-data';
@@ -10,6 +11,7 @@ export default function RoutePlaceSearch({open,points,disabled,onChoose}:{open:b
  const {t}=useWeatherLanguage(),id=useId();
  const [focus,setFocus]=useState<0|1|null>(null),[query,setQuery]=useState(''),[results,setResults]=useState<SearchPlace[]>([]),[status,setStatus]=useState(''),[pending,setPending]=useState(false),[highlight,setHighlight]=useState(-1);
  const [chosen,setChosen]=useState<Array<SearchPlace|null>>([null,null]);
+ const [labels,setLabels]=useState<Record<string,string>>(()=>readTrip()?.pointLabels??{});
  const expanded=open&&focus!==null;
  useEffect(()=>{
   if(!expanded)return;
@@ -33,8 +35,8 @@ export default function RoutePlaceSearch({open,points,disabled,onChoose}:{open:b
   },Math.max(650,1200-(Date.now()-lastRequest)));
   return()=>{live=false;clearTimeout(timer);clearTimeout(timeout);controller.abort();};
  },[query,expanded,focus]);
- const select=(place:SearchPlace)=>{if(focus===null||pending||disabled)return;const index=focus;setChosen(old=>old.map((v,i)=>i===index?place:v));setFocus(null);setQuery('');onChoose(index,place);};
- const shown=(index:0|1)=>{const p=points[index],c=chosen[index];return p?(c&&c.point[0]===p[0]&&c.point[1]===p[1]?c.label:`${p[1].toFixed(4)}, ${p[0].toFixed(4)}`):'';};
+ const select=(place:SearchPlace)=>{if(focus===null||pending||disabled)return;const index=focus;savePointLabel(place.point,place.label);setLabels(old=>({...old,[pointLabelKey(place.point)]:place.label}));setChosen(old=>old.map((v,i)=>i===index?place:v));setFocus(null);setQuery('');onChoose(index,place);};
+ const shown=(index:0|1)=>{const p=points[index],c=chosen[index];return p?(c&&c.point[0]===p[0]&&c.point[1]===p[1]?c.label:labels[pointLabelKey(p)]||t(index===0?'Point A · Start':'Point B · Finish')):'';};
  return <div className={`route-search-collapse ${open?'is-open':''}`} inert={!open} aria-hidden={!open}><div><section className={`route-place-search ${expanded?'is-searching':''}`} aria-label={t('Search route')}>
  {([0,1] as const).map(index=><label className="route-search-field" key={index}><b>{index===0?'A':'B'}</b><input type="text" role="combobox" autoComplete="off" maxLength={160} disabled={disabled} aria-label={t(index===0?'From':'To')} aria-expanded={expanded&&focus===index} aria-controls={id} aria-autocomplete="list" aria-activedescendant={focus===index&&highlight>=0?`${id}-${highlight}`:undefined} placeholder={t(index===0?'From · city, ZIP or address':'To · city, ZIP or address')} value={focus===index?query:shown(index)} onFocus={()=>{if(focus!==index){setFocus(index);setQuery('');setResults([]);setStatus('Type at least 3 characters');setPending(false);setHighlight(-1);}}} onChange={e=>{setQuery(e.target.value);const enough=e.target.value.trim().length>=3;setPending(enough);setStatus(enough?'Searching…':'Type at least 3 characters');if(!enough)setResults([]);setHighlight(-1);}} onKeyDown={e=>{if(e.key==='Escape'){setFocus(null);e.currentTarget.blur();}if(!pending&&results.length&&(e.key==='ArrowDown'||e.key==='ArrowUp')){e.preventDefault();setHighlight(h=>(h+(e.key==='ArrowDown'?1:-1)+results.length)%results.length);}if(e.key==='Enter'){e.preventDefault();if(!pending&&highlight>=0&&results[highlight])select(results[highlight]);}}}/></label>)}
  <div className={`route-search-results-collapse ${expanded?'is-open':''}`} inert={!expanded} aria-hidden={!expanded}><div><div className="route-search-results" aria-busy={pending}>
