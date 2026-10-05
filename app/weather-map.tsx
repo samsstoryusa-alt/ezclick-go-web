@@ -108,6 +108,13 @@ export default function WeatherMap() {
   const [terrainError, setTerrainError] = useState(false);
   const [locating,setLocating]=useState(false);
   const [locationMessage,setLocationMessage]=useState('');
+  const [locationNoticeVisible,setLocationNoticeVisible]=useState(false);
+  const [locationSucceeded,setLocationSucceeded]=useState(false);
+  useEffect(()=>{
+    if(!locationSucceeded||!locationNoticeVisible||locating)return;
+    const timer=window.setTimeout(()=>setLocationNoticeVisible(false),2500);
+    return()=>window.clearTimeout(timer);
+  },[locationSucceeded,locationNoticeVisible,locating,locationMessage]);
   const [attempt, setAttempt] = useState(0);
   const globeDrag = useRef<{id: number; x: number; y: number; bearing: number; pitch: number} | null>(null);
   const globeFrame=useRef(0);
@@ -330,11 +337,13 @@ export default function WeatherMap() {
   function locateMe() {
     const map=mapRef.current;
     if(!map||!ready||locating)return;
+    setLocationNoticeVisible(true);setLocationSucceeded(false);
     if(!navigator.geolocation){setLocationMessage('Location is not supported by this browser.');return;}
     setLocating(true);setLocationMessage('Finding your location…');
     const found=(position:GeolocationPosition)=>{
       if(mapRef.current!==map)return;
       const {longitude,latitude,accuracy}=position.coords;
+      setLocationSucceeded(true);setLocationNoticeVisible(true);
       setLocating(false);
       map.flyTo({center:[longitude,latitude],zoom:accuracy>5000?10:13,duration:window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:1400});
       setLocationMessage(accuracy>1000?'Approximate location · '+Math.round(accuracy/1000)+' km accuracy':'Your location · about '+Math.max(1,Math.round(accuracy))+' m accuracy');
@@ -381,7 +390,7 @@ export default function WeatherMap() {
           </button>
 
         </div>
-        {locationMessage&&<div className="location-feedback" role="status"><span>{locationMessage}</span>{!locating&&<button type="button" aria-label="Dismiss location message" onClick={()=>setLocationMessage('')}>×</button>}</div>}
+        <div className={`location-feedback ${locationNoticeVisible?"is-visible":""}`} role="status" aria-hidden={!locationNoticeVisible} inert={!locationNoticeVisible}><span>{locationMessage}</span>{!locating&&<button type="button" aria-label="Dismiss location message" onClick={()=>setLocationNoticeVisible(false)}>×</button>}</div>
       </div>
       <div className="weather-corner-globe">
         <span className="globe-north">N</span>

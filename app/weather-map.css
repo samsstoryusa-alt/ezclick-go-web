@@ -215,3 +215,7 @@
 .weather-site-menu.is-open nav{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0);transition-delay:0s}
 .weather-site-menu nav a{transition:background-color .3s ease,color .3s ease}
 @media(prefers-reduced-motion:reduce){.weather-site-menu nav,.weather-site-menu-toggle,.weather-site-menu nav a{transition:none;transform:none}}
+
+.location-feedback{opacity:0;visibility:hidden;pointer-events:none;transform:translateY(5px);transition:opacity .4s ease,transform .4s ease,visibility 0s .4s}
+.location-feedback.is-visible{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition-delay:0s}
+@media(prefers-reduced-motion:reduce){.location-feedback{transition:none;transform:none}}
