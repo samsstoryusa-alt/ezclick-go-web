@@ -19,8 +19,11 @@ p.seek(2);assert.equal(position,2);p.replace([canvas(),canvas()],1);assert.equal
 p.play(true);map.isMoving=()=>true;
 const beforeDrag=updates;
 for(const [id,fn] of [...queue]){queue.delete(id);fn(1100);}
-assert.equal(updates,beforeDrag,'hold terrain image uploads during camera gestures');
+assert.ok(updates>beforeDrag,'precipitation must keep updating during camera gestures');
 assert.ok(queue.size>0,'timeline continues while camera moves');
+const dragStart=updates;
+for(let i=0;i<60;i++){for(const [id,fn] of [...queue]){queue.delete(id);fn(1200+i*1000/60);}}
+assert.ok(updates-dragStart>=19&&updates-dragStart<=22,'moving raster cadence stays near 20 fps');
 map.isMoving=()=>false;
 events.get('moveend')();
 assert.ok(updates>beforeDrag,'publish latest frame immediately after camera settles');

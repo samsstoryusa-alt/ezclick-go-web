@@ -1,0 +1,33 @@
+Standalone weather build — 2026-10-04
+
+Commands:
+ npm run dev:weather
+ npm run build:weather
+ node scripts/check-weather-build.mjs
+ npm run preview:weather
+
+Preview: http://127.0.0.1:5192/?demo=nashville-jacksonville
+The opt-in demo preselects public city-center endpoints, not a user's location.
+Truck settings must be confirmed and Build route clicked. The result is real routing/weather, not canned data.
+
+Output: dist-weather (independent from dist-pages).
+Entry: weather-app/index.html, weather-app/main.tsx, weather-app/base.css.
+WeatherMap and its route, wind, precipitation and map components remain shared source.
+No Page/VersionA/site-details/pricing/mobile-tour modules may enter this build; a build-time guard checks it.
+Only logo, favicon and six shared fonts are copied from public; landing-page media is excluded.
+Terms have a physical index entry for direct navigation and return to the local map.
+The weather header Home goes to this application's root; the terms logo still links to the company website intentionally.
+
+Dependencies:
+ MapLibre and its worker: bundled map engine.
+ /trip-api -> local tunnel 8767 during preview; existing same-origin Caddy proxy in production.
+ /weather-types -> local tunnel 8766 during preview; existing Caddy proxy in production.
+ NOAA/NWS: route arrival forecasts via server.
+ NOAA GFS: precipitation/wind through existing collector.
+ Open-Meteo: current point weather, direct browser request; commercial access decision outstanding.
+ OpenFreeMap / OpenStreetMap / Mapterhorn: external map/terrain sources, provider review outstanding.
+
+Both build commands passed. Route sampling and forecast-symbol tests passed.
+Browser confirmed Nashville–Jacksonville with 14/14 forecast points using standalone proxy.
+No public deployment performed. This is a separate build target in the existing repository, not a separately migrated repository/backend or store-ready app.
+The current deployment instructions still refer to dist-pages; do not publish those accidentally. A future weather release should stage dist-weather contents in a new release directory, verify APIs, then use existing rollback procedure.

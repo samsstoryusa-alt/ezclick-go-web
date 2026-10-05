@@ -1,0 +1,17 @@
+/* Only the map-tapped mobile hint; position follows the map without CSS lag. */
+.route-forecast-hint.is-mobile-hint{width:210px;height:110px;min-height:110px;grid-template-rows:32px 25px 17px;gap:6px;padding:8px 10px;animation:none;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 280ms ease-out,visibility 0s 280ms}
+.route-forecast-hint.is-mobile-hint.is-visible{opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s}
+.route-forecast-hint.is-mobile-hint[data-in-view=false]{opacity:0;visibility:hidden;pointer-events:none}
+.route-forecast-hint.is-mobile-hint .hint-heading{gap:7px;min-width:0}
+.route-forecast-hint.is-mobile-hint .hint-heading>.forecast-symbol{width:27px;height:27px}
+.route-forecast-hint.is-mobile-hint .hint-heading>span{min-width:0}
+.route-forecast-hint.is-mobile-hint .hint-heading strong{font-size:11px;line-height:15px}
+.route-forecast-hint.is-mobile-hint .hint-time{font-size:9px;line-height:13px}
+.route-forecast-hint.is-mobile-hint .hint-time small{font-size:8px}
+.route-forecast-hint.is-mobile-hint .hint-weather{font-size:11px;line-height:13px;gap:5px}
+.route-forecast-hint.is-mobile-hint .hint-condition{max-height:26px;-webkit-line-clamp:2}
+.route-forecast-hint.is-mobile-hint .hint-weather b{font-size:14px}
+.route-forecast-hint.is-mobile-hint .hint-wind{padding-top:3px;font-size:9px;gap:4px}
+@media(prefers-reduced-motion:reduce){.route-forecast-hint.is-mobile-hint{transition:none}}
+
+.route-forecast-hint.is-mobile-hint .hint-distance{margin-left:auto;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:8px;font-weight:400;color:#9db9c7;flex:none}

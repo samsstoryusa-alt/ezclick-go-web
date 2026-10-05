@@ -13,7 +13,11 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "build:pages": "vite build --config vite.pages.config.ts && node scripts/pages-routes.mjs",
-    "preview:pages": "vite preview --config vite.pages.config.ts"
+    "preview:pages": "vite preview --config vite.pages.config.ts",
+    "check:weather": "tsc -p tsconfig.weather.json && node scripts/check-weather-request.mjs && node scripts/check-weather-trip-storage.mjs && node scripts/check-route-lifecycle.mjs && node scripts/check-route-timing.mjs && node scripts/check-forecast-symbols.mjs",
+    "dev:weather": "vite --config vite.weather.config.ts",
+    "build:weather": "vite build --config vite.weather.config.ts && node scripts/weather-assets.mjs",
+    "preview:weather": "vite preview --config vite.weather.config.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

@@ -47,14 +47,13 @@ export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], on
   // ImageSource's public updateImage path invalidates all draped terrain tiles.
   // CanvasSource updates only invalidate its canonical tile in MapLibre 6.11.
   function publish() {
-    // Keep the last draped frame while the camera moves, avoiding terrain-tile rebuilds.
-    if(map.isMoving()||map.getContainer().dataset.globeRotating)return;
+    // Continue updating the geographic layer during camera gestures.
     source.updateImage({image:canvas});map.triggerRepaint();
   }
   const resumePublish=()=>publish();
   map.on('moveend',resumePublish);
   publish();
-  const frameInterval=1000/30;
+
   let lastDraw:number|null=null;
   function tick(now:number) {
     raf=0;
@@ -62,6 +61,8 @@ export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], on
     if(playing){const elapsed=last?Math.min(now-last,100):0;onSmoothPosition?.(Math.min((position+elapsed*images.length/CYCLE_MS)%images.length,images.length-1));}
     // Preserve the frame phase: resetting to now loses fractional display time
     // and turns a 30 fps target into uneven 20 fps on a 60 Hz display.
+    // Terrain uploads cost more during movement; retain motion at 20 fps, idle at 30.
+    const frameInterval=1000/((map.isMoving()||map.getContainer().dataset.globeRotating)?20:30);
     if(lastDraw===null) lastDraw=now;
     else {
       const steps=Math.floor((now-lastDraw+0.01)/frameInterval);

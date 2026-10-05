@@ -52,3 +52,6 @@ next-env.d.ts
 *.tsbuildinfo
 __pycache__/
 *.pyc
+
+# Standalone weather build
+/dist-weather/

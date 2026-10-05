@@ -1,4 +1,6 @@
 "use client";
+import {WindGradient} from './weather-legend';
+import type {WeatherUnits} from './weather-units';
 import {createPrecipMotion} from './precip-motion';
 import {useEffect,useRef,useState} from 'react';
 import type {Map as LibreMap} from 'maplibre-gl';
@@ -7,9 +9,10 @@ import {typeServiceBase} from './precip-types';
 import {enhancePrecipitation} from './precip-appearance';
 import {forecastWindow,type ForecastFrame} from './forecast-time';
 
-export default function RadarControls({map,ready,onTimeChange}:{map:LibreMap|null;ready:boolean;onTimeChange:(time:number|null)=>void}) {
+export default function RadarControls({map,ready,onTimeChange,units}:{units:WeatherUnits;map:LibreMap|null;ready:boolean;onTimeChange:(time:number|null)=>void}) {
  const motionPreview=typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('motion')==='1';
  const [motionReady,setMotionReady]=useState(false);
+ const [contentVisible,setContentVisible]=useState(true);
  const [enabled,setEnabled]=useState(true),[frames,setFrames]=useState<number[]>([]);
  const [index,setIndex]=useState(0),[playing,setPlaying]=useState(false),[opacity,setOpacity]=useState(.65);
  const [status,setStatus]=useState('Loading 24-hour forecast…'),[failed,setFailed]=useState(false),[attempt,setAttempt]=useState(0);
@@ -90,10 +93,11 @@ export default function RadarControls({map,ready,onTimeChange}:{map:LibreMap|nul
  const time=frames.length?frames[a]+(frames[b]-frames[a])*(index-a):0;
  useEffect(()=>{onTimeChange(enabled&&frames.length?time:null);},[enabled,frames.length,time,onTimeChange]);
  const reset=()=>{setPlaying(false);setFrames([]);setFailed(false);setStatus('Loading 24-hour forecast…');};
+ useEffect(()=>{if(enabled)return;const timer=setTimeout(()=>{setContentVisible(false);setFrames([]);setPlaying(false);setFailed(false);setStatus('Loading 24-hour forecast…');},350);return()=>clearTimeout(timer);},[enabled]);
  const stale=run>0&&clock-run>18*3600000;
- return <div className="weather-radar-controls">
-  <button type="button" className="radar-toggle" disabled={!ready} aria-pressed={enabled} onClick={()=>{setEnabled(v=>!v);reset();}}>Precipitation: {enabled?'On':'Off'}</button>
-  {enabled&&<section className="radar-player" aria-label="Precipitation settings">
+ return <div className={`weather-radar-controls ${enabled?'is-weather-enabled':'is-weather-disabled'}`}>
+  <button type="button" className="radar-toggle weather-precip-toggle" disabled={!ready} aria-label="Weather precipitation layer" aria-pressed={enabled} onClick={()=>{if(!enabled){reset();setContentVisible(true);}setEnabled(v=>!v);}}><span className="weather-layer-label-full">Precipitation</span><span className="weather-layer-label-short">Weather</span>: {enabled?'On':'Off'}</button>
+  {contentVisible&&<section inert={!enabled} aria-hidden={!enabled} className="radar-player" aria-label="Precipitation settings">
    {status&&<p role={failed?'alert':'status'}>{status}</p>}
    {failed&&<button type="button" onClick={()=>{reset();setAttempt(v=>v+1);}}>Retry forecast</button>}
    {!!frames.length&&<>
@@ -104,10 +108,11 @@ export default function RadarControls({map,ready,onTimeChange}:{map:LibreMap|nul
    </>}
    <small><a href="https://www.ncei.noaa.gov/products/weather-climate-models/global-forecast" target="_blank" rel="noreferrer">NOAA GFS · model forecast</a></small>
   </section>}
-  {enabled&&!!frames.length&&<section className="radar-player radar-timeline" aria-label="Weather forecast timeline">
+  {contentVisible&&!!frames.length&&<section inert={!enabled} aria-hidden={!enabled} className="radar-player radar-timeline" aria-label="Weather forecast timeline">
    <div className="radar-player-heading"><strong>{stale?'Outdated forecast':'Weather Forecast'} · 24h</strong><time dateTime={new Date(time).toISOString()}>{new Date(time).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})} local</time></div>
    <div className="radar-player-row"><button type="button" aria-label={playing?'Pause forecast animation':'Play forecast animation'} onClick={()=>{player.current?.play(!playing);setPlaying(!playing);}}>{playing?'Pause':'Play'}</button><input ref={timeline} aria-label="Forecast time" type="range" step=".001" min={0} max={frames.length-1} defaultValue={index} onChange={e=>{setPlaying(false);player.current?.seek(Number(e.target.value));}}/><button type="button" onClick={()=>{setPlaying(false);player.current?.seek(0);}}>Now</button></div>
    <div className="radar-history-span"><span>Now</span><span>+6h</span><span>+12h</span><span>+18h</span><span>+24h</span></div>
+   <div className="mobile-precip-intensity" aria-label="Precipitation intensity from light to heavy"><div className="precip-intensity-bars"><span><span>Rain<small>Light → Heavy</small></span><i className="precip-rain-gradient" aria-hidden="true"/></span><span><span>Wind</span><WindGradient units={units}/></span></div></div>
   </section>}
  </div>;
 }

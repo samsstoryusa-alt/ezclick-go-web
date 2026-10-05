@@ -1,0 +1,109 @@
+/* A compact mobile presentation; desktop card/list styles stay unchanged. */
+.has-mobile-carousel .route-weather-title,.has-mobile-carousel .route-mobile-brief,.has-mobile-carousel .route-forecast-details{display:none!important}
+.route-mobile-carousel{height:178px;min-height:178px;width:100%;min-width:0;text-align:left}
+.mobile-forecast-status{height:24px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;color:#9bbaca;min-width:0}
+.mobile-forecast-status>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.route-sheet .mobile-forecast-status>button{padding:0 5px;min-height:20px;font-size:10px;flex:none}
+.mobile-forecast-viewport{height:112px;position:relative;overflow:hidden;touch-action:pan-y;isolation:isolate;border-radius:12px}
+.mobile-forecast-card{position:absolute;inset:0;box-sizing:border-box;border:1px solid #7197ae44;border-left:3px solid;border-radius:12px;background:#102536;padding:8px 10px;opacity:0;visibility:hidden;transition:opacity 300ms ease-out,transform 320ms ease-out,visibility 0s 320ms;pointer-events:none}
+.mobile-forecast-card.is-current{opacity:1;visibility:visible;transition-delay:0s;pointer-events:auto}
+.mobile-forecast-card.is-current.is-refreshing{opacity:.58}
+.mobile-forecast-place{display:flex;align-items:center;gap:8px;height:40px;min-width:0}
+.mobile-forecast-place>div{flex:1;min-width:0}
+.mobile-forecast-place strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:#e4f2f7;line-height:20px}
+.mobile-forecast-place span{display:block;font-size:10px;color:#abc8d6;line-height:15px;white-space:nowrap}
+.mobile-forecast-place>b{font-size:18px;color:#e4f2f7;flex:none}
+.mobile-forecast-place>svg,.mobile-forecast-place>.weather-symbol{flex:none}
+.mobile-forecast-condition{height:26px;display:flex;align-items:center;font-size:12px;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#d7eaf3}
+.mobile-forecast-wind{height:28px;border-top:1px solid #7197ae33;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;text-align:center;gap:8px;font-size:14px;color:#c8dfe9;white-space:nowrap}
+.mobile-forecast-wind>span:last-child{margin-left:0}
+.mobile-forecast-placeholder{height:112px;border:1px solid #7197ae44;border-radius:12px;display:grid;place-items:center;font-size:12px;color:#abc8d6;box-sizing:border-box}
+.mobile-checkpoint-rail{position:relative;display:flex;gap:5px;height:42px;align-items:center;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;touch-action:pan-x;scrollbar-width:none;user-select:none;-webkit-user-select:none}
+.mobile-checkpoint-rail::-webkit-scrollbar{display:none}
+.route-sheet .mobile-checkpoint-rail>button{flex:0 0 40px;min-height:40px;height:40px;display:flex;align-items:center;justify-content:center;gap:5px;padding:0;font-size:11px;border:1px solid #7197ae44;border-radius:10px;background:#102536;color:#d5eff5;transition:background-color 280ms,border-color 280ms,box-shadow 280ms;transform:none}
+.route-sheet .mobile-checkpoint-rail>button[aria-pressed=true]{background:#183f4b;border-color:#88ddec;box-shadow:inset 0 0 8px #88ddec12}
+.mobile-checkpoint-rail i{width:5px;height:5px;border-radius:50%;flex:none}
+.mobile-forecast-viewport:focus-visible{outline:2px solid #88ddec;outline-offset:2px}
+.route-sheet .has-mobile-carousel>.route-timing-toggle{min-height:42px;height:42px;padding:4px 7px;margin:0 0 3px}
+.has-mobile-carousel .route-departure-copy strong{font-size:11px;line-height:14px}.has-mobile-carousel .route-departure-copy small{font-size:12px;line-height:15px}.has-mobile-carousel .route-departure-copy{gap:0;overflow:hidden}.has-mobile-carousel .route-departure-copy small{white-space:nowrap;text-overflow:ellipsis;overflow:hidden;overflow-wrap:normal}
+@media(prefers-reduced-motion:reduce){.mobile-forecast-card{transition:none;transform:none!important}.route-sheet .mobile-checkpoint-rail>button{transition:none}}
+
+.route-sheet .has-mobile-carousel{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:45px 178px}
+.has-mobile-carousel>.route-timing-toggle{grid-area:1/1}
+.has-mobile-carousel>.route-mobile-carousel,.has-mobile-carousel>.route-options-collapse{grid-area:2/1;min-width:0}
+.has-mobile-carousel>.route-mobile-carousel{opacity:1;visibility:visible;transform:translateY(0);transition:opacity 300ms ease-out,transform 320ms ease-out,visibility 0s}
+.has-mobile-carousel.is-timing-open>.route-mobile-carousel{opacity:0;visibility:hidden;transform:translateY(5px);transition-delay:0s,0s,320ms}
+.route-sheet .has-mobile-carousel>.route-options-collapse{display:block;height:178px;max-height:178px;overflow:hidden;opacity:0;visibility:hidden;transform:translateY(5px);transition:opacity 300ms ease-out,transform 320ms ease-out,visibility 0s 320ms}
+.route-sheet .has-mobile-carousel>.route-options-collapse.is-expanded{opacity:1;visibility:visible;transform:translateY(0);transition-delay:0s}
+.has-mobile-carousel>.route-options-collapse>div{height:178px;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+.has-mobile-carousel .route-timing{margin:0 0 8px}
+@media(prefers-reduced-motion:reduce){.has-mobile-carousel>.route-mobile-carousel,.route-sheet .has-mobile-carousel>.route-options-collapse{transition:none;transform:none}}
+
+/* Make trip totals and wind readable without increasing the fixed panel height. */
+.mobile-forecast-status>.mobile-route-totals{display:flex;align-items:center;justify-content:center;gap:8px;color:#dceef6;overflow:visible;line-height:20px}
+.mobile-route-totals>strong{font-size:15px;font-weight:650;font-variant-numeric:tabular-nums}
+.mobile-route-totals>span{font-size:12px;color:#8aaebb}
+.mobile-route-totals>small{font-size:11px;color:#9bbaca;margin-left:4px;font-variant-numeric:tabular-nums}
+.mobile-forecast-wind>svg{width:15px;height:15px;flex:none}
+.mobile-forecast-wind>span:last-child{font-size:12px;color:#abc8d6}
+@media(hover:hover) and (pointer:fine){.mobile-checkpoint-rail{cursor:grab}.mobile-checkpoint-rail:active{cursor:grabbing}}
+
+/* Approved arrival hierarchy; keep the complete carousel at 184px. */
+.mobile-forecast-place .mobile-forecast-arrival{display:flex;align-items:baseline;gap:5px;min-width:0;line-height:18px;overflow:hidden}
+.mobile-forecast-place .mobile-forecast-arrival>span{font-size:12px;line-height:18px;color:#c5dce7;flex:none}
+.mobile-forecast-arrival>time{font-size:13px;font-weight:650;color:#e2f1f6;flex:none}
+.mobile-forecast-arrival>small{font-size:10px;color:#95b5c5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mobile-forecast-wind-reading{display:flex;align-items:center;justify-content:center;gap:5px;min-width:0}
+.mobile-forecast-wind-reading>svg{width:15px;height:15px;flex:none}
+.mobile-forecast-wind-reading>span{overflow:hidden;text-overflow:ellipsis}
+.mobile-forecast-arrival>.mobile-arrival-date{font-size:12px;font-weight:400;color:#c5dce7}
+.mobile-forecast-arrival>small:first-child{flex:none}
+.mobile-forecast-arrival>small:last-child{min-width:0}
+
+/* Separate departure lines and balance weather content within the fixed mobile panel. */
+.route-sheet .has-mobile-carousel .route-departure-copy{display:flex;flex-direction:column;justify-content:center;gap:2px;min-width:0;overflow:hidden}
+.route-sheet .has-mobile-carousel .route-departure-copy strong{display:block;margin:0;font-size:11px;line-height:14px}
+.route-sheet .has-mobile-carousel .route-departure-copy small{display:block;margin:0;font-size:12px;line-height:16px}
+.has-mobile-carousel .route-departure-breaks{display:none}
+.mobile-forecast-card{padding:4px 10px 5px}
+.mobile-forecast-place{height:40px;gap:9px}
+.mobile-forecast-place>.forecast-symbol{display:flex;align-items:center;justify-content:center;flex:0 0 36px;width:36px;height:40px}
+.mobile-forecast-condition{height:29px}
+.mobile-forecast-wind{height:32px}
+
+/* Touch uses native momentum; mouse dragging uses the matching deceleration in React. */
+.mobile-checkpoint-rail{-webkit-overflow-scrolling:touch;scroll-snap-type:none}
+
+/* Keep the city, arrival and condition centred between balanced side columns. */
+.mobile-forecast-place{display:grid;grid-template-columns:40px minmax(0,1fr) 40px;gap:6px}
+.mobile-forecast-place>div{text-align:center}
+.mobile-forecast-place .mobile-forecast-arrival{justify-content:center;gap:3px}
+.mobile-forecast-place>b{justify-self:end}
+.mobile-forecast-condition{justify-content:center;text-align:center}
+
+/* Edge cues stay fixed while checkpoints scroll beneath them. */
+.mobile-checkpoint-rail-frame{position:relative;height:42px;min-width:0;isolation:isolate}
+.mobile-checkpoint-rail-frame::before,.mobile-checkpoint-rail-frame::after{content:'';position:absolute;z-index:2;top:3px;bottom:3px;width:18px;pointer-events:none;opacity:0;transition:opacity .35s ease;border-radius:9px}
+.mobile-checkpoint-rail-frame::before{left:0;background:radial-gradient(ellipse at left center,#88ddec99 0%,#70d4ed38 35%,#70d4ed00 75%)}
+.mobile-checkpoint-rail-frame::after{right:0;background:radial-gradient(ellipse at right center,#88ddec99 0%,#70d4ed38 35%,#70d4ed00 75%)}
+.mobile-checkpoint-rail-frame.has-more-left::before,.mobile-checkpoint-rail-frame.has-more-right::after{opacity:.5}
+.mobile-checkpoint-rail-frame.is-scrolling.has-more-left::before,.mobile-checkpoint-rail-frame.is-scrolling.has-more-right::after{opacity:1}
+@media(prefers-reduced-motion:reduce){.mobile-checkpoint-rail-frame::before,.mobile-checkpoint-rail-frame::after{transition:none}.mobile-checkpoint-rail-frame.is-scrolling.has-more-left::before,.mobile-checkpoint-rail-frame.is-scrolling.has-more-right::after{opacity:.5}}
+
+/* Compact route card: retain type sizes and full-height checkpoint touch targets. */
+.route-sheet .has-mobile-carousel{grid-template-rows:40px 168px}
+.route-sheet .has-mobile-carousel>.route-timing-toggle{height:38px;min-height:38px;padding:2px 7px;margin-bottom:2px}
+.route-mobile-carousel{height:168px;min-height:168px}
+.mobile-forecast-viewport,.mobile-forecast-placeholder{height:100px}
+.mobile-forecast-card{padding:3px 10px}
+.mobile-forecast-place{height:38px}
+.mobile-forecast-place>.forecast-symbol{height:38px}
+.mobile-forecast-condition{height:23px}
+.mobile-forecast-wind{height:31px}
+.mobile-checkpoint-rail,.mobile-checkpoint-rail-frame{height:44px}
+.route-sheet .mobile-checkpoint-rail>button{position:relative;isolation:isolate;height:44px;min-height:44px;background:transparent;border:0;box-shadow:none;border-radius:9px}
+.route-sheet .mobile-checkpoint-rail>button::before{content:'';position:absolute;inset:6px 2px;z-index:-1;border:1px solid #7197ae44;border-radius:8px;background:#102536;transition:background-color 280ms,border-color 280ms,box-shadow 280ms}
+.route-sheet .mobile-checkpoint-rail>button[aria-pressed=true]{background:transparent;box-shadow:none}
+.route-sheet .mobile-checkpoint-rail>button[aria-pressed=true]::before{background:#183f4b;border-color:#88ddec;box-shadow:inset 0 0 8px #88ddec12}
+.route-sheet .has-mobile-carousel>.route-options-collapse,.has-mobile-carousel>.route-options-collapse>div{height:168px;max-height:168px}
+@media(prefers-reduced-motion:reduce){.route-sheet .mobile-checkpoint-rail>button::before{transition:none}}
