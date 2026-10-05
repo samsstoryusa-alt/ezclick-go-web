@@ -17,3 +17,14 @@
 
 .voice-route-drawer.is-suspended{opacity:0;visibility:hidden;transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .3s,visibility 0s .3s}
 @media(prefers-reduced-motion:reduce){.voice-route-drawer.is-suspended{transition:none}}
+
+/* Direct manipulation follows the pointer; easing resumes only on release. */
+.voice-route-drawer.is-dragging{transform:translateX(var(--voice-offset));transition:none}
+.is-dragging .voice-handle-surface{width:calc(24px + 20px * var(--voice-progress));transition:none}
+.is-dragging .voice-drawer-content{opacity:var(--voice-progress);visibility:visible;transition:none;pointer-events:none}
+.is-dragging .voice-handle-mic{opacity:calc(1 - var(--voice-progress));transition:none}
+.is-dragging .voice-handle-chevron{opacity:var(--voice-progress);transition:none}
+.is-dragging .voice-drawer-notice{opacity:0;visibility:hidden;transition:none}
+.voice-drawer-handle{cursor:grab;user-select:none;-webkit-user-select:none}
+.voice-drawer-handle:active{cursor:grabbing}
+.voice-drawer-notice{top:auto;bottom:64px}
