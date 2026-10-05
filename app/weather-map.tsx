@@ -29,6 +29,7 @@ export default function WeatherMap() {
   const embeddedTrip = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("embed") === "trip";
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LibreMap | null>(null);
+  const scaleRef=useRef<{setUnit:(unit:'imperial'|'metric')=>void}|null>(null);
   const [weatherTime,setWeatherTime]=useState<number|null>(null);
   const [mobileExpanded,setMobileExpanded]=useState(false);
   const [mobilePortrait,setMobilePortrait]=useState(()=>typeof window!=="undefined"&&matchMedia('(max-width:767px) and (orientation:portrait)').matches);
@@ -86,6 +87,7 @@ export default function WeatherMap() {
   const [mapVisible,setMapVisible]=useState(false);
   const windData=useWindFields(ready);
   const {units,toggle:toggleUnits}=useWeatherUnits();
+  useEffect(()=>{scaleRef.current?.setUnit(units==='us'?'imperial':'metric');},[units,ready]);
   const [radarMap, setRadarMap] = useState<LibreMap | null>(null);
   const [terrainReady, setTerrainReady] = useState(false);
   const [threeD, setThreeD] = useState(false);
@@ -131,7 +133,8 @@ export default function WeatherMap() {
         map.on('style.load',()=>{if(!disposed&&map)applyMapPalette(map);});
         map.on('move', () => {if (!disposed && map) setCamera(previous=>{const bearing=map!.getBearing(),pitch=map!.getPitch();return Math.abs(previous.bearing-bearing)<.05&&Math.abs(previous.pitch-pitch)<.05?previous:{bearing,pitch};});});
 
-        map.addControl(new lib.ScaleControl({unit: 'imperial'}), 'bottom-left');
+        const scale=new lib.ScaleControl({unit:'imperial'});scaleRef.current=scale;
+        map.addControl(scale,'bottom-left');
         map.addControl(new lib.AttributionControl({compact: false, customAttribution: '<a href="https://github.com/cwdaniel/RadrView" target="_blank" rel="noopener noreferrer">Wind animation: RadrView</a>'}), 'bottom-right');
         map.getCanvas().setAttribute('aria-label', 'Interactive EZCLICK map. Drag to move; use arrow keys to pan and plus or minus to zoom.');
         map.on('error', event => {
@@ -208,7 +211,7 @@ export default function WeatherMap() {
       }
     }
     void initialize();
-    return () => {disposed = true; window.clearTimeout(timeout); observer?.disconnect(); mapRef.current = null; map?.remove();disposeVegetation?.();};
+    return () => {disposed = true; window.clearTimeout(timeout); observer?.disconnect(); mapRef.current = null; scaleRef.current=null; map?.remove();disposeVegetation?.();};
   }, [attempt]);
 
   useEffect(() => {
@@ -349,6 +352,7 @@ export default function WeatherMap() {
     <header className="weather-map-header">
       <a className="weather-map-brand" href={platformUrl}><img src="/media/ezclick-go-logo.png" width="2166" height="726" alt="EZCLICK GO"/></a>
       <div><h1>Explore the road ahead</h1><p>Map & terrain preview</p></div>
+      <button type="button" className="weather-header-units" onClick={toggleUnits} aria-label={units==='us'?'Units: Fahrenheit and miles. Switch to Celsius and kilometers':'Units: Celsius and kilometers. Switch to Fahrenheit and miles'} title={units==='us'?'Switch to °C · km':'Switch to °F · mi'}><span>{units==='us'?'°F · mi':'°C · km'}</span></button>
       <details className="weather-site-menu"><summary>Menu</summary><nav aria-label="Site menu"><a href={platformUrl}>Home</a><a href="/terms">About &amp; weather disclaimer</a></nav></details>
     </header>
     <section className="weather-map-stage" aria-label="Map and terrain preview">
