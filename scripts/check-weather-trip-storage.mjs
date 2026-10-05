@@ -43,3 +43,10 @@ try{
  e.saveTrip({departure:''});assert.equal(e.readTrip().departure,'');
 }finally{if(originalTZ===undefined)delete process.env.TZ;else process.env.TZ=originalTZ;}
 console.log('PASS: legacy migration, timezone travel, DST repeated-hour instants, spring offset, leave-now mode');
+
+const clock=Date.parse('2026-10-05T23:12:00Z');
+assert.equal(e.currentDeparture('2026-10-05T17:45:00-04:00',clock),'');
+assert.equal(e.currentDeparture('2026-10-05T23:12:00Z',clock),'');
+assert.equal(e.currentDeparture('2026-10-06T08:00:00-04:00',clock),'2026-10-06T08:00:00-04:00');
+assert.equal(e.currentDeparture('',clock),'');assert.equal(e.currentDeparture('bad',clock),'');
+console.log('PASS: expired departure rolls to now, exact boundary, future plan preserved');

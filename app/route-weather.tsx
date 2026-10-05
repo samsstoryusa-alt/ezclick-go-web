@@ -8,7 +8,7 @@ import RouteForecastHint from './route-forecast-hint';
 import {weatherRequest,validForecastResponse} from './weather-request';
 import {useWeatherLanguage} from './weather-language';
 import DeparturePicker from './departure-picker';
-import {readTrip,saveTrip,departureZone as deviceDepartureZone} from './weather-trip-storage';
+import {readTrip,saveTrip,currentDeparture,departureZone as deviceDepartureZone} from './weather-trip-storage';
 import type {Map as LibreMap,ExpressionSpecification} from 'maplibre-gl';
 import {tripApi,type RoadRoute,type RoutePoint} from './road-route';
 import {type WeatherUnits,temperature} from './weather-units';
@@ -47,7 +47,7 @@ export default function RouteWeather({route,map,units,active,compactMobile=false
  const [warningFilter,setWarningFilter]=useState<string|null>(null);
  const [selected,setSelected]=useState<{key:string;routeKey:string;index:number}|null>(null);
  const [timingOpen,setTimingOpen]=useState(false),[infoOpen,setInfoOpen]=useState(false);
- const [departure,setDeparture]=useState(()=>readTrip()?.departure??''),[stops,setStops]=useState(()=>readTrip()?.stops??0),[attempt,retry]=useState(0),[now,setNow]=useState(Date.now),[result,setResult]=useState<{key:string;points:Forecast[];checkedAt:number}|null>(null),[error,setError]=useState(''),[loading,setLoading]=useState(false);
+ const [departure,setDeparture]=useState(()=>currentDeparture(readTrip()?.departure??'',Date.now())),[stops,setStops]=useState(()=>readTrip()?.stops??0),[attempt,retry]=useState(0),[now,setNow]=useState(Date.now),[result,setResult]=useState<{key:string;points:Forecast[];checkedAt:number}|null>(null),[error,setError]=useState(''),[loading,setLoading]=useState(false);
  const [departureZone,setDepartureZone]=useState(()=>readTrip()?.departureZone??deviceDepartureZone());
  useEffect(()=>{saveTrip({departure,departureZone,stops});},[departure,departureZone,stops]);
  const depart=departure?new Date(departure).getTime():now;
@@ -56,7 +56,16 @@ export default function RouteWeather({route,map,units,active,compactMobile=false
  const points=useMemo(()=>sampleRoute(route,depart,stops),[route,depart,stops]);
  const forecasts=result?.key===key?result.points:null;
  const displayedForecasts=forecasts??result?.points;
- useEffect(()=>{const t=setInterval(()=>{setNow(Date.now());retry(n=>n+1);},300000);return()=>clearInterval(t);},[]);
+ useEffect(()=>{
+  const refresh=()=>{const clock=Date.now();setDeparture(value=>currentDeparture(value,clock));setNow(clock);};
+  const visible=()=>{if(document.visibilityState==='visible')refresh();};
+  const initial=window.setTimeout(refresh,0);
+  const interval=window.setInterval(()=>{refresh();retry(n=>n+1);},300000);
+  const remaining=departure?Date.parse(departure)-Date.now():NaN;
+  const expiry=Number.isFinite(remaining)&&remaining>=0?window.setTimeout(refresh,Math.min(remaining+25,2147483647)):undefined;
+  window.addEventListener('focus',refresh);document.addEventListener('visibilitychange',visible);
+  return()=>{clearTimeout(initial);clearTimeout(expiry);clearInterval(interval);window.removeEventListener('focus',refresh);document.removeEventListener('visibilitychange',visible);};
+ },[route.key,departure]);
  useEffect(()=>{if(!active||!valid)return;const controller=new AbortController();const deadline=setTimeout(()=>controller.abort(),90000);const delay=setTimeout(()=>{setLoading(true);setError('');weatherRequest(tripApi()+'/weather',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({points}),signal:controller.signal}).then(v=>{if(!validForecastResponse(v,points.length))throw new Error('Incomplete forecast. Please try again.');const checked=v as {points:Forecast[];checkedAt:number};return {...checked,points:checked.points.map((p,i)=>({...p,...points[i]}))};}).then(v=>{if(!controller.signal.aborted)setResult({key,points:v.points,checkedAt:v.checkedAt});}).catch(e=>{if(!controller.signal.aborted&&!disposed)setError(e instanceof Error?e.message:'Forecast unavailable. Please try again.');else if(!disposed)setError('Forecast timed out. Try again.');}).finally(()=>{if(!disposed)setLoading(false);clearTimeout(deadline);});},450);let disposed=false;return()=>{disposed=true;clearTimeout(delay);clearTimeout(deadline);controller.abort();};},[key,active,valid,points]);
  useEffect(()=>{if(!map||!active)return;let painted:unknown=null;const apply=()=>{const source=map.getSource('ezclick-trip-route');if(!map.getLayer('ezclick-trip-line')||!source||source===painted)return;const stops:unknown[]=[];for(const p of forecasts??points.map(p=>({...p,level:'unknown' as const})))stops.push(p.mapFraction,colors[p.level]);const gradient=['interpolate',['linear'],['line-progress'],...stops] as ExpressionSpecification;if(JSON.stringify(map.getPaintProperty('ezclick-trip-line','line-gradient'))!==JSON.stringify(gradient))map.setPaintProperty('ezclick-trip-line','line-gradient',gradient);painted=source;};apply();map.on('style.load',apply);map.on('render',apply);return()=>{map.off('style.load',apply);map.off('render',apply);};},[map,active,forecasts,points]);
  const warningsOnly=warningFilter===key;

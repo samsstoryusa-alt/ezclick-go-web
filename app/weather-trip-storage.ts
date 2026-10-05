@@ -33,3 +33,9 @@ export function saveTrip(patch:Partial<Omit<SavedTrip,'version'>>){
  if(!standaloneWeather())return;
  try{localStorage.setItem(TRIP_STORAGE_KEY,JSON.stringify({...{points:defaultTripPoints(),confirmed:false,builtKey:null,departure:'',stops:0},...readTrip(),...patch,...(patch.departure!==undefined?{departure:normalizeDeparture(patch.departure)}:{}),version:1}));}catch{/* Storage can be blocked or full; the current trip remains usable. */}
 }
+
+// A past departure becomes rolling "leave now"; future plans keep their instant.
+export function currentDeparture(value:string,now:number):string{
+ const instant=Date.parse(value);
+ return value&&Number.isFinite(instant)&&instant>now?value:'';
+}
