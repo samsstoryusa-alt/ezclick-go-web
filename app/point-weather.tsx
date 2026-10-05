@@ -1,4 +1,5 @@
 "use client";
+import {useWeatherLanguage} from './weather-language';
 import {useEffect, useState} from 'react';
 import type {Map as LibreMap} from 'maplibre-gl';
 import PointPlace from './point-place';
@@ -20,6 +21,7 @@ function condition(code:number) {
   return 'Weather';
 }
 export default function PointWeather({map,ready,time,windFrames,units,onToggleUnits}:{map:LibreMap|null;ready:boolean;time:number|null;windFrames:WindFrame[];units:WeatherUnits;onToggleUnits:()=>void}) {
+  const {t,locale,dir}=useWeatherLanguage();
   const now=useWeatherClock();
   const [reading,setReading]=useState<Reading|null>(null);
   const [status,setStatus]=useState('Loading…');
@@ -67,13 +69,13 @@ export default function PointWeather({map,ready,time,windFrames,units,onToggleUn
   const label=current?condition(current.weather_code):'Weather';
   const center=map?.getCenter();
   const wind=center?sampleWind(windPair(windFrames,time??now,now),center.lng,center.lat):null;
-  return <section className="point-weather" aria-label="Current weather at map center" aria-busy={busy}>
-    <PointPlace map={map} ready={ready}/><div className="point-weather-heading"><strong>{time===null?'Now':'Selected time'}</strong><small>{status||(current?new Date(current.time*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+' local':'No data for this time')}</small></div>
+  return <section className="point-weather" aria-label={t('Current weather at map center')} aria-busy={busy}>
+    <PointPlace map={map} ready={ready}/><div className="point-weather-heading"><strong dir={dir}>{t(time===null?'Now':'Selected time')}</strong><small dir={dir}>{status?t(status):current?new Date(current.time*1000).toLocaleTimeString(locale,{hour:'2-digit',minute:'2-digit'})+' '+t('local'):t('No data for this time')}</small></div>
     <div className={`point-weather-values ${busy?'is-updating':''}`} aria-live="polite">
-      <div className="point-weather-row"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4a5 5 0 0 0-9 4M3 3l1 1M10 1v2M1 9h2M17 3l-1 1M7 19h11a4 4 0 0 0 0-8 6 6 0 0 0-11-1 4.5 4.5 0 0 0 0 9Z"/></svg><span>{label}</span><strong>{current?`${temperature(current.temperature_2m,units)} °${units==='us'?'F':'C'}`:'—'}</strong></div>
-      <div className="point-weather-row"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 8h14a3 3 0 1 0-3-3M2 12h18a2 2 0 1 1-2 2M2 16h8a3 3 0 1 1-3 3"/></svg><span>Wind</span><strong>{wind?`${windSpeed(wind.speed,units)} ${units==='us'?'mph':'km/h'} · ${directions[Math.round(wind.direction/45)%8]}`:'—'}</strong></div>
+      <div className="point-weather-row"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4a5 5 0 0 0-9 4M3 3l1 1M10 1v2M1 9h2M17 3l-1 1M7 19h11a4 4 0 0 0 0-8 6 6 0 0 0-11-1 4.5 4.5 0 0 0 0 9Z"/></svg><span dir={dir}>{t(label)}</span><strong dir="ltr">{current?`${temperature(current.temperature_2m,units)} °${units==='us'?'F':'C'}`:'—'}</strong></div>
+      <div className="point-weather-row"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 8h14a3 3 0 1 0-3-3M2 12h18a2 2 0 1 1-2 2M2 16h8a3 3 0 1 1-3 3"/></svg><span dir={dir}>{t('Wind')}</span><strong dir="ltr">{wind?`${windSpeed(wind.speed,units)} ${units==='us'?'mph':'km/h'} · ${directions[Math.round(wind.direction/45)%8]}`:'—'}</strong></div>
     </div>
-    <div className="weather-units-row"><span>Units</span><button type="button" className="weather-units-toggle" aria-label="US units: Fahrenheit and miles per hour" aria-pressed={units==='us'} onClick={onToggleUnits}><span className={units==='metric'?'is-selected':''}>°C · km/h</span><span className={units==='us'?'is-selected':''}>°F · mph</span></button></div>
-    <div className="point-weather-credit"><a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a><a href="https://www.ncei.noaa.gov/products/weather-climate-models/global-forecast" target="_blank" rel="noreferrer">Wind: NOAA GFS</a><span>Model estimate</span>{!busy&&!reading&&<button onClick={()=>setAttempt(n=>n+1)}>Retry</button>}</div>
+    <div className="weather-units-row"><span dir={dir}>{t('Units')}</span><button type="button" dir="ltr" className="weather-units-toggle" aria-label={t('US units: Fahrenheit and miles per hour')} aria-pressed={units==='us'} onClick={onToggleUnits}><span className={units==='metric'?'is-selected':''}>°C · km/h</span><span className={units==='us'?'is-selected':''}>°F · mph</span></button></div>
+    <div className="point-weather-credit"><a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a><a href="https://www.ncei.noaa.gov/products/weather-climate-models/global-forecast" target="_blank" rel="noreferrer">{t('Wind: NOAA GFS')}</a><span dir={dir}>{t('Model estimate')}</span>{!busy&&!reading&&<button dir={dir} onClick={()=>setAttempt(n=>n+1)}>{t('Retry')}</button>}</div>
   </section>;
 }

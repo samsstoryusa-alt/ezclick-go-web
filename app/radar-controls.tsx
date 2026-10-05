@@ -1,4 +1,5 @@
 "use client";
+import {useWeatherLanguage} from './weather-language';
 import {WindGradient} from './weather-legend';
 import type {WeatherUnits} from './weather-units';
 import {createPrecipMotion} from './precip-motion';
@@ -10,6 +11,7 @@ import {enhancePrecipitation} from './precip-appearance';
 import {forecastWindow,type ForecastFrame} from './forecast-time';
 
 export default function RadarControls({map,ready,onTimeChange,units}:{units:WeatherUnits;map:LibreMap|null;ready:boolean;onTimeChange:(time:number|null)=>void}) {
+ const {t,locale,dir}=useWeatherLanguage();
  const motionPreview=typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('motion')==='1';
  const [motionReady,setMotionReady]=useState(false);
  const [contentVisible,setContentVisible]=useState(true);
@@ -94,25 +96,27 @@ export default function RadarControls({map,ready,onTimeChange,units}:{units:Weat
  useEffect(()=>{onTimeChange(enabled&&frames.length?time:null);},[enabled,frames.length,time,onTimeChange]);
  const reset=()=>{setPlaying(false);setFrames([]);setFailed(false);setStatus('Loading 24-hour forecast…');};
  useEffect(()=>{if(enabled)return;const timer=setTimeout(()=>{setContentVisible(false);setFrames([]);setPlaying(false);setFailed(false);setStatus('Loading 24-hour forecast…');},350);return()=>clearTimeout(timer);},[enabled]);
+ const loadingProgress=status.match(/^Loading forecast (\d+\/\d+…)$/);
+ const statusLabel=loadingProgress?t('Loading forecast')+' '+loadingProgress[1]:t(status);
  const stale=run>0&&clock-run>18*3600000;
  return <div className={`weather-radar-controls ${enabled?'is-weather-enabled':'is-weather-disabled'}`}>
-  <button type="button" className="radar-toggle weather-precip-toggle" disabled={!ready} aria-label="Weather precipitation layer" aria-pressed={enabled} onClick={()=>{if(!enabled){reset();setContentVisible(true);}setEnabled(v=>!v);}}><span className="weather-layer-label-full">Precipitation</span><span className="weather-layer-label-short">Weather</span>: {enabled?'On':'Off'}</button>
-  {contentVisible&&<section inert={!enabled} aria-hidden={!enabled} className="radar-player" aria-label="Precipitation settings">
-   {status&&<p role={failed?'alert':'status'}>{status}</p>}
-   {failed&&<button type="button" onClick={()=>{reset();setAttempt(v=>v+1);}}>Retry forecast</button>}
+  <button type="button" dir={dir} className="radar-toggle weather-precip-toggle" disabled={!ready} aria-label={t('Weather precipitation layer')} aria-pressed={enabled} onClick={()=>{if(!enabled){reset();setContentVisible(true);}setEnabled(v=>!v);}}><span className="weather-layer-label-full">{t('Precipitation')}</span><span className="weather-layer-label-short">{t('Weather')}</span>: {t(enabled?'On':'Off')}</button>
+  {contentVisible&&<section inert={!enabled} aria-hidden={!enabled} className="radar-player" aria-label={t('Precipitation settings')}>
+   {status&&<p dir={dir} role={failed?'alert':'status'}>{statusLabel}</p>}
+   {failed&&<button type="button" dir={dir} onClick={()=>{reset();setAttempt(v=>v+1);}}>{t('Retry forecast')}</button>}
    {!!frames.length&&<>
-    <label className="radar-opacity">Layer strength<input aria-label="Radar layer strength" type="range" min=".3" max=".9" step=".001" value={opacity} onChange={e=>setOpacity(Number(e.target.value))}/></label>
-    <div className="precip-type-legend" aria-label="Precipitation types"><span><i style={{background:'#4bc982'}}/>Rain</span><span><i style={{background:'#c0a5f7'}}/>Snow</span></div>
-    <p className="precip-type-note">{motionPreview?(motionReady?'Motion preview · Gulf region':'Standard blend · motion unavailable'):'Forecast · US region · rain & snow'}</p>
-    <div className="radar-legend"><span>Weaker</span><i/><span>Stronger</span></div>
+    <label className="radar-opacity" dir={dir}>{t('Layer strength')}<input dir="ltr" aria-label={t('Radar layer strength')} type="range" min=".3" max=".9" step=".001" value={opacity} onChange={e=>setOpacity(Number(e.target.value))}/></label>
+    <div className="precip-type-legend" aria-label={t('Precipitation types')}><span><i style={{background:'#4bc982'}}/>{t('Rain')}</span><span><i style={{background:'#c0a5f7'}}/>{t('Snow')}</span></div>
+    <p className="precip-type-note" dir={dir}>{t(motionPreview?(motionReady?'Motion preview · Gulf region':'Standard blend · motion unavailable'):'Forecast · US region · rain & snow')}</p>
+    <div className="radar-legend" dir="ltr"><span dir={dir}>{t('Weaker')}</span><i/><span dir={dir}>{t('Stronger')}</span></div>
    </>}
-   <small><a href="https://www.ncei.noaa.gov/products/weather-climate-models/global-forecast" target="_blank" rel="noreferrer">NOAA GFS · model forecast</a></small>
+   <small><a href="https://www.ncei.noaa.gov/products/weather-climate-models/global-forecast" target="_blank" rel="noreferrer">{t('NOAA GFS · model forecast')}</a></small>
   </section>}
-  {contentVisible&&!!frames.length&&<section inert={!enabled} aria-hidden={!enabled} className="radar-player radar-timeline" aria-label="Weather forecast timeline">
-   <div className="radar-player-heading"><strong>{stale?'Outdated forecast':'Weather Forecast'} · 24h</strong><time dateTime={new Date(time).toISOString()}>{new Date(time).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})} local</time></div>
-   <div className="radar-player-row"><button type="button" aria-label={playing?'Pause forecast animation':'Play forecast animation'} onClick={()=>{player.current?.play(!playing);setPlaying(!playing);}}>{playing?'Pause':'Play'}</button><input ref={timeline} aria-label="Forecast time" type="range" step=".001" min={0} max={frames.length-1} defaultValue={index} onChange={e=>{setPlaying(false);player.current?.seek(Number(e.target.value));}}/><button type="button" onClick={()=>{setPlaying(false);player.current?.seek(0);}}>Now</button></div>
-   <div className="radar-history-span"><span>Now</span><span>+6h</span><span>+12h</span><span>+18h</span><span>+24h</span></div>
-   <div className="mobile-precip-intensity" aria-label="Precipitation intensity from light to heavy"><div className="precip-intensity-bars"><span><span>Rain<small>Light → Heavy</small></span><i className="precip-rain-gradient" aria-hidden="true"/></span><span><span>Wind</span><WindGradient units={units}/></span></div></div>
+  {contentVisible&&!!frames.length&&<section inert={!enabled} aria-hidden={!enabled} className="radar-player radar-timeline" aria-label={t('Weather forecast timeline')}>
+   <div className="radar-player-heading" dir={dir}><strong>{t(stale?'Outdated forecast':'Weather Forecast')} · {t('24h')}</strong><time dateTime={new Date(time).toISOString()}>{new Date(time).toLocaleString(locale,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})} {t('local')}</time></div>
+   <div className="radar-player-row" dir="ltr"><button type="button" dir={dir} aria-label={t(playing?'Pause forecast animation':'Play forecast animation')} onClick={()=>{player.current?.play(!playing);setPlaying(!playing);}}>{t(playing?'Pause':'Play')}</button><input dir="ltr" ref={timeline} aria-label={t('Forecast time')} type="range" step=".001" min={0} max={frames.length-1} defaultValue={index} onChange={e=>{setPlaying(false);player.current?.seek(Number(e.target.value));}}/><button type="button" dir={dir} onClick={()=>{setPlaying(false);player.current?.seek(0);}}>{t('Now')}</button></div>
+   <div className="radar-history-span" dir="ltr"><span dir={dir}>{t('Now')}</span><span dir={dir}>{t('+6h')}</span><span dir={dir}>{t('+12h')}</span><span dir={dir}>{t('+18h')}</span><span dir={dir}>{t('+24h')}</span></div>
+   <div className="mobile-precip-intensity" aria-label={t('Precipitation intensity from light to heavy')}><div className="precip-intensity-bars"><span><span dir={dir}>{t('Rain')}<small dir="ltr">{t('Light → Heavy')}</small></span><i className="precip-rain-gradient" aria-hidden="true"/></span><span><span dir={dir}>{t('Wind')}</span><WindGradient units={units}/></span></div></div>
   </section>}
  </div>;
 }

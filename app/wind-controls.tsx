@@ -1,4 +1,5 @@
 "use client";
+import {useWeatherLanguage} from './weather-language';
 // Particle trail approach adapted from RadrView, MIT, copyright 2026 RadrView Contributors.
 // License: public/licenses/radrview.txt. Camera projection and time sampling are EZCLICK adaptations.
 import {useEffect,useRef,useState} from 'react';
@@ -10,6 +11,7 @@ import {createWindVisibility} from './wind-visibility';
 import {weatherPerf} from './weather-perf';
 import {advectWind} from './wind-advection';
 export default function WindControls({map,ready,time,frames,status,units}:{map:LibreMap|null;ready:boolean;time:number|null;frames:WindFrame[];status:string;units:WeatherUnits}){
+ const {t,dir}=useWeatherLanguage();
  const now=useWeatherClock();
  const [enabled,setEnabled]=useState(true);
  const [visibility,setVisibility]=useState(.65);
@@ -62,5 +64,5 @@ export default function WindControls({map,ready,time,frames,status,units}:{map:L
   raf=requestAnimationFrame(tick);
   return()=>{cancelAnimationFrame(raf);canvas.remove();};
  },[map,ready,enabled,frames]);
- return <div className="wind-controls"><button type="button" className="radar-toggle weather-wind-toggle" disabled={!ready} aria-label="Wind layer" aria-pressed={enabled} onClick={()=>setEnabled(v=>!v)}>Wind: {enabled?'On':'Off'}</button>{enabled&&<small>{!frames.length?status:windPair(frames,time??now,now)?status:'No wind data for this time'}</small>}{enabled&&<div className="wind-appearance"><label className="radar-opacity">Wind visibility<input aria-label="Wind visibility" type="range" min="0.15" max="1" step="0.001" value={visibility} onChange={e=>setVisibility(Number(e.target.value))}/></label><div className="wind-speed-legend" aria-label={units==='us'?'Wind speed colors in miles per hour':'Wind speed colors in kilometres per hour'}>{WIND_COLORS.map((color,i)=><span key={color}><i style={{background:color}}/>{(units==='us'?['0–9','9–19','19–31','31+']:['0–15','15–30','30–50','50+'])[i]}</span>)}<b>{units==='us'?'≈ mph':'km/h'}</b></div></div>}</div>;
+ return <div className="wind-controls"><button type="button" dir={dir} className="radar-toggle weather-wind-toggle" disabled={!ready} aria-label={t('Wind layer')} aria-pressed={enabled} onClick={()=>setEnabled(v=>!v)}>{t('Wind')}: {t(enabled?'On':'Off')}</button>{enabled&&<small dir={dir}>{t(!frames.length?status:windPair(frames,time??now,now)?status:'No wind data for this time')}</small>}{enabled&&<div className="wind-appearance"><label className="radar-opacity" dir={dir}>{t('Wind visibility')}<input dir="ltr" aria-label={t('Wind visibility')} type="range" min="0.15" max="1" step="0.001" value={visibility} onChange={e=>setVisibility(Number(e.target.value))}/></label><div className="wind-speed-legend" dir="ltr" aria-label={t(units==='us'?'Wind speed colors in miles per hour':'Wind speed colors in kilometres per hour')}>{WIND_COLORS.map((color,i)=><span key={color}><i style={{background:color}}/>{(units==='us'?['0–9','9–19','19–31','31+']:['0–15','15–30','30–50','50+'])[i]}</span>)}<b>{units==='us'?'≈ mph':'km/h'}</b></div></div>}</div>;
 }

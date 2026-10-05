@@ -1,0 +1,30 @@
+.weather-site-menu nav{width:270px;box-sizing:border-box;max-height:calc(100dvh - 90px);overflow-y:auto;overscroll-behavior:contain}
+.weather-language-menu{border-top:1px solid #91cddd22;margin-top:3px;padding-top:3px}
+.weather-language-toggle{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:10px 12px;border:0;border-radius:8px;background:transparent;color:#d4e3ef;cursor:pointer;text-align:start;transition:background-color .3s,color .3s}
+.weather-language-toggle>span:nth-child(2){margin-inline-start:auto;font-size:11px;color:#9bc0cf}
+.weather-language-toggle>span:last-child{color:#91d7e7}
+.weather-language-toggle:hover,.weather-language-toggle:focus-visible{background:#20394e;color:#a2e9f7}
+.weather-language-collapse{display:grid;grid-template-rows:0fr;opacity:0;visibility:hidden;transition:grid-template-rows .45s cubic-bezier(.22,1,.36,1),opacity .3s,visibility 0s .45s}
+.weather-language-collapse.is-expanded{grid-template-rows:1fr;opacity:1;visibility:visible;transition-delay:0s}
+.weather-language-collapse>div{min-height:0;overflow:hidden}
+.weather-language-list{max-height:min(286px,45dvh);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#71bfd055 transparent;padding:3px}
+.weather-language-list button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px;padding:9px 10px;border:1px solid transparent;border-radius:8px;background:transparent;color:#d4e3ef;font-size:14px;line-height:22px;text-align:start;cursor:pointer;transition:background-color .25s,border-color .25s,color .25s}
+.weather-language-list button:hover{background:#83cbdc12}
+.weather-language-list button[aria-pressed=true]{background:#83cbdc18;border-color:#83cbdc40;color:#b4edf7}
+.weather-language-list button:focus-visible,.weather-language-toggle:focus-visible{outline:2px solid #8edbeb;outline-offset:-2px}
+.weather-workspace[data-language=ar] :is(.route-departure-copy,.mobile-route-status,.route-navigation,.truck-profile,.truck-confirm,.departure-inline,.point-weather,.weather-legend-panel){direction:rtl}
+.weather-workspace[data-language=ar] .route-departure-copy{text-align:right}
+.weather-workspace[data-language=ar] :is(.mobile-forecast-arrival time,.mobile-route-totals,.mobile-checkpoint-rail,.forecast-overview,.legend-speed-values,.weather-header-units){direction:ltr;unicode-bidi:isolate}
+.weather-workspace[data-language=ar] .hint-distance{direction:ltr;unicode-bidi:isolate}
+.weather-workspace .mobile-route-icon>span{max-width:100%;padding-inline:1px;box-sizing:border-box;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.weather-workspace .desktop-forecast-tools>button{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.weather-workspace[data-language=ar] .mobile-forecast-place{direction:ltr}
+.weather-workspace[data-language=ar] .mobile-forecast-place>div{direction:rtl}
+@media(prefers-reduced-motion:reduce){.weather-language-collapse,.weather-language-toggle,.weather-language-list button{transition:none}}
+
+.weather-workspace[data-language=ar]{font-family:Tahoma,Arial,sans-serif}
+.weather-workspace:is([data-language=hi],[data-language=pa]){font-family:"Nirmala UI",system-ui,sans-serif}
+.weather-workspace[data-language=ar] .mobile-forecast-place strong{direction:ltr;unicode-bidi:isolate}
+.weather-workspace[data-language=ar] .mobile-forecast-wind-reading{direction:ltr;unicode-bidi:isolate}
+.weather-workspace .weather-language-menu .weather-language-toggle{font-family:inherit}
+
