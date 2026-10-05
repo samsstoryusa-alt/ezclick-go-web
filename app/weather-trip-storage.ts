@@ -3,7 +3,7 @@ import {validTruck,type TruckProfile,type RoutePoint} from './road-route';
 export const TRIP_STORAGE_KEY='ezclick-weather-trip-v1';
 export type TripPoints=[RoutePoint|null,RoutePoint|null];
 type SavedTrip={version:1;points:TripPoints;truck?:TruckProfile;confirmed:boolean;builtKey:string|null;departure:string;departureZone?:string;stops:number};
-export const defaultTripPoints=():TripPoints=>[[-86.7816,36.1627],[-81.6557,30.3322]];
+export const defaultTripPoints=():TripPoints=>[null,null];
 export function standaloneWeather(){return typeof document!=='undefined'&&document.documentElement.dataset.weatherStandalone==='true';}
 function point(p:unknown):p is RoutePoint|null{return p===null||(Array.isArray(p)&&p.length===2&&Number.isFinite(p[0])&&Number.isFinite(p[1])&&Math.abs(p[0])<=180&&Math.abs(p[1])<=85);}
 export function departureZone(){return Intl.DateTimeFormat().resolvedOptions().timeZone;}

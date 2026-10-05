@@ -10,6 +10,8 @@ const storage={getItem:()=>{if(blocked)throw Error('blocked');return data;},setI
 const doc={documentElement:{dataset:{weatherStandalone:'true'}}};
 const e={};new Function('exports','require','document','localStorage',ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(e,()=>validExports,doc,storage);
 assert.equal(e.readTrip(),null);
+assert.deepEqual(e.defaultTripPoints(),[null,null]);
+e.saveTrip({departure:''});assert.deepEqual(e.readTrip().points,[null,null]);
 e.saveTrip({points:[[-80,35],[-81,30]],departure:'2026-10-05T18:30',stops:90});
 assert.deepEqual(e.readTrip().points,[[-80,35],[-81,30]]);
 assert.equal(e.readTrip().departure,new Date('2026-10-05T18:30').toISOString());

@@ -3,7 +3,7 @@ import VoiceRouteDrawer from './voice-route-drawer';
 import WeatherLanguageMenu from './weather-language-menu';
 import {useWeatherLanguage} from './weather-language';
 import {platformUrl} from './site-links';
-import {readTrip,standaloneWeather} from './weather-trip-storage';
+import {standaloneWeather} from './weather-trip-storage';
 
 import {useEffect, useRef, useState, type PointerEvent, type KeyboardEvent} from 'react';
 import type {Map as LibreMap} from 'maplibre-gl';
@@ -24,7 +24,7 @@ import {useWeatherUnits} from './weather-units';
 import {installSoftVegetation} from './soft-vegetation';
 
 const demoRoute = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('demo') === 'nashville-jacksonville';
-const INITIAL_VIEW = standaloneWeather() || demoRoute ? {center:readTrip()?.points[0]??[-86.7816,36.1627] as [number,number],zoom:8} : {center: [-105.6, 39.65] as [number, number], zoom: 8};
+const INITIAL_VIEW = standaloneWeather() || demoRoute ? {center:[-86.7816,36.1627] as [number,number],zoom:8} : {center: [-105.6, 39.65] as [number, number], zoom: 8};
 const TERRAIN_URL = 'https://tiles.mapterhorn.com/tilejson.json';
 
 
@@ -95,7 +95,7 @@ export default function WeatherMap() {
     else if(sheetRef.current)sheetRef.current.style.height='';
   }
 
-  const [routeActive,setRouteActive]=useState(()=>standaloneWeather()||demoRoute);
+  const [routeActive,setRouteActive]=useState(()=>demoRoute);
   const [ready, setReady] = useState(false);
   const [mapVisible,setMapVisible]=useState(false);
   const windData=useWindFields(ready);

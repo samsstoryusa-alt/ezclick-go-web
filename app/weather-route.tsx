@@ -32,7 +32,7 @@ export function WeatherRoute({map,active,onClose,compactMobile=false,onExpand,mo
  const {t}=useWeatherLanguage();
  const desktopPresentation=!mobilePresentation&&standaloneWeather();
  const [restored]=useState(readTrip);
- const [points,setPoints]=useState<Pair>(()=>restored?.points??(standaloneWeather()?defaultTripPoints():typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('demo')==='nashville-jacksonville'?[[-86.7816,36.1627],[-81.6557,30.3322]]:[null,null])),[selected,select]=useState<number|null>(null),[editing,edit]=useState<number|null>(null),[undo,setUndo]=useState<Pair|null>(null),[dragging,setDragging]=useState<number|null>(null);
+ const [points,setPoints]=useState<Pair>(()=>restored?.points??(typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('demo')==='nashville-jacksonville'?[[-86.7816,36.1627],[-81.6557,30.3322]]:defaultTripPoints())),[selected,select]=useState<number|null>(null),[editing,edit]=useState<number|null>(null),[undo,setUndo]=useState<Pair|null>(null),[dragging,setDragging]=useState<number|null>(null);
  const [pointsOpen,setPointsOpen]=useState(false);
  const [mobileStep,setMobileStep]=useState<0|1|null>(null);
  const [mobileEditing,setMobileEditing]=useState(false);
