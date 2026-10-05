@@ -60,6 +60,12 @@ def route(body):
     keys=('distance','duration','geometry','elapsedSeconds')
     return {'code':'Ok','routes':[{k:r[k] for k in keys if k in r} for r in result.get('routes',[])[:1]]}
 
+def forecast_timestamp(value):
+    # NWS times must name their UTC offset; never infer the server's timezone.
+    parsed=datetime.fromisoformat(value.replace('Z','+00:00'))
+    if parsed.tzinfo is None or parsed.utcoffset() is None:raise ValueError('Forecast timestamp needs a timezone.')
+    return parsed.timestamp()
+
 def forecast(p):
     out={**p,'available':False,'condition':'Forecast unavailable','level':'unknown'}
     try:
@@ -68,8 +74,11 @@ def forecast(p):
         if not re.fullmatch(r'https://api.weather.gov/gridpoints/[A-Z]{3}/[0-9]+,[0-9]+/forecast/hourly',url):return out
         data=read(url,600)['properties']
         updated=data.get('updateTime') or data.get('generatedAt')
-        if not updated or time.time()-datetime.fromisoformat(updated.replace('Z','+00:00')).timestamp()>24*3600:return out
-        period=next((x for x in data.get('periods',[]) if datetime.fromisoformat(x['startTime']).timestamp()<=p['eta']/1000<datetime.fromisoformat(x['endTime']).timestamp()),None)
+        if not updated:return out
+        age=time.time()-forecast_timestamp(updated)
+        # Allow minor clock skew, but do not accept a future-issued forecast.
+        if age>24*3600 or age < -300:return out
+        period=next((x for x in data.get('periods',[]) if forecast_timestamp(x['startTime'])<=p['eta']/1000<forecast_timestamp(x['endTime'])),None)
         if not period:return out
         temp=period.get('temperature');unit=period.get('temperatureUnit')
         winds=[float(x) for x in re.findall(r'[0-9]+(?:\.[0-9]+)?',period.get('windSpeed',''))]

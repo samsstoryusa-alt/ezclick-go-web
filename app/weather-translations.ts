@@ -19,6 +19,7 @@ type TranslatedLanguage = Exclude<WeatherLanguage, "en" | "ro">;
 const translatedLanguages = ["es", "ru", "uk", "zh", "hi", "pa", "fr", "de", "pt", "ar"] as const;
 type Translations = readonly [string, string, string, string, string, string, string, string, string, string];
 const catalog: Record<string, Translations> = {
+  "Last checked": ["Última consulta", "Последняя проверка", "Остання перевірка", "上次检查", "अंतिम जाँच", "ਆਖਰੀ ਜਾਂਚ", "Dernière vérification", "Zuletzt geprüft", "Última verificação", "آخر تحقق"],
   "Menu": ["Menú", "Меню", "Меню", "菜单", "मेन्यू", "ਮੀਨੂ", "Menu", "Menü", "Menu", "القائمة"],
   "Language": ["Idioma", "Язык", "Мова", "语言", "भाषा", "ਭਾਸ਼ਾ", "Langue", "Sprache", "Idioma", "اللغة"],
   "Home": ["Inicio", "Главная", "Головна", "首页", "होम", "ਮੁੱਖ ਪੰਨਾ", "Accueil", "Startseite", "Início", "الرئيسية"],
@@ -221,6 +222,7 @@ for (const [key, source] of Object.entries(aliases)) catalog[key] = catalog[sour
 
 
 const romanianCatalog: Record<string, string> = {
+  "Last checked": "Ultima verificare",
   "Menu": "Meniu",
   "Language": "Limbă",
   "Home": "Acasă",
