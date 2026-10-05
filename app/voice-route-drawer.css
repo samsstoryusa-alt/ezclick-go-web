@@ -1,0 +1,19 @@
+.voice-route-drawer{position:absolute;right:0;top:38%;width:108px;height:56px;z-index:4;transform:translateX(64px);transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .3s,visibility 0s;direction:ltr;pointer-events:none}
+.voice-route-drawer.is-open{transform:translateX(0)}
+.voice-drawer-handle{position:absolute;left:0;top:0;width:44px;height:56px;padding:0;border:0;background:transparent;cursor:pointer;touch-action:none;pointer-events:auto;color:#a8e6f0}
+.voice-handle-surface{position:absolute;right:0;inset-block:0;width:24px;display:grid;place-items:center;background:#102536f2;border:1px solid #7197ae88;border-right:0;border-radius:14px 0 0 14px;box-shadow:-3px 3px 12px #0003;transition:width .5s cubic-bezier(.22,1,.36,1),background-color .3s}
+.is-open .voice-handle-surface{width:44px}
+.voice-handle-surface svg{grid-area:1/1;transition:opacity .25s}
+.voice-handle-chevron,.is-open .voice-handle-mic{opacity:0}.is-open .voice-handle-chevron{opacity:1}
+.voice-drawer-handle:focus-visible{outline:2px solid #9ae9f6;outline-offset:-2px;border-radius:14px}
+.voice-drawer-content{position:absolute;left:44px;top:0;width:64px;height:56px;display:grid;place-items:center;box-sizing:border-box;background:#102536f2;border-block:1px solid #7197ae88;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .35s,visibility 0s .5s}
+.is-open .voice-drawer-content{opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s}
+.voice-drawer-mic{display:grid;place-items:center;width:44px;height:44px;border:1px solid #7197ae88;border-radius:10px;background:#183545;color:#a8e6f0;opacity:.65}
+.voice-drawer-notice{position:absolute;right:8px;top:64px;width:184px;padding:8px 10px;border:1px solid #7197ae55;border-radius:10px;background:#102536f5;color:#b8d2df;font:11px/16px Arial,sans-serif;opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .3s,transform .4s,visibility 0s .5s}
+.is-open .voice-drawer-notice{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+.weather-map-stage:has(.voice-route-drawer){overflow:hidden}
+@media(min-width:951px){.voice-route-drawer{top:auto;bottom:92px}}
+@media(prefers-reduced-motion:reduce){.voice-route-drawer,.voice-handle-surface,.voice-handle-surface svg,.voice-drawer-content,.voice-drawer-notice{transition:none}}
+
+.voice-route-drawer.is-suspended{opacity:0;visibility:hidden;transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .3s,visibility 0s .3s}
+@media(prefers-reduced-motion:reduce){.voice-route-drawer.is-suspended{transition:none}}

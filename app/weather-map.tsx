@@ -1,4 +1,5 @@
 "use client";
+import VoiceRouteDrawer from './voice-route-drawer';
 import WeatherLanguageMenu from './weather-language-menu';
 import {useWeatherLanguage} from './weather-language';
 import {platformUrl} from './site-links';
@@ -389,6 +390,7 @@ export default function WeatherMap() {
         </button>
         <span id="globe-help">Drag to rotate & tilt</span>
       </div>
+      {typeof window!=="undefined"&&new URLSearchParams(window.location.search).get("voice-preview")==="1"&&<VoiceRouteDrawer suspended={cameraExpanded||legendOpen||siteMenuOpen}/>}
       <WeatherLegend open={legendOpen} onClose={()=>setLegendOpen(false)} map={radarMap} units={units}/><WeatherCenterMarker /><div ref={sheetRef} inert={mobilePresentation&&routeActive&&!routeInfoOpen} className={`weather-left-stack ${routeActive?"route-active":""} ${mobilePresentation&&routeActive?"mobile-route-shell":""} ${mobilePresentation&&routeActive&&!routeInfoOpen?"route-info-hidden":""} ${mobileExpanded?"mobile-expanded":""}`}><button type="button" className="weather-mobile-expand" aria-label={routeActive?(mobileExpanded?"Collapse route forecasts":"Expand route forecasts"):(mobileExpanded?"Close weather settings":"Open weather settings")} aria-expanded={mobileExpanded} onPointerDown={beginSheet} onPointerMove={pullSheet} onPointerUp={releaseSheet} onPointerCancel={()=>{sheetDrag.current=null;settleSheet(mobileExpanded);}} onClick={()=>{if(skipSheetClick.current){skipSheetClick.current=false;return;}settleSheet(!mobileExpanded);}}><span className="sheet-grip" aria-hidden="true"/><span className="sheet-grip-label">{mobileExpanded?"Swipe down to collapse":routeActive?"Swipe up for more forecasts":"Swipe up for settings"}</span></button><WeatherRoute map={radarMap} active={routeActive} mobilePresentation={mobilePresentation} onShowInfo={()=>{setRouteActive(true);setRouteInfoOpen(true);}} onClose={()=>{if(mobilePresentation)setRouteInfoOpen(false);else setRouteActive(false);}} compactMobile={mobilePortrait&&!mobileExpanded} onExpand={()=>{if(mobilePortrait)settleSheet(true);}}/><PointWeather map={radarMap} ready={ready} time={weatherTime} windFrames={windData.frames} units={units} onToggleUnits={toggleUnits} /><WindControls map={radarMap} ready={ready} time={weatherTime} frames={windData.frames} status={windData.status} units={units} /><RadarControls map={radarMap} ready={ready} onTimeChange={setWeatherTime} units={units} /></div>
 
       {!ready && !error && <p className="weather-map-message" role="status">{t('Loading your map…')}</p>}
