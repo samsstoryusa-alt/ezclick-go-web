@@ -12,7 +12,13 @@
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
   const FPS = 60;
-  let ready = video.readyState >= 2;
+  const SEEK_TOLERANCE = .5 / FPS;
+  // A metadata-only preload is enough to request a frame. Waiting for
+  // loadeddata first can deadlock mobile browsers that defer video decoding.
+  let ready = video.readyState >= 1;
+  const mobileMedia = window.matchMedia('(max-width: 740px), (pointer: coarse)');
+  let priming = false;
+  let primed = false;
   let playing = false;
   let frame = 0;
   let previousTime = 0;
@@ -38,8 +44,35 @@
     if (mediaRequested || mediaFailed) return;
     mediaRequested = true;
     video.preload = 'auto';
-    for (const source of video.querySelectorAll('source[data-src]')) source.src = source.dataset.src;
+    video.muted = true;
+    video.defaultMuted = true;
+    for (const source of video.querySelectorAll('source[data-src]')) {
+      source.src = mobileMedia.matches && source.dataset.mobileSrc ? source.dataset.mobileSrc : source.dataset.src;
+    }
     video.load();
+  }
+  function primeMobileVideo() {
+    if (!mobileMedia.matches || reduced.matches || mediaFailed || playing || priming || primed || !heroIsNear()) return;
+    waitingForInitialAnchor = false;
+    ensureHeroLoaded();
+    priming = true;
+    // Call play directly in the gesture handler so Safari can authorize its
+    // decoder. This is only a warm-up; scrolling remains the playback clock.
+    const attempt = video.play();
+    Promise.resolve(attempt).then(() => {
+      primed = true;
+    }, () => {
+      // Low-power/data restrictions may reject automatic playback. A later
+      // gesture or the existing Play film button can retry without an error screen.
+    }).finally(() => {
+      priming = false;
+      if (!playing) {
+        video.pause();
+        ready = video.readyState >= 1;
+        readScrollTarget();
+        wake();
+      }
+    });
   }
   function heroIsNear() {
     const rect = stage.getBoundingClientRect();
@@ -79,8 +112,18 @@
     targetProgress = reduced.matches ? 0 : clamp((window.scrollY - filmTop) / Math.max(1, filmHeight - viewportHeight));
   }
 
+  function measureFilm() {
+    // Stylesheets below this deferred script can finish after it in WebKit.
+    // Re-measure the actual sticky range instead of keeping the unstyled size.
+    filmHeight = film.offsetHeight;
+    viewportHeight = stage.offsetHeight;
+    filmTop = film.getBoundingClientRect().top + window.scrollY;
+    readScrollTarget();
+    wake();
+  }
+
   function seekLatest() {
-    if (mediaFailed || !ready || playing || video.seeking || Math.abs(video.currentTime - wantedTime) < .004) return;
+    if (mediaFailed || !ready || playing || priming || video.seeking || Math.abs(video.currentTime - wantedTime) < SEEK_TOLERANCE) return;
     video.currentTime = wantedTime;
   }
 
@@ -142,24 +185,38 @@
   });
   video.addEventListener('ended', () => { applyProgress(1); stopPlayback(false); });
   video.addEventListener('seeked', () => {
-    if (!playing && Math.abs(video.currentTime - wantedTime) >= .004) wake();
+    if (!playing && Math.abs(video.currentTime - wantedTime) >= SEEK_TOLERANCE) wake();
   });
-  video.addEventListener('loadeddata', () => { if (!mediaFailed) { ready = true; wake(); } });
+  for (const event of ['loadedmetadata', 'loadeddata', 'canplay', 'progress']) {
+    video.addEventListener(event, () => {
+      if (!mediaFailed && video.readyState >= 1) { ready = true; readScrollTarget(); wake(); }
+    });
+  }
   video.addEventListener('error', failHero);
   for (const source of video.querySelectorAll('source')) source.addEventListener('error', failHero);
+  // Never cancel native swipes. Authorize video on the first contact, then
+  // retry on release for browsers that require a completed user gesture.
+  for (const event of ['touchstart', 'touchend']) {
+    stage.addEventListener(event, primeMobileVideo, {passive: true});
+  }
+  window.addEventListener('pageshow', () => {
+    if (canAutoLoadHero() && heroIsNear()) ensureHeroLoaded();
+    ready = video.readyState >= 1;
+    measureFilm();
+  });
   window.addEventListener('scroll', () => {
     if (playing) stopPlayback(false);
     if (canAutoLoadHero() && heroIsNear()) ensureHeroLoaded();
     readScrollTarget();
     wake();
   }, { passive: true });
-  window.addEventListener('resize', () => {
-    filmHeight = film.offsetHeight;
-    viewportHeight = stage.offsetHeight;
-    filmTop = film.getBoundingClientRect().top + window.scrollY;
-    readScrollTarget();
-    wake();
-  }, { passive: true });
+  window.addEventListener('resize', measureFilm, {passive: true});
+  window.addEventListener('load', measureFilm, {once: true});
+  if ('ResizeObserver' in window) {
+    const layoutObserver = new ResizeObserver(measureFilm);
+    layoutObserver.observe(film);
+    layoutObserver.observe(stage);
+  }
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       if (playing) stopPlayback(false);
@@ -178,10 +235,8 @@
   });
 
   function configureMotion() {
-    filmHeight = film.offsetHeight;
     hint.lastChild.textContent = reduced.matches ? 'Explore the journey below' : 'Scroll to take the journey';
-    readScrollTarget();
-    wake();
+    measureFilm();
   }
   reduced.addEventListener('change', configureMotion);
   configureMotion();
