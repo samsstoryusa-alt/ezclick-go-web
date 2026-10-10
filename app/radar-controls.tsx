@@ -13,7 +13,7 @@ import {enhancePrecipitation} from './precip-appearance';
 import {RAIN_GRADIENT} from './rain-intensity-palette';
 import {forecastWindow,type ForecastFrame} from './forecast-time';
 
-export default function RadarControls({map,ready,onTimeChange,units}:{units:WeatherUnits;map:LibreMap|null;ready:boolean;onTimeChange:(time:number|null)=>void}) {
+export default function RadarControls({map,ready,onTimeChange,units,cloudObservations=false}:{cloudObservations?:boolean;units:WeatherUnits;map:LibreMap|null;ready:boolean;onTimeChange:(time:number|null)=>void}) {
  const {t,locale,dir}=useWeatherLanguage();
  const quality=useWeatherQuality(),qualityFps=useRef(qualityProfiles[quality].radarFps as number);
  useEffect(()=>{qualityFps.current=qualityProfiles[quality].radarFps;},[quality]);
@@ -139,6 +139,7 @@ export default function RadarControls({map,ready,onTimeChange,units}:{units:Weat
   {contentVisible&&!!frames.length&&<section inert={!enabled} aria-hidden={!enabled} className="radar-player radar-timeline" aria-label={t('Weather forecast timeline')}>
    <div className="radar-player-heading" dir={dir}><strong>{t(stale?'Outdated forecast':'Weather Forecast')} · {t('24h')}</strong><time dateTime={new Date(time).toISOString()}>{new Date(time).toLocaleString(locale,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})} {t('local')}</time></div>
    <div className="radar-player-row" dir="ltr"><button type="button" dir={dir} aria-label={t(playing?'Pause forecast animation':'Play forecast animation')} onClick={()=>{player.current?.play(!playing);setPlaying(!playing);}}>{t(playing?'Pause':'Play')}</button><input dir="ltr" ref={timeline} aria-label={t('Forecast time')} type="range" step=".001" min={0} max={frames.length-1} defaultValue={index} onChange={e=>{setPlaying(false);player.current?.seek(Number(e.target.value));}}/><button type="button" dir={dir} onClick={()=>{setPlaying(false);player.current?.seek(0);}}>{t('Now')}</button></div>
+   {cloudObservations&&<small className="cloud-forecast-time-note" dir={dir}>{t("This timeline controls weather and wind. Clouds show separate recorded observations.")}</small>}
    <div className="radar-history-span" dir="ltr"><span dir={dir}>{t('Now')}</span><span dir={dir}>{t('+6h')}</span><span dir={dir}>{t('+12h')}</span><span dir={dir}>{t('+18h')}</span><span dir={dir}>{t('+24h')}</span></div>
    <div className="mobile-precip-intensity" aria-label={t('Precipitation intensity from light to heavy')}><div className="precip-intensity-bars"><span><span dir={dir}>{t('Rain')}<small dir="ltr">{t('Light → Heavy')}</small></span><i className="precip-rain-gradient" style={{background:RAIN_GRADIENT}} aria-hidden="true"/></span><span><span dir={dir}>{t('Wind')}</span><WindGradient units={units}/></span></div></div>
   </section>}
