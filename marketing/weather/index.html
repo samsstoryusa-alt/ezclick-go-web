@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1319">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="EZ Click Weather — Weather for your journey">
+  <meta property="og:description" content="Explore forecasts along your route, plan your departure and shape your trip by voice.">
+  <meta name="description" content="See the forecast along your route, timed to your journey. Plan your drive with EZ Click Weather.">
+  <title>EZ Click Weather — See what’s ahead</title>
+  <link rel="icon" href="assets/logo.webp">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="completion.css?v=finish-v1">
+  <link rel="stylesheet" href="photo-motion.css?v=auto-v1">
+  <script src="motion.js?v=sections-20261010" defer></script>
+  <script src="photo-warp.js" defer></script>
+  <script src="journey-pin.js?v=auto-v1" defer></script>
+  <script src="photo-motion.js?v=sections-20261010" defer></script>
+  <script src="card-autoplay.js?v=readiness-20261010" defer></script>
+  <script src="completion.js?v=finish-v1" defer></script>
+<link rel="stylesheet" href="feature-cards.css?v=20261010-1">
+<link rel="stylesheet" href="site-readiness.css?v=20261010-1">
+<script src="support.js?v=20261010-1" defer></script><link rel="stylesheet" href="section-transitions.css?v=20261010-1">
+<script src="section-transitions.js?v=20261010-1" defer></script>
+<link rel="stylesheet" href="product-experience.css?v=20261010-art2">
+<script src="product-experience.js?v=20261010-art2" defer></script>
+<link rel="stylesheet" href="platform-nav.css?v=20261010-1">
+<link rel="stylesheet" href="button-affordance.css?v=20261010-1">
+<link rel="stylesheet" href="membership.css?v=20261010-2">
+<script src="membership.js?v=20261010-2" defer></script>
+<link rel="canonical" href="https://ezclickgo.com/weather/">
+<meta property="og:url" content="https://ezclickgo.com/weather/">
+<meta property="og:image" content="https://ezclickgo.com/weather/assets/social-preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EZ Click Weather: your route, weather ahead. A recorded app map beside a road approaching rain.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ezclickgo.com/weather/assets/social-preview.jpg">
+</head>
+<body class="scene-preview-page">
+  <a class="skip-link" href="#features">Skip to features</a>
+  <header class="navigation">
+    <a class="brand" href="#top" aria-label="EZ Click Weather home"><img src="assets/logo.webp" width="800" height="308" alt="EZ Click Weather"></a>
+    <nav aria-label="Main navigation"><a href="#story">The journey</a><a href="#features">Features</a><a class="nav-support" href="#support">Help</a><a class="nav-platform" href="https://ezclickgo.com/" target="_blank" rel="noopener noreferrer" aria-label="EZCLICK GO trucking platform and load board (opens in a new tab)"><span class="platform-long">EZCLICK GO</span><span class="platform-short">Platform</span><span aria-hidden="true">↗</span></a></nav>
+    <a class="nav-cta" href="https://weather.ezclickgo.com/" target="_blank" rel="noopener noreferrer">Open app <span class="status-dot" aria-hidden="true"></span></a>
+  </header>
+
+  <main>
+    <section class="film" id="top" aria-label="A journey from the road into EZ Click Weather">
+      <div class="film-stage">
+        <video class="hero-video" id="heroVideo" muted playsinline preload="none" poster="assets/hero-first-frame.jpg" aria-label="A green coupe approaches rain. The camera enters the cabin and moves closer to a phone showing route weather.">
+          <source data-src="assets/hero-scroll-60.mp4" type="video/mp4">
+        </video>
+        <div class="film-shade" aria-hidden="true"></div>
+        <div class="hero-copy" id="heroCopy">
+          <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> A forecast for the road ahead</p>
+          <h1>Your route.<br>Weather <em>ahead.</em></h1>
+          <div class="hero-bottom">
+            <p>Conditions change. See what’s ahead on your route, at the time you expect to get there.</p>
+            <a class="pill primary" href="https://weather.ezclickgo.com/" target="_blank" rel="noopener noreferrer">Plan your route</a><a class="hero-skip" href="#features">See how it works <span aria-hidden="true">↓</span></a>
+          </div>
+        </div>
+        <div class="film-end" id="filmEnd" aria-hidden="true"><p class="eyebrow">The bigger picture. In your pocket.</p><p>Know before<br>you <em>go.</em></p></div>
+        <div class="film-controls">
+          <span class="scroll-hint" id="scrollHint"><span class="scroll-line" aria-hidden="true"></span>Scroll to take the journey</span>
+          <div class="film-chapters" aria-hidden="true"><span id="chapterName">01 / THE ROAD</span><span class="film-track"><span id="filmProgress"></span></span><span>0:10</span></div>
+          <button class="film-toggle" id="filmToggle" type="button" aria-pressed="false"><span class="play-symbol" aria-hidden="true">▷</span><span id="filmToggleLabel">Play film</span></button>
+        </div>
+        <p class="film-error" id="filmError" role="status" hidden>The film couldn’t load. You can still explore the features below.</p>
+      </div>
+    </section>
+
+    <section class="journey section-pad" data-playback="auto" id="story" aria-labelledby="journeyTitle">
+      <div class="journey-stage">
+      <div class="section-intro">
+        <p class="eyebrow">Along the way</p>
+        <h2 id="journeyTitle">Your route. Your timing.<br>Your forecast.</h2>
+        <p class="intro-note">See beyond the destination.<br>A little foresight for every<br>mile between A and B.</p>
+      </div>
+      <div class="photo-story">
+        <figure class="story-photo photo-road">
+          <div class="photo-frame photo-frame--video">
+            <video class="story-video" id="routeWeatherFilm" data-frame-rate="24" width="720" height="1280" muted playsinline controls preload="metadata" poster="assets/route-weather-phone-v2-poster.jpg" aria-label="A centered smartphone displays a Florida weather map and rain forecast against a rainy background.">
+              <source src="assets/route-weather-phone-scroll-v3-auto.mp4" type="video/mp4">
+              Your browser cannot play this film.
+            </video>
+            <span class="card-scroll-hint" aria-hidden="true" hidden>Scroll to explore</span>
+          </div>
+          <figcaption><span class="photo-number" aria-hidden="true">01</span><div><h3>See beyond the horizon.</h3><p>Explore weather along your route before you set off.</p></div></figcaption>
+        </figure>
+        <figure class="story-photo photo-cabin">
+          <div class="photo-frame photo-frame--video">
+            <video class="story-video" id="truckWeatherFilm" data-frame-rate="24" width="720" height="1280" muted playsinline controls preload="metadata" poster="assets/truck-card-poster-v1.jpg" aria-label="A weather map in a truck cabin, followed by a view of the truck traveling on a rainy highway.">
+              <source src="assets/truck-card-scroll-v1-auto.mp4" type="video/mp4">
+              Your browser cannot play this film.
+            </video>
+            <span class="card-scroll-hint" aria-hidden="true" hidden>Scroll to explore</span>
+          </div>
+          <figcaption><span class="photo-number" aria-hidden="true">02</span><div><h3>Truck routes. Weather ahead.</h3><p>Build a route for your truck. See the weather along the way.</p></div></figcaption>
+        </figure>
+        <figure class="story-photo photo-phone">
+          <div class="photo-frame photo-frame--video">
+            <video class="story-video" id="voiceWeatherFilm" data-frame-rate="24" width="720" height="1280" muted playsinline controls preload="metadata" poster="assets/voice-card-poster-v1.jpg" aria-label="A driver taps the microphone on a mounted phone, speaks a destination, and a route appears on the weather map.">
+              <source src="assets/voice-card-loop-v1.mp4" type="video/mp4">
+              Your browser cannot play this film.
+            </video>
+            <span class="card-scroll-hint" aria-hidden="true" hidden>Scroll to explore</span>
+          </div>
+          <figcaption><span class="photo-number" aria-hidden="true">03</span><div><h3>Say it. Plan it.</h3><p>Speak your destination. Explore the weather along the way.</p></div></figcaption>
+        </figure>
+        <p class="journey-signature" aria-hidden="true"><span class="status-dot"></span> A little foresight. Every mile.</p>
+      </div>
+      </div>
+    </section>
+
+<section class="feature-gallery section-pad" id="features" aria-labelledby="featuresTitle">
+<div class="gallery-heading"><p class="eyebrow">02 / Your journey, in detail</p><div><h2 id="featuresTitle">A closer look.<br><em>A clearer plan.</em></h2><p class="gallery-intro">From the big picture to the next turn.<br>Explore the details that shape your drive.</p></div></div>
+<div class="feature-card-grid">
+<article class="detail-card reveal" id="detail-1">
+<div class="detail-card-image"><img src="assets/feature-01-route-overview-1672.webp" srcset="assets/feature-01-route-overview-840.webp 840w, assets/feature-01-route-overview-1672.webp 1672w" sizes="(max-width: 740px) calc(100vw - 46px), (max-width: 1700px) 44vw, 720px" width="1672" height="941" loading="lazy" decoding="async" alt="Illustration of a dark weather map with a colored route and a forecast checkpoint."></div>
+<div class="detail-card-copy"><p class="detail-card-label"><span>01</span>Route overview</p><h3>See the whole journey.</h3><p class="detail-card-description">Explore weather along your route, with forecast checkpoints that help you see what’s ahead.</p></div></article>
+<article class="detail-card reveal" id="detail-2">
+<div class="detail-card-image"><img src="assets/feature-02-arrival-forecast-1672.webp" srcset="assets/feature-02-arrival-forecast-840.webp 840w, assets/feature-02-arrival-forecast-1672.webp 1672w" sizes="(max-width: 740px) calc(100vw - 46px), (max-width: 1700px) 44vw, 720px" width="1672" height="941" loading="lazy" decoding="async" alt="Illustration of the departure control and an enlarged arrival forecast card."></div>
+<div class="detail-card-copy"><p class="detail-card-label"><span>02</span>Arrival forecasts</p><h3>Weather for when you arrive.</h3><p class="detail-card-description">Check temperature, wind and rain at your estimated arrival time. Change your departure to explore a different forecast.</p></div></article>
+<article class="detail-card reveal" id="detail-3">
+<div class="detail-card-image"><img src="assets/feature-03-route-edit-undo-1672.webp" srcset="assets/feature-03-route-edit-undo-840.webp 840w, assets/feature-03-route-edit-undo-1672.webp 1672w" sizes="(max-width: 740px) calc(100vw - 46px), (max-width: 1700px) 44vw, 720px" width="1672" height="941" loading="lazy" decoding="async" alt="Illustration of an intermediate route point near Columbia and the Undo, Navigate and Edit controls."></div>
+<div class="detail-card-copy"><p class="detail-card-label"><span>03</span>Route editing &amp; Undo</p><h3>Make the route your own.</h3><p class="detail-card-description">Add an intermediate city or drag a route point. Changed your mind? Undo takes you back a step.</p></div></article>
+<article class="detail-card reveal" id="detail-4">
+<div class="detail-card-image"><img src="assets/feature-04-voice-planning-1672.webp" srcset="assets/feature-04-voice-planning-840.webp 840w, assets/feature-04-voice-planning-1672.webp 1672w" sizes="(max-width: 740px) calc(100vw - 46px), (max-width: 1700px) 44vw, 720px" width="1672" height="941" loading="lazy" decoding="async" alt="Illustration of a voice panel with mint sound waves around a microphone and the request Take me through Columbia."></div>
+<div class="detail-card-copy"><p class="detail-card-label"><span>04</span>Voice assistant</p><h3>Say it. Shape your trip.</h3><p class="detail-card-description">Speak your destination or ask to travel through another city. Keep your journey in view as you plan.</p></div></article>
+</div><p class="gallery-note">Illustrative product views. Map and interface details may differ from the app. <a href="https://weather.ezclickgo.com/" target="_blank" rel="noopener noreferrer">Plan your route ↗</a> <a href="#example">Explore the actual app ↓</a></p></section>
+
+
+<section class="route-example section-pad" id="example" aria-labelledby="exampleTitle">
+ <div class="example-inner">
+  <div class="example-heading"><div><p class="eyebrow">03 / Inside the app</p><h2 id="exampleTitle">One trip.<br><em>A closer look.</em></h2></div><p>Follow a recorded journey from Nashville to Jacksonville, via Columbia. Explore the route, its first forecast and the controls for making a change.</p></div>
+  <div class="example-layout">
+   <figure>
+    <div class="example-map" data-view="route">
+     <a class="example-image-link" href="assets/recorded-route.webp" target="_blank" rel="noopener noreferrer" aria-label="Enlarge the recorded app screenshot">
+      <img id="example-capture" src="assets/recorded-route.webp" width="1280" height="900" loading="lazy" decoding="async" alt="Recorded EZ Click Weather map: Nashville to Jacksonville via Columbia, with colored weather checkpoints and the Nashville forecast.">
+      <span class="example-image-action">View app capture <span aria-hidden="true">↗</span></span>
+     </a>
+     <span class="example-focus" aria-hidden="true"></span>
+    </div>
+    <figcaption class="example-caption">Actual app capture · October 9, 2026 · Truck mode</figcaption>
+   </figure>
+   <div class="example-sidebar">
+    <div class="example-options" role="tablist" aria-label="Explore the recorded journey" hidden>
+     <button type="button" id="example-route-tab" role="tab" aria-controls="example-route" aria-selected="true" data-example="route">The route</button>
+     <button type="button" id="example-forecast-tab" role="tab" aria-controls="example-forecast" aria-selected="false" tabindex="-1" data-example="forecast">The forecast</button>
+     <button type="button" id="example-edit-tab" role="tab" aria-controls="example-edit" aria-selected="false" tabindex="-1" data-example="edit">Make a change</button>
+    </div>
+    <article class="example-detail" id="example-route">
+     <p class="eyebrow">01 / The bigger picture</p><h3>Every mile is part<br>of the plan.</h3>
+     <p>Start in Nashville. Travel through Columbia. Finish in Jacksonville. The route brings forecast checkpoints into one view.</p>
+     <dl class="recorded-weather"><dt>Recorded distance</dt><dd>1,186 km</dd><dt>Estimated driving time</dt><dd>12 h 37 min</dd><dt>Intermediate city</dt><dd>Columbia, SC</dd></dl>
+    </article>
+    <article class="example-detail" id="example-forecast">
+     <p class="eyebrow">02 / A forecast at arrival</p><h3>The weather.<br>At your moment.</h3>
+     <p>The first card in this recorded trip shows Nashville at an estimated arrival of October 9, 9:46 PM, in the viewer’s time zone.</p>
+     <dl class="recorded-weather"><dt>Conditions</dt><dd>Cloudy · 23°C</dd><dt>Wind</dt><dd>8 km/h · E</dd><dt>Precipitation probability</dt><dd>0%</dd></dl>
+    </article>
+    <article class="example-detail" id="example-edit">
+     <p class="eyebrow">03 / Room to change your mind</p><h3>Your route.<br>Your next move.</h3>
+     <p>In the app, use Edit to move a route point or add an intermediate city. Undo takes you back after an edit.</p>
+     <dl class="recorded-weather"><dt>Change the route</dt><dd>Edit</dd><dt>Reverse a recent edit</dt><dd>Undo</dd><dt>Plan another time</dt><dd>Change departure</dd></dl>
+    </article>
+   </div>
+  </div>
+  <div class="example-footer"><p>This is a recorded walkthrough, not a live forecast. Plan a new trip in the app for updated conditions and arrival estimates.</p><a class="text-link" href="https://weather.ezclickgo.com/" target="_blank" rel="noopener noreferrer">Try your own route <span aria-hidden="true">↗</span></a></div>
+ </div>
+</section>
+
+<section class="drive-guide section-pad" id="drivers" aria-labelledby="driversTitle">
+ <div class="drive-inner drive-layout">
+  <div class="drive-copy">
+   <p class="eyebrow">04 / Built around your drive</p>
+   <h2 id="driversTitle">Different journeys.<br><em>The same foresight.</em></h2>
+   <div class="drive-tabs" role="tablist" aria-label="Explore driving scenarios" hidden>
+    <button type="button" role="tab" id="drive-car-tab" aria-controls="drive-car" aria-selected="true" data-drive="car"><svg viewBox="0 0 28 24" aria-hidden="true"><path d="m4 10 3-6h14l3 6M3 10h22v9H3zM7 19v2m14-2v2M6 14h3m10 0h3"/></svg>Car</button>
+    <button type="button" role="tab" id="drive-truck-tab" aria-controls="drive-truck" aria-selected="false" tabindex="-1" data-drive="truck"><svg viewBox="0 0 28 24" aria-hidden="true"><path d="M2 4h15v14H2zM17 9h5l4 5v4h-9M18 10v5h7"/><circle cx="7" cy="19" r="2.5"/><circle cx="21" cy="19" r="2.5"/></svg>Truck</button>
+   </div>
+   <div class="drive-panels">
+   <article class="drive-panel" id="drive-car">
+    <h3>Your everyday drive.<br>A wider view.</h3>
+    <p>A weekend away. A cross-country trip. See the forecast along the route, not just at your destination.</p>
+    <ul class="drive-benefits"><li>Check conditions at your estimated arrival.</li><li>Explore another departure time.</li><li>Add a stop along the way. Undo an edit.</li></ul>
+    <p class="drive-note">Open the app and select car mode to plan your trip.</p>
+   </article>
+   <article class="drive-panel" id="drive-truck">
+    <h3>Your long-haul drive.<br>A wider view.</h3>
+    <p>Plan in truck mode and review wind, rain and forecast conditions across the long haul.</p>
+    <ul class="drive-benefits"><li>Use the app’s truck routing profile.</li><li>Review wind and rain along the route.</li><li>Include planned breaks in arrival estimates.</li></ul>
+    <p class="drive-note">The current truck profile is fixed. Check posted restrictions for your vehicle. Open the app and select truck mode to get started.</p>
+   </article>
+   </div>
+  </div>
+  <figure class="drive-art">
+   <img class="is-active" data-drive-image="car" src="assets/road-scene.webp" width="1376" height="768" loading="lazy" decoding="async" alt="A winding road leads across green hills toward distant rain.">
+   <img data-drive-image="truck" src="assets/truck-tandem-large.webp" srcset="assets/truck-tandem-small.webp 640w, assets/truck-tandem-large.webp 1200w" sizes="(max-width: 740px) calc(100vw - 46px), 45vw" width="1200" height="1200" loading="lazy" decoding="async" alt="" aria-hidden="true">
+   <figcaption><span id="drive-art-caption">A little planning. A different perspective.</span><span>Illustrative scene</span></figcaption>
+  </figure>
+ </div>
+</section>
+<section class="getting-started section-pad" id="start" aria-labelledby="startTitle"><div class="start-heading"><p class="eyebrow">Ready when you are</p><h2 id="startTitle">Your next trip, in three steps.</h2><p>Open in your browser. No installation needed.</p></div><ol class="start-steps"><li><span class="start-number">01</span><h3>Choose your drive.</h3><p>Select car or truck mode.</p></li><li><span class="start-number">02</span><h3>Build your route.</h3><p>Set your starting point and destination, then choose when to leave.</p></li><li><span class="start-number">03</span><h3>Look ahead.</h3><p>Review forecast checkpoints and adjust your plan before you go.</p></li></ol><a class="text-link" href="https://weather.ezclickgo.com/" target="_blank" rel="noopener noreferrer">Plan your route <span aria-hidden="true">↗</span></a></section>
+
+<section class="plans-section section-pad" id="plans" aria-labelledby="plansTitle">
+ <div class="plans-inner">
+  <header class="plans-heading">
+   <div><p class="eyebrow">05 / A plan for your journey</p><h2 id="plansTitle">Start free.<br><em>Go further.</em></h2></div>
+   <p>Everyday forecasts or a more flexible journey.<br>Our planned memberships, at a glance.</p>
+  </header>
+  <div class="plans-grid">
+   <article class="plan-card" aria-labelledby="freePlanTitle">
+    <div class="plan-name-row"><h3 id="freePlanTitle">Free</h3><span class="plan-label">The essentials</span></div>
+    <p class="plan-price"><span>$0</span><span class="plan-period">USD</span></p>
+    <p class="plan-summary">A clearer view of the road ahead.</p>
+    <ul class="plan-features">
+     <li>Car and truck route planning</li>
+     <li>A starting point and a destination</li>
+     <li>Weather, wind and rain along your route</li>
+     <li>Forecast cards and route concern colors</li>
+    </ul>
+    <div class="plan-footer"><a class="pill primary" href="https://weather.ezclickgo.com/" target="_blank" rel="noopener noreferrer">Open web app <span aria-hidden="true">↗</span></a><p>Explore the current web experience.</p></div>
+   </article>
+   <article class="plan-card plan-card-plus" aria-labelledby="plusPlanTitle">
+    <div class="plan-name-row"><h3 id="plusPlanTitle">Plus</h3><span class="plan-label plan-label-soon">Coming soon</span></div>
+    <p class="plan-price"><span>$5</span><span class="plan-period">USD / month</span></p>
+    <p class="plan-summary">More ways to shape your journey.</p>
+    <p class="plan-includes">Everything in Free, plus:</p>
+    <ul class="plan-features plan-features-expanded">
+     <li>Speak your destination and ask route questions</li>
+     <li>Reroute through a city of your choice</li>
+     <li>Add stops and drag points to reshape your route</li>
+     <li>Undo recent route edits</li>
+     <li>Choose departure times and planned breaks</li>
+     <li>Update arrival forecasts as your plan changes</li>
+     <li>Explore 24 hours of rain, snow and wind</li>
+    </ul>
+    <div class="plan-roadmap"><p>Planned additions</p><ul><li>3D route exploration</li><li>Severe-weather alerts along your route</li></ul></div>
+    <div class="plan-footer"><a class="text-link" href="https://weather.ezclickgo.com/" target="_blank" rel="noopener noreferrer">Explore the web app <span aria-hidden="true">↗</span></a><p>Plus subscriptions are not open yet.</p></div>
+   </article>
+  </div>
+  <p class="plans-note">This is our planned membership lineup. Voice usage allowances will be published before Plus launches.</p>
+  <div class="platform-availability" aria-labelledby="platformsTitle">
+   <div class="platform-availability-copy"><h3 id="platformsTitle">On the web today.<br>More ways to go, coming next.</h3><p>Use your phone or computer browser now.</p></div>
+   <ul class="platform-status-list" aria-label="Platform availability">
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg><span><strong>Web</strong><span class="platform-available">Available now</span></span></li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 5h4m-3 14h2"/></svg><span><strong>iPhone</strong><span>App Store · Planned</span></span></li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M10 5h4m-2 13v2"/></svg><span><strong>Android</strong><span>Google Play · Planned</span></span></li>
+   </ul>
+  </div>
+ </div>
+</section>
+
+<section class="faq section-pad" id="questions" aria-labelledby="faqTitle"><div class="faq-heading reveal"><p class="eyebrow">06 / Before you go</p><h2 id="faqTitle">Good questions.<br><em>Clear answers.</em></h2><a class="text-link" href="#support">Need more help? <span aria-hidden="true">↗</span></a></div><div class="faq-list">
+<details class="faq-item reveal"><summary><span>Can I plan a truck route?</span><span class="faq-symbol" aria-hidden="true"></span></summary><div class="faq-answer"><div><p>Yes. Choose truck mode to plan with the app’s current truck profile and available road data. Always follow posted restrictions and road signs.</p></div></div></details>
+<details class="faq-item reveal"><summary><span>Can I change the route after I build it?</span><span class="faq-symbol" aria-hidden="true"></span></summary><div class="faq-answer"><div><p>Yes. Add an intermediate city, drag a route point, or change your departure and planned breaks. Undo reverses recent route edits during your current session.</p></div></div></details>
+<details class="faq-item reveal"><summary><span>Does the forecast match the time I get there?</span><span class="faq-symbol" aria-hidden="true"></span></summary><div class="faq-answer"><div><p>Route cards show forecasts for sampled locations at estimated arrival times. Changing your departure or planned breaks updates those estimates. Conditions between forecast points may differ.</p></div></div></details>
+<details class="faq-item reveal"><summary><span>Is the animated weather map live radar?</span><span class="faq-symbol" aria-hidden="true"></span></summary><div class="faq-answer"><div><p>The rain, snow and wind layers are model forecasts. The time slider explores the next 24 hours. Clouds currently show a recorded satellite sequence with its own observation times.</p></div></div></details>
+<details class="faq-item reveal"><summary><span>What do the route colors mean?</span><span class="faq-symbol" aria-hidden="true"></span></summary><div class="faq-answer"><div><p>Mint indicates lower forecast concern, amber calls for a closer look, and red indicates higher concern. Purple means forecast data is unavailable. These are planning indicators, not official warnings or guarantees about road conditions.</p></div></div></details>
+<details class="faq-item reveal"><summary><span>Where does the weather information come from?</span><span class="faq-symbol" aria-hidden="true"></span></summary><div class="faq-answer"><div><p>Route checkpoints use National Weather Service forecasts at estimated arrival times. Rain, snow and wind map layers use NOAA GFS model forecasts. Point weather also uses Open-Meteo. Clouds currently show recorded satellite imagery with its own observation times.</p></div></div></details>
+<details class="faq-item reveal"><summary><span>Do I need to install anything?</span><span class="faq-symbol" aria-hidden="true"></span></summary><div class="faq-answer"><div><p>You can open EZ Click Weather directly in your browser on a computer or phone. An internet connection is needed to load maps, forecasts and the voice assistant. Dedicated iPhone and Android apps are planned; release dates have not been announced.</p></div></div></details>
+<details class="faq-item reveal"><summary><span>Can I use my usual navigation app?</span><span class="faq-symbol" aria-hidden="true"></span></summary><div class="faq-answer"><div><p>Yes. The Navigate button can open destination B in Apple Maps, Google Maps or Trucker Path, depending on your device. The other app calculates its own route; intermediate points and truck settings are not transferred.</p></div></div></details>
+</div></section>
+
+<section class="support-section section-pad" id="support" aria-labelledby="supportTitle"><div class="support-heading"><p class="eyebrow">07 / Help along the way</p><h2 id="supportTitle">Need a hand?</h2><p>A clear report helps us understand what happened.</p></div><div class="support-grid"><article class="support-card"><span class="support-kicker">In the app</span><h3>Report a problem.</h3><p>Open <strong>Menu → Report a problem</strong>. Tell us what happened, what you expected and the steps that led to it.</p><p>You can review or turn off technical details before sending. Add a reply email if you would like a follow-up, and keep your report number.</p><a class="text-link" href="https://weather.ezclickgo.com/" target="_blank" rel="noopener noreferrer">Open the app <span aria-hidden="true">↗</span></a></article><article class="support-card"><span class="support-kicker">By email</span><h3>Tell us what’s happening.</h3><a class="support-email" href="mailto:support@ezclickgo.com?subject=EZ%20Click%20Weather%20%E2%80%94%20support&amp;body=What%20happened%3A%0A%0AWhat%20I%20expected%3A%0A%0ASteps%20to%20reproduce%3A%0A%0ADevice%20and%20browser%3A%0A%0AReport%20number%2C%20if%20available%3A%0A">support@ezclickgo.com</a><button class="copy-email" type="button" hidden>Copy email</button><span class="copy-email-status" role="status" aria-live="polite"></span><p>Include your device, browser and the steps to reproduce the issue. A screenshot can help; hide personal details before attaching it to your email.</p><a class="text-link" href="mailto:support@ezclickgo.com?subject=EZ%20Click%20Weather%20%E2%80%94%20support&amp;body=What%20happened%3A%0A%0AWhat%20I%20expected%3A%0A%0ASteps%20to%20reproduce%3A%0A%0ADevice%20and%20browser%3A%0A%0AReport%20number%2C%20if%20available%3A%0A">Email support <span aria-hidden="true">↗</span></a><span class="support-note">Opens your email app with a report template.</span></article></div><p class="support-data"><a href="https://weather.ezclickgo.com/terms" target="_blank" rel="noopener noreferrer">Weather limitations and how support reports are handled <span aria-hidden="true">↗</span></a></p></section>
+
+
+    <section class="closing closing-road section-pad" id="next" aria-labelledby="closingTitle">
+      <img class="closing-landscape" src="assets/coastal-outro-large.webp" srcset="assets/coastal-outro-small.webp 840w, assets/coastal-outro-large.webp 1672w" sizes="(max-width: 740px) 940px, 100vw" width="1672" height="941" loading="lazy" decoding="async" alt="">
+      <p class="eyebrow">Your next journey starts here</p>
+      <h2 id="closingTitle">Wherever next.<br><em>Know what’s ahead.</em></h2>
+      <a class="pill primary" href="https://weather.ezclickgo.com/" target="_blank" rel="noopener noreferrer">Plan your route <span aria-hidden="true">&nbsp;↗</span></a>
+      <p class="closing-note">Open in your browser. No installation needed.</p>
+    </section>
+  </main>
+  <footer class="footer section-pad"><a class="footer-brand" href="#top">EZ Click <em>Weather</em></a><p>Weather planning for the road.</p><div class="footer-links"><a href="#example">Inside the app</a><a href="#drivers">Car &amp; Truck</a><a href="#start">Get started</a><a href="#plans">Free &amp; Plus</a><a href="#questions">Questions</a><a href="https://weather.ezclickgo.com/terms" target="_blank" rel="noopener noreferrer">Weather information &amp; limitations</a><a href="#support">Help &amp; support</a></div><span>© 2026 EZ Click</span><p class="footer-note">Forecasts and arrival times are estimates. Route colors highlight forecast concern; they do not guarantee road safety. Check official alerts and local road conditions. Videos and product illustrations show the experience; generated interface details may differ from the current app.</p></footer>
+  <noscript><style>.reveal{opacity:1;transform:none}.film{height:100svh}.film-controls{display:none}</style></noscript>
+</body>
+</html>

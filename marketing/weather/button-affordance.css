@@ -1,0 +1,47 @@
+/* Clickable controls have a visible shape at rest; motion never changes layout. */
+.scene-preview-page :is(.navigation nav a,.nav-cta,.pill,.film-toggle,.card-playback,.text-link,.hero-skip,.copy-email,.drive-tabs button,.example-options button,.capture-dialog button){
+ --control-outline:#9fc7d359;
+ box-shadow:inset 0 0 0 1px var(--control-outline),0 2px 5px #020a1026;
+ transition:transform .18s ease,box-shadow .18s ease,background-color .18s ease,color .18s ease;
+}
+.scene-preview-page .navigation{width:min(840px,calc(100% - 40px));gap:18px}
+.scene-preview-page .navigation nav{gap:8px}
+.scene-preview-page .navigation nav a{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:40px;padding:0 9px;border-radius:6px;background:#1527318c;white-space:nowrap;color:#d9e9ef}
+.scene-preview-page .navigation nav .nav-platform{color:#b7e3e8}
+.scene-preview-page .nav-cta{min-height:44px;border-color:transparent;background:#203e4c;color:#e4f7fa}
+.scene-preview-page :is(.text-link,.hero-skip){padding:0 16px;border:0;border-radius:7px;background:#18323eb3;text-decoration:none}
+.scene-preview-page :is(.film-toggle,.card-playback){border:0;border-radius:7px;padding:0 13px;min-height:44px;background:#102630d9;color:#dceef4;opacity:1}
+.scene-preview-page .film-toggle{justify-content:center}
+.scene-preview-page .card-playback{width:max-content;font-size:11px;margin-top:10px;text-decoration:none}
+.scene-preview-page .copy-email{border-color:transparent;background:#193340}
+.scene-preview-page .drive-tabs button{--control-outline:#a2c7d533}
+.scene-preview-page :is(.drive-tabs button,.example-options button)[aria-selected=true]{--control-outline:#d0f6f9;background:#afdde3;color:#102a35;transform:translateY(-1px);box-shadow:inset 0 0 0 1px var(--control-outline),0 4px 12px #010b114d}
+.scene-preview-page .film-toggle[aria-pressed=true]{--control-outline:#b5edf0;background:#234651}
+.scene-preview-page .pill.primary{--control-outline:#cdeef2;background:#a9dbe1;color:#102a35}
+@media(hover:hover) and (pointer:fine){
+ .scene-preview-page :is(.navigation nav a,.nav-cta,.pill,.film-toggle,.card-playback,.text-link,.hero-skip,.copy-email,.drive-tabs button,.example-options button,.capture-dialog button):not(:disabled):hover{--control-outline:#b5edf0;transform:translateY(-2px);box-shadow:inset 0 0 0 1px var(--control-outline),0 7px 18px #010b1159}
+ .scene-preview-page :is(.navigation nav a,.nav-cta,.film-toggle,.card-playback,.text-link,.hero-skip,.copy-email,.capture-dialog button):not(:disabled):hover{background-color:#264651;color:#f3fcff}
+ .scene-preview-page .pill.primary:hover{background:#c5edf0}
+ .scene-preview-page .faq-item summary:hover{color:#c7eff2}
+}
+.scene-preview-page :is(.navigation nav a,.nav-cta,.pill,.film-toggle,.card-playback,.text-link,.hero-skip,.copy-email,.drive-tabs button,.example-options button,.capture-dialog button):focus-visible{outline:2px solid #c1f5f6;outline-offset:3px}
+.scene-preview-page :is(.navigation nav a,.nav-cta,.pill,.film-toggle,.card-playback,.text-link,.hero-skip,.copy-email,.drive-tabs button,.example-options button,.capture-dialog button):not(:disabled):active{transform:translateY(0);box-shadow:inset 0 0 0 1px #b5edf0}
+.scene-preview-page :is(.film-toggle,.card-playback,.copy-email,.capture-dialog button):disabled{transform:none;box-shadow:inset 0 0 0 1px #9fc7d330;opacity:.55;cursor:default}
+.scene-preview-page .text-link:hover span{transform:none}
+@media(max-width:800px){
+ .scene-preview-page .navigation{width:calc(100% - 28px);gap:12px}
+ .scene-preview-page .navigation nav{gap:6px}
+ .scene-preview-page .navigation nav a{padding:0 7px}
+}
+@media(max-width:600px){
+ .scene-preview-page .navigation{width:calc(100% - 16px);gap:6px}
+ .scene-preview-page .navigation .brand,.scene-preview-page .navigation .brand img{width:clamp(60px,17vw,76px)}
+ .scene-preview-page .navigation nav a{padding:0 6px;min-height:42px;gap:3px}
+ .scene-preview-page .navigation nav a:first-child,.scene-preview-page .navigation nav .nav-support{display:none}
+ .scene-preview-page .navigation .nav-cta{padding:0 8px;gap:5px}
+ .scene-preview-page :is(.text-link,.hero-skip){padding-left:13px;padding-right:13px}
+ .scene-preview-page .film-toggle{padding:0 9px}
+}
+@media(prefers-reduced-motion:reduce){
+ .scene-preview-page :is(.navigation nav a,.nav-cta,.pill,.film-toggle,.card-playback,.text-link,.hero-skip,.copy-email,.drive-tabs button,.example-options button,.capture-dialog button){transition:none;transform:none!important}
+}

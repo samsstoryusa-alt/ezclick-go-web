@@ -1,0 +1,225 @@
+/* The reference's three-photo choreography, isolated from the approved hero. */
+.journey {
+  position: relative;
+  padding: 0;
+  overflow: visible;
+}
+.journey-stage {
+  display: flow-root;
+  padding: 130px clamp(32px, 9.375vw, 180px) 165px;
+  overflow: clip;
+}
+.journey.has-scroll-story .journey-stage {
+  position: sticky;
+  top: var(--story-pin-top, 0px);
+}
+.journey .section-intro {
+  display: block;
+  width: min(370px, 100%);
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 4;
+}
+.journey .section-intro .eyebrow {
+  font: 400 20px/1.3 var(--serif);
+  text-transform: none;
+  letter-spacing: -.035em;
+  color: #bac4b9;
+  margin-bottom: 12px;
+}
+.journey .section-intro h2 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(29px, 2.55vw, 40px);
+  font-weight: 500;
+  letter-spacing: -.06em;
+  line-height: 1.07;
+}
+.journey .intro-note {
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: .015em;
+  margin: 24px auto 0;
+  max-width: 290px;
+}
+.journey .photo-story {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: auto;
+  column-gap: 13.45%;
+  max-width: 1400px;
+  padding: 0;
+  margin: -60px auto 0;
+  position: relative;
+}
+.journey .story-photo {
+  position: relative;
+  grid-row: 1;
+  width: 100%;
+  align-self: start;
+  transform: translate3d(0, var(--card-y, 0px), 0);
+  /* Only composites are animated; card dimensions never change during scroll. */
+  transition: none;
+  isolation: isolate;
+}
+.journey.is-moving .story-photo,
+.journey.is-moving .story-photo img { will-change: transform; }
+.journey .photo-road { grid-column: 1; margin-top: 70px; }
+.journey .photo-cabin { grid-column: 2; margin-top: 225px; }
+.journey .photo-phone { grid-column: 3; margin-top: -90px; }
+.journey .story-photo .photo-frame {
+  height: auto;
+  aspect-ratio: 254 / 362;
+  overflow: hidden;
+  background: #1b251f;
+  position: relative;
+}
+.journey .photo-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 52%, #08110b2b 67%, #08110bd1);
+  pointer-events: none;
+}
+.journey .story-video {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 60%;
+  background: #1b251f;
+}
+.journey .card-scroll-hint {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  padding: 8px 10px;
+  border: 1px solid #ffffff45;
+  border-radius: 8px;
+  background: #101713d9;
+  color: #fff;
+  font-size: 11px;
+  line-height: 1.3;
+  pointer-events: none;
+}
+.journey .card-scroll-hint::after {
+  content: '';
+  display: block;
+  height: 2px;
+  margin-top: 6px;
+  background: #c5e2ba;
+  transform-origin: left;
+  transform: scaleX(var(--video-progress, 0));
+}
+.journey .card-scroll-hint[hidden] { display: none; }
+.journey .story-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: translate3d(0, var(--image-y, 0px), 0) scale(var(--image-scale, 1.16));
+  transition: none;
+}
+.journey .photo-road img { object-position: 56% center; }
+.journey .photo-cabin img { object-position: 35% center; }
+.journey .photo-phone img { object-position: 58% center; }
+.journey .story-photo figcaption {
+  position: absolute;
+  left: 17px;
+  right: 15px;
+  bottom: 20px;
+  z-index: 2;
+  display: block;
+  padding: 0;
+  background: none;
+  pointer-events: none;
+}
+.journey .story-photo h3 {
+  font-size: clamp(16px, 1.5vw, 23px);
+  line-height: 1.1;
+  font-weight: 400;
+  letter-spacing: -.05em;
+  color: #fff;
+  text-wrap: balance;
+}
+.journey .photo-number,
+.journey .story-photo figcaption p {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.journey-signature {
+  grid-column: 3;
+  grid-row: 1;
+  align-self: end;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font: 11px/1.5 monospace;
+  letter-spacing: -.025em;
+  color: #a4b19f;
+  padding-bottom: 100px;
+}
+@media (max-width: 900px) and (min-width: 601px) {
+  .journey-stage { padding-inline: 7vw; }
+  .journey .photo-story { column-gap: 9%; margin-top: -25px; }
+  .journey .photo-road { margin-top: 110px; }
+  .journey .photo-cabin { margin-top: 235px; }
+  .journey .story-photo figcaption { left: 13px; right: 13px; bottom: 16px; }
+  .journey-signature { font-size: 9px; padding-bottom: 75px; }
+}
+@media (max-width: 600px) {
+  .journey-stage { padding: 90px 23px 90px; }
+  .journey .section-intro { width: 310px; max-width: 100%; }
+  .journey .section-intro .eyebrow { font-size: 20px; margin-bottom: 13px; }
+  .journey .section-intro h2 { font-size: 31px; }
+  .journey .intro-note { font-size: 14px; margin-top: 22px; }
+  .journey .photo-story {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px 19px;
+    margin-top: 42px;
+  }
+  .journey .photo-road { grid-column: 1; grid-row: 1; margin-top: 70px; }
+  .journey .photo-phone { grid-column: 2; grid-row: 1; margin-top: 0; }
+  .journey .photo-cabin { grid-column: 1 / -1; grid-row: 2; width: 72%; justify-self: center; margin-top: 0; }
+  .journey .story-photo figcaption { left: 12px; right: 10px; bottom: 16px; }
+  .journey .story-photo h3 { font-size: 17px; }
+  .journey .photo-cabin h3 { font-size: 21px; }
+  .journey-signature { grid-column: 1 / -1; grid-row: 3; justify-self: center; padding: 0; font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey .story-photo { transform: none; will-change: auto; }
+  .journey .story-photo img { transform: scale(1.05); will-change: auto; }
+}
+
+/* Autoplay preview: copy lives below the picture, outside the video. */
+.journey[data-playback="auto"] .photo-frame::after { display: none; }
+.journey[data-playback="auto"] .story-photo figcaption {
+  position: relative; inset: auto; padding: 18px 0 0;
+  pointer-events: auto; opacity: .7; transform: translateY(7px);
+  transition: opacity 700ms ease, transform 700ms cubic-bezier(.2,.7,.2,1);
+}
+.journey[data-playback="auto"] .caption-visible figcaption { opacity: 1; transform: none; }
+.journey[data-playback="auto"] .story-photo figcaption p {
+  position: static; width: auto; height: auto; margin: 9px 0 0; padding: 0;
+  overflow: visible; clip-path: none; white-space: normal;
+  color: #a4b19f; font-size: 13px; line-height: 1.55;
+}
+.card-playback {
+  margin-top: 12px; padding: 5px 0; border: 0; background: none;
+  color: #c5e2ba; font: inherit; font-size: 12px; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 4px;
+}
+.card-playback[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .journey[data-playback="auto"] .story-photo figcaption { opacity: 1; transform: none; transition: none; }
+}

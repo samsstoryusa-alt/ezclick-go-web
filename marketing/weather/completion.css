@@ -1,0 +1,47 @@
+/* Finishing sections share the approved typography and restrained motion. */
+.capture-label{display:block;text-align:center;margin-top:8px;font-size:10px;line-height:1.5;color:#a8beab}
+.how{padding-top:110px;padding-bottom:105px;background:#151e18;border-top:1px solid var(--line)}
+.how-heading{display:grid;grid-template-columns:1fr 1fr;gap:25px;align-items:end}
+.how-heading .eyebrow{grid-column:1/-1;color:var(--muted)}
+.how h2,.faq h2{font-size:clamp(48px,5.7vw,84px);line-height:1.05}
+.how-heading>p:last-child{justify-self:end;color:var(--muted);font-size:14px;line-height:1.7}
+.how-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5vw;list-style:none;margin:75px 0 0;padding:0}
+.how-steps li{border-top:1px solid #dce9d632;padding-top:24px}
+.step-number{font-size:11px;color:#99ad96;font-variant-numeric:tabular-nums}
+.how-steps h3{font-family:var(--serif);font-size:30px;font-weight:400;letter-spacing:-.035em;line-height:1.15;margin:25px 0 17px}
+.how-steps p{max-width:320px;font-size:14px;line-height:1.75;color:var(--muted)}
+.how-bottom{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-top:68px}
+.how-bottom>p{font-size:12px;color:var(--muted);line-height:1.7;text-align:right}
+.text-link{display:inline-flex;align-items:center;gap:20px;min-height:44px;font-size:13px;border-bottom:1px solid #c2e2bd70}
+.text-link span{transition:transform .3s ease}
+.text-link:hover span{transform:translate(3px,-3px)}
+.faq{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1fr);gap:8vw;padding-top:120px;padding-bottom:125px}
+.faq-heading .eyebrow{color:var(--muted);margin-bottom:30px}
+.faq-heading .text-link{margin-top:35px;color:var(--muted)}
+.faq h2{font-size:clamp(45px,4.9vw,72px)}
+.faq-item{border-top:1px solid var(--line)}
+.faq-item:last-child{border-bottom:1px solid var(--line)}
+.faq-item summary{display:flex;align-items:center;justify-content:space-between;gap:22px;min-height:80px;padding:20px 0;list-style:none;font-size:15px;line-height:1.5;cursor:pointer}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary:focus-visible{outline:2px solid var(--mint);outline-offset:5px}
+.faq-symbol{width:16px;height:16px;position:relative;flex:none}
+.faq-symbol::before,.faq-symbol::after{content:"";position:absolute;background:#b4c9ad;left:1px;right:1px;top:7px;height:1px;transition:transform .3s ease}
+.faq-symbol::after{transform:rotate(90deg)}
+.faq-item[open] .faq-symbol::after{transform:rotate(0)}
+.faq-answer p{font-size:14px;line-height:1.8;color:var(--muted);padding:0 24px 24px 0;max-width:530px}
+.faq-enhanced .faq-answer{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .35s ease,opacity .3s ease}
+.faq-enhanced .faq-answer>div{overflow:hidden;min-height:0}
+.faq-enhanced .faq-item.is-open .faq-answer{grid-template-rows:1fr;opacity:1}
+.footer{flex-wrap:wrap}
+.footer-links{display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center}
+.footer-links a{padding:9px 0}
+.footer .footer-note{display:block;flex-basis:100%;max-width:880px;color:#8e9d90;font-size:11px;line-height:1.7;margin-top:12px}
+.card-playback{display:block;min-height:44px;text-decoration:none;opacity:.8;transition:opacity .3s ease}
+.card-playback:hover{opacity:1}
+@media(max-width:900px){.faq{gap:5vw}.how-steps{gap:28px}.how-steps h3{font-size:26px}}
+@media(max-width:600px){
+.how{padding-top:70px;padding-bottom:65px}.how-heading{display:block}.how-heading .eyebrow{margin-bottom:25px}.how h2{font-size:46px}.how-heading>p:last-child{margin-top:25px;font-size:13px}
+.how-steps{grid-template-columns:1fr;gap:30px;margin-top:38px}.how-steps li{position:relative;padding-left:37px;padding-top:23px}.step-number{position:absolute;left:0;top:29px}.how-steps h3{margin:0 0 13px;font-size:29px}.how-steps p{max-width:none}
+.how-bottom{margin-top:38px}.how-bottom>p{display:none}.faq{grid-template-columns:1fr;gap:38px;padding-top:70px;padding-bottom:70px}.faq h2{font-size:46px}.faq-heading .text-link{margin-top:22px}.faq-item summary{font-size:14px;min-height:75px}.faq-answer p{font-size:13px;padding-right:15px}.footer-links{grid-column:1/-1;gap:12px 24px}.footer .footer-note{grid-column:1/-1;margin-top:0}.capture-label{font-size:9px}.card-playback{margin-top:6px}
+}
+@media(prefers-reduced-motion:reduce){.faq-enhanced .faq-answer,.faq-symbol::after,.text-link span,.card-playback{transition:none}.text-link:hover span{transform:none}}

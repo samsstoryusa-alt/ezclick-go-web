@@ -1,0 +1,85 @@
+/* Membership preview: two equal plans, followed by platform availability. */
+.plans-section{background:#0e1c26;border-top:1px solid #abc8d629;padding-top:90px;padding-bottom:72px;scroll-margin-top:0}
+.plans-inner{max-width:1100px;margin:auto}
+.plans-heading{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:end;margin-bottom:38px}
+.plans-heading .eyebrow{color:#a5c4d2;margin-bottom:24px}
+.plans-heading h2{font-size:clamp(48px,5.6vw,76px);line-height:1.03}
+.plans-heading>p{font-size:14px;line-height:1.8;color:#b4c7d2;max-width:330px;justify-self:end;padding-bottom:5px}
+.plans-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.plan-card{min-width:0;border:1px solid #95bec63d;border-radius:10px;padding:30px 32px;background:#10212c;display:flex;flex-direction:column}
+.plan-card-plus{border-color:#a9dbe1a6;background:linear-gradient(145deg,#1b3541,#122631 80%);box-shadow:0 12px 34px #020a1026}
+.plan-name-row{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.plan-name-row h3{font-size:21px;font-weight:500;letter-spacing:-.025em}
+.plan-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#a6becb;line-height:1.5}
+.plan-label-soon{color:#b7e9ed}
+.plan-price{display:flex;align-items:baseline;gap:12px;margin-top:25px}
+.plan-price>span:first-child{font-size:68px;font-weight:400;line-height:1;letter-spacing:-.065em;font-variant-numeric:lining-nums}
+.plan-period{font-size:12px;color:#b4cbd7;white-space:nowrap}
+.plan-summary{font-size:14px;line-height:1.7;color:#bfd3dd;margin-top:18px}
+.plan-features{padding:24px 0 0;margin:24px 0 28px;list-style:none;border-top:1px solid #abc8d62e;display:grid;gap:15px;align-content:start;flex:1}
+.plan-features li{position:relative;padding-left:24px;font-size:13px;line-height:1.6;color:#d8e7ed}
+.plan-features li:before{content:'✓';position:absolute;left:0;color:#b0e4df}
+.plan-footer{margin-top:auto}
+.plan-footer :is(.pill,.text-link){min-height:48px;width:100%;gap:16px;justify-content:center;border-radius:7px;font-size:13px;white-space:normal;text-align:center}
+.plan-footer>p{margin-top:13px;font-size:11px;line-height:1.7;color:#aac1ce}
+.plans-note{font-size:11px;line-height:1.8;color:#a8bfcd;margin-top:18px}
+.platform-availability{margin-top:38px;padding-top:30px;border-top:1px solid #abc8d62e;display:flex;gap:32px;justify-content:space-between;align-items:center}
+.platform-availability-copy h3{font-family:var(--serif);font-size:26px;font-weight:400;line-height:1.14;letter-spacing:-.025em}
+.platform-availability-copy p{font-size:11px;line-height:1.8;color:#a8bfcd;margin-top:10px}
+.platform-status-list{display:flex;gap:28px;list-style:none;padding:0;margin:0}
+.platform-status-list li{display:flex;align-items:center;gap:10px}
+.platform-status-list svg{width:25px;height:25px;flex-shrink:0;fill:none;stroke:#a9c7d4;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.platform-status-list strong{display:block;font-size:12px;font-weight:400;line-height:1.8;color:#dbeaf1}
+.platform-status-list li>span>span{display:block;font-size:10px;line-height:1.8;color:#a8bfcd;white-space:nowrap}
+.platform-status-list li>span>.platform-available{color:#afe7d6}
+@media(max-width:1000px){.platform-availability{align-items:flex-start;flex-direction:column;gap:24px}.platform-status-list{width:100%;justify-content:space-between;gap:20px}.plan-card{padding:28px 25px}}
+@media(max-width:640px){
+ .plans-section{padding-top:70px;padding-bottom:54px}
+ .plans-heading{grid-template-columns:1fr;gap:22px;margin-bottom:28px}
+ .plans-heading h2{font-size:clamp(46px,12vw,62px)}
+ .plans-heading>p{justify-self:start;font-size:13px;padding:0}
+ .plans-heading .eyebrow{margin-bottom:22px}
+ .plans-grid{grid-template-columns:1fr;gap:18px}
+ .plan-card{padding:25px 23px}
+ .plan-price>span:first-child{font-size:60px}
+ .plan-summary{font-size:13px}
+ .plan-features{margin-top:20px;padding-top:20px;gap:14px}
+ .plan-features li{font-size:12px}
+ .platform-availability{margin-top:30px;padding-top:26px}
+ .platform-status-list{display:grid;grid-template-columns:1fr;gap:19px}
+ .platform-status-list li{gap:14px}
+ .platform-status-list li>span{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex:1}
+ .platform-status-list strong{font-size:13px}
+ .platform-status-list li>span>span{font-size:11px}
+}
+
+/* Whole-card feedback and an explicit keyboard-accessible highlight control. */
+.plan-card{position:relative;transition:transform .26s cubic-bezier(.2,.8,.2,1),border-color .26s ease,box-shadow .26s ease;transform:translateY(0)}
+.plan-card.is-selectable{cursor:pointer}
+.plan-card.is-selectable .plan-name-row{padding-right:41px}
+.plan-pick{position:absolute;right:18px;top:19px;width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:#daf8fa;padding:0;display:grid;place-items:center}
+.plan-pick:before{content:'';width:21px;height:21px;border:1px solid #9fc7d380;border-radius:50%;background:#122832}
+.plan-pick[aria-pressed=true]:before{border-color:#c4f5f4;background:#ace1df}
+.plan-pick[aria-pressed=true]:after{content:'✓';position:absolute;color:#0c2932;font-size:13px;font-weight:bold}
+.plan-pick:focus-visible{outline:2px solid #c1f5f6;outline-offset:1px}
+.plan-card.is-chosen,.plan-card:has(.plan-pick:focus-visible){transform:translateY(-7px);border-color:#bceff2;box-shadow:0 18px 34px #020a1059,0 0 0 1px #a9dbe133,0 0 30px #80dbea18}
+@media(hover:hover) and (pointer:fine){
+ .plan-card:hover{transform:translateY(-7px);border-color:#bceff2;box-shadow:0 18px 34px #020a1059,0 0 0 1px #a9dbe133,0 0 30px #80dbea18}
+ .plan-pick:hover:before{border-color:#c4f5f4}
+}
+.plan-includes{margin-top:22px;padding-top:19px;border-top:1px solid #abc8d62e;font-size:12px;color:#b8dce4}
+.plan-features-expanded{margin-top:14px;margin-bottom:20px;padding-top:0;border-top:0;gap:12px}
+.plan-roadmap{padding:15px 17px;margin:0 0 23px;border-left:2px solid #a1cbd35c;background:#0c1c253d;border-radius:0 5px 5px 0}
+.plan-roadmap>p{font-size:10px;line-height:1.5;letter-spacing:.08em;text-transform:uppercase;color:#b4d4df;margin-bottom:9px}
+.plan-roadmap ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.plan-roadmap li{font-size:11px;line-height:1.7;color:#aec4d0}
+.plan-card:not(.plan-card-plus) .plan-features{flex:0}
+@media(max-width:640px){
+ .plan-pick{right:12px;top:15px}
+ .plan-name-row{gap:10px}
+ .plan-label{font-size:9px;letter-spacing:.06em}
+ .plan-includes{margin-top:18px}
+ .plan-features-expanded{gap:12px}
+ .plan-roadmap{padding:13px 14px}
+}
+@media(prefers-reduced-motion:reduce){.plan-card{transition:none!important;transform:none!important}}

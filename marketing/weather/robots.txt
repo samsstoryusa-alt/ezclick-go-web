@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ezclickgo.com/weather/sitemap.xml

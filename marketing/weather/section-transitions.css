@@ -1,0 +1,11 @@
+/* Section links fade through darkness; ordinary manual scrolling stays native. */
+html{scroll-behavior:auto;scroll-padding-top:0}
+html.section-jumping{scroll-behavior:auto!important}
+.section-curtain{position:fixed;inset:0;z-index:1000;background:#05090e;opacity:0;pointer-events:auto;touch-action:none;will-change:opacity}
+.section-curtain[hidden]{display:none}
+@media(prefers-reduced-motion:reduce){.section-curtain{display:none}}
+
+/* Land on a clean section edge, with headings below the floating navigation. */
+#start,#questions,#support{scroll-margin-top:105px}
+.feature-gallery{padding-top:110px}
+@media(max-width:740px){.feature-gallery{padding-top:96px}}
