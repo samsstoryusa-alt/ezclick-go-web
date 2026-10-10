@@ -1,0 +1,38 @@
+[Unit]
+Description=EZ Click Weather support inbox
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+DynamicUser=yes
+WorkingDirectory=/opt/ezclick/support/current
+ExecStart=/usr/bin/python3 -u service.py
+Environment=SUPPORT_DATA_DIR=/var/lib/ezclick-support
+Environment=SUPPORT_ORIGINS=https://weather.ezclickgo.com
+Environment=SUPPORT_DELIVERY=smtp
+Environment=SUPPORT_PORT=8770
+Environment=SUPPORT_SOURCE_IP=40.160.37.103
+Environment=SUPPORT_AI=on
+LoadCredential=openai_api_key:/etc/ezclick-support/openai-api-key
+StateDirectory=ezclick-support
+StateDirectoryMode=0700
+UMask=0077
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+CapabilityBoundingSet=
+MemoryMax=128M
+TasksMax=24
+
+[Install]
+WantedBy=multi-user.target

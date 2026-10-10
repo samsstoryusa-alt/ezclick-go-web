@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {cloudHistory,cloudPosition} from '../app/cloud-timeline.ts';
+const end=Date.parse('2026-10-09T22:00:00Z');
+const times=Array.from({length:25},(_,i)=>new Date(end-i*5*60000).toISOString());
+const chosen=cloudHistory(times.join(','),end+5*60000);
+assert.equal(chosen.length,7);assert.equal(chosen[0],end-60*60000);assert.equal(chosen.at(-1),end);
+assert.throws(()=>cloudHistory(times.join(','),end+91*60000),/delayed/);
+assert.throws(()=>cloudHistory('',end),/delayed/);
+assert.deepEqual(cloudHistory(times[0],end),[end]);
+assert.deepEqual(cloudPosition(900,7),{a:0,b:1,mix:.5});
+assert.deepEqual(cloudPosition(12000,7),{a:6,b:6,mix:0});
+assert.deepEqual(cloudPosition(13000,7),{a:0,b:1,mix:0});
+assert.deepEqual(cloudPosition(900,1),{a:0,b:0,mix:0});
+console.log('Cloud history: real timestamps, bounded window, freshness, single-frame fallback and chronological loop PASS');

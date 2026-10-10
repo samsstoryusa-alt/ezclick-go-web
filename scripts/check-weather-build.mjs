@@ -3,11 +3,20 @@ import {readFile,readdir} from 'node:fs/promises';
 const root=new URL('../dist-weather/',import.meta.url);
 const html=await readFile(new URL('index.html',root),'utf8');
 assert.match(html,/data-weather-standalone="true"/);
-assert.match(html,/<title>EZCLICK GO Weather/);
+assert.match(html,/<title>EZ Click Weather/);
 assert.doesNotMatch(html,/journey|Trucking &amp; Dispatch Platform/);
 assert.equal(await readFile(new URL('terms/index.html',root),'utf8'),html);
 assert.deepEqual(await readdir(new URL('media/',root)),['ezclick-go-logo.png']);
 const manifest=JSON.parse(await readFile(new URL('.vite/manifest.json',root),'utf8'));
+const appEntry=Object.values(manifest).find(entry=>entry.isEntry);
+assert.ok(appEntry,'Standalone app entry must exist');
+const appCode=await readFile(new URL(appEntry.file,root),'utf8');
+assert.match(appCode,/voice-direct-launch/,'Direct microphone launch must ship in the standalone build');
+assert.match(appCode,/voice-start/,'Direct microphone launch must start the recorder');
+// A clean build previously showed voice only with ?voice-preview=1. Check the emitted bundle.
+assert.equal(/\.get\(\s*['"`]voice-preview['"`]\s*\)/.test(appCode),false,'Standalone voice must be enabled on the normal URL, without a preview flag');
+await readFile(new URL('voice-preview.html',root));
+console.log('Standalone voice: controls and recorder asset present; no preview-only gate PASS');
 for(const entry of Object.values(manifest)){
  await readFile(new URL(entry.file,root));
  for(const css of entry.css??[])await readFile(new URL(css,root));

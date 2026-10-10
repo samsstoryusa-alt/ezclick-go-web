@@ -9,8 +9,49 @@ class Checks(unittest.TestCase):
   self.assertTrue(service.coords({'lon':-105,'lat':40}))
  def test_truck_validation(self):
   with self.assertRaises(ValueError):service.route({'locations':[{'lon':-105,'lat':40}]*2,'truck':{}})
+ def test_car_profile(self):
+  with patch.object(service,'read',return_value={'code':'Ok','routes':[]}) as request:
+   service.route({'locations':[{'lon':-86.78,'lat':36.16},{'lon':-81.65,'lat':30.33}],'vehicle':'car'})
+   payload=request.call_args.kwargs['payload']
+   self.assertEqual(payload['costing'],'auto');self.assertNotIn('truck',payload['costing_options'])
+ def test_invalid_vehicle(self):
+  with self.assertRaises(ValueError):service.route({'vehicle':'plane'})
+ def test_fixed_truck_profile(self):
+  truck=dict(height=4.1148,width=2.5908,length=21.9456,weight=36.2873896,axle_load=9.0718474,axle_count=5,hazmat=False)
+  with patch.object(service,'read',return_value={'code':'Ok','routes':[]}) as request:
+   service.route({'locations':[{'lon':-86.78,'lat':36.16},{'lon':-81.65,'lat':30.33}],'vehicle':'truck','truck':truck})
+   payload=request.call_args.kwargs['payload'];self.assertEqual(payload['costing'],'truck')
+   for key,value in truck.items():self.assertEqual(payload['costing_options']['truck'][key],value)
  def test_expired_request(self):
   with self.assertRaises(ValueError):service.weather({'points':[{'lon':-105,'lat':40,'fraction':0,'eta':0}]*2})
+ def route_result(self,distance=1477000,duration=58000):
+  return {'code':'Ok','routes':[{'distance':distance,'duration':duration,'geometry':{'type':'LineString','coordinates':[[-81.65,30.33],[-95.37,29.76]]}}]}
+ def test_truck_detour_comparison_preserves_restrictions(self):
+  truck=dict(height=4.5,width=2.59,length=21.94,weight=45,axle_load=10,axle_count=5,hazmat=True)
+  with patch.object(service,'read',side_effect=[self.route_result(),self.route_result(1419000,56000)]) as request:
+   result=service.route({'locations':[{'lon':-81.65,'lat':30.33},{'lon':-95.37,'lat':29.76}],'vehicle':'truck','truck':truck})
+   self.assertEqual(result['routes'][0]['distance'],1419000)
+   self.assertEqual(request.call_count,2)
+   first,second=[c.kwargs['payload'] for c in request.call_args_list]
+   expected=copy.deepcopy(first);expected['costing_options']['truck']['use_truck_route']=0
+   self.assertEqual(second,expected)
+   for key,value in truck.items():self.assertEqual(second['costing_options']['truck'][key],value)
+   self.assertEqual(second['costing_options']['truck']['hgv_no_access_penalty'],43200)
+   self.assertTrue(second['costing_options']['truck']['exclude_unpaved'])
+   self.assertEqual(request.call_args_list[1].kwargs['timeout'],5)
+ def test_truck_comparison_keeps_primary_on_failure(self):
+  truck=dict(height=4.1,width=2.59,length=21.94,weight=36,axle_load=9,axle_count=5,hazmat=False)
+  for alternative in [TimeoutError('timeout'),{'code':'NoRoute','routes':[]}]:
+   with patch.object(service,'read',side_effect=[self.route_result(),alternative]):
+    result=service.route({'locations':[{'lon':-81.65,'lat':30.33},{'lon':-95.37,'lat':29.76}],'truck':truck})
+    self.assertEqual(result['routes'][0]['distance'],1477000)
+ def test_detour_selection_thresholds(self):
+  p=self.route_result(100000,1000)
+  for distance,duration,expected in [(94000,999,True),(95000,1000,True),(96000,990,False),(94000,1001,False),(110000,900,False),(0,900,False)]:
+   with self.subTest(distance=distance,duration=duration):
+    self.assertEqual(service.preferable_truck_alternative(p,self.route_result(distance,duration)),expected)
+  self.assertFalse(service.preferable_truck_alternative(self.route_result(),{'code':'Ok','routes':[]}))
+  self.assertFalse(service.preferable_truck_alternative(self.route_result(1000000),self.route_result(985000,50000)))
  def test_missing_forecast_is_unknown(self):
   with patch.object(service,'read',side_effect=Exception('offline')):
    p=service.forecast({'lon':-105,'lat':40,'fraction':0,'eta':time.time()*1000})

@@ -1,8 +1,9 @@
 import {validTruck,type TruckProfile,type RoutePoint} from './road-route';
+import {validViaPoints} from './route-waypoints';
 
 export const TRIP_STORAGE_KEY='ezclick-weather-trip-v1';
 export type TripPoints=[RoutePoint|null,RoutePoint|null];
-type SavedTrip={pointLabels?:Record<string,string>;version:1;points:TripPoints;truck?:TruckProfile;confirmed:boolean;builtKey:string|null;departure:string;departureZone?:string;stops:number};
+type SavedTrip={vehicle?:"truck"|"car";pointLabels?:Record<string,string>;version:1;points:TripPoints;via?:RoutePoint[];truck?:TruckProfile;confirmed:boolean;builtKey:string|null;departure:string;departureZone?:string;stops:number};
 export const defaultTripPoints=():TripPoints=>[null,null];
 export function standaloneWeather(){return typeof document!=='undefined'&&document.documentElement.dataset.weatherStandalone==='true';}
 function point(p:unknown):p is RoutePoint|null{return p===null||(Array.isArray(p)&&p.length===2&&Number.isFinite(p[0])&&Number.isFinite(p[1])&&Math.abs(p[0])<=180&&Math.abs(p[1])<=85);}
@@ -19,13 +20,14 @@ export function readTrip():SavedTrip|null{
   const v=JSON.parse(value);
   if(!v||v.version!==1||!Array.isArray(v.points)||v.points.length!==2||!v.points.every(point))return null;
   const truck=v.truck&&typeof v.truck==='object'&&validTruck(v.truck)&&typeof v.truck.hazmat==='boolean'?v.truck:undefined;
+  if(v.via!==undefined&&!validViaPoints(v.via))return null;
   const departure=normalizeDeparture(v.departure);
   const zone=validZone(v.departureZone)?v.departureZone:departureZone();
   // Legacy wall-clock values have no recoverable original zone. Anchor once in
   // the current device zone, then persist the instant before any later travel.
   if(departure&&v.departure!==departure){try{localStorage.setItem(TRIP_STORAGE_KEY,JSON.stringify({...v,departure,departureZone:zone}));}catch{/* Storage may be unavailable. */}}
-  return {pointLabels:Object.fromEntries(Object.entries(v.pointLabels??{}).filter(([k,label])=>k.length<80&&typeof label==='string'&&label.length<=400).slice(-12)) as Record<string,string>,version:1,points:v.points,truck,confirmed:!!truck&&v.confirmed===true,builtKey:typeof v.builtKey==='string'?v.builtKey:null,
-   departure,departureZone:zone,
+  return {pointLabels:Object.fromEntries(Object.entries(v.pointLabels??{}).filter(([k,label])=>k.length<80&&typeof label==='string'&&label.length<=400).slice(-12)) as Record<string,string>,version:1,points:v.points,vehicle:v.vehicle==='car'?'car':'truck',truck,confirmed:!!truck&&v.confirmed===true,builtKey:typeof v.builtKey==='string'?v.builtKey:null,
+   via:v.via??[],departure,departureZone:zone,
    stops:Number.isFinite(v.stops)&&v.stops>=0&&v.stops<=4320?v.stops:0};
  }catch{return null;}
 }

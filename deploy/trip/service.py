@@ -10,13 +10,13 @@ UA='EZCLICK GO route weather (https://weather.ezclickgo.com)'
 def finite(v):return isinstance(v,(int,float)) and not isinstance(v,bool) and math.isfinite(v)
 def coords(p):return isinstance(p,dict) and finite(p.get('lon')) and finite(p.get('lat')) and -125<=p['lon']<=-66 and 24<=p['lat']<=50
 
-def read(url,ttl=0,payload=None):
+def read(url,ttl=0,payload=None,timeout=None):
     now=time.time()
     with LOCK:
         old=CACHE.get(url)
         if ttl and old and now-old[0]<ttl:return old[1]
     req=urllib.request.Request(url,data=json.dumps(payload).encode() if payload is not None else None,headers={'User-Agent':UA,'Accept':'application/geo+json, application/json','Content-Type':'application/json'})
-    with urllib.request.urlopen(req,timeout=35 if payload is not None else 12) as r:data=json.load(r)
+    with urllib.request.urlopen(req,timeout=timeout if timeout is not None else (35 if payload is not None else 12)) as r:data=json.load(r)
     if ttl:
         with LOCK:
             CACHE[url]=(now,data);CACHE.move_to_end(url)
@@ -46,15 +46,43 @@ def add_timing(result):
 
 def coverage():return os.getenv('ROUTING_COVERAGE','contiguous-us')
 
+def preferable_truck_alternative(primary,alternative):
+    # Only remove a substantial preference-induced detour. This is still truck
+    # costing with identical access, dimensions, axle, weight and hazmat rules.
+    def summary(result):
+        routes=result.get('routes',[])
+        if result.get('code')!='Ok' or not routes:return None
+        r=routes[0]
+        if not all(finite(r.get(k)) and r[k]>0 for k in ('distance','duration')):return None
+        geometry=r.get('geometry',{})
+        if geometry.get('type')!='LineString' or len(geometry.get('coordinates',[]))<2:return None
+        return r
+    p=summary(primary);a=summary(alternative)
+    return bool(p and a and p['distance']-a['distance']>=max(5000,p['distance']*.02) and a['duration']<=p['duration'])
+
 def route(body):
-    loc=body.get('locations');t=body.get('truck',{})
-    if not isinstance(loc,list) or len(loc)!=2 or not all(coords(x) for x in loc):raise ValueError('Choose two points in the contiguous United States.')
+    loc=body.get('locations');t=body.get('truck',{});vehicle=body.get('vehicle','truck')
+    if vehicle not in ('truck','car'):raise ValueError('Choose truck or car.')
+    if not isinstance(loc,list) or not 2<=len(loc)<=7 or not all(coords(x) for x in loc):raise ValueError('Choose start, finish and up to five intermediate points in the contiguous United States.')
     if coverage()=='colorado' and any(not (-109.06<=x['lon']<=-102.04 and 36.99<=x['lat']<=41.01) for x in loc):raise ValueError('Colorado preview is available while US routes are being prepared.')
-    bounds={'height':(1,10),'width':(1,10),'length':(2,50),'weight':(.1,150),'axle_load':(.1,40),'axle_count':(2,20)}
-    if not isinstance(t,dict) or any(not finite(t.get(k)) or not lo<=t[k]<=hi for k,(lo,hi) in bounds.items()) or t['axle_count']%1 or t['axle_load']>t['weight'] or not isinstance(t.get('hazmat'),bool):raise ValueError('Check truck dimensions and loaded weight.')
-    truck={k:t[k] for k in bounds};truck.update(hazmat=t['hazmat'],hgv_no_access_penalty=43200,use_truck_route=.5,use_highways=1,exclude_unpaved=True)
-    payload={'locations':[dict(lon=x['lon'],lat=x['lat'],type='break',search_cutoff=2000) for x in loc],'costing':'truck','costing_options':{'truck':truck},'format':'osrm','shape_format':'geojson','units':'kilometers'}
-    result=add_timing(read(os.getenv('VALHALLA_URL','http://127.0.0.1:8003')+'/route',payload=payload))
+    if vehicle=='car':
+        costing='auto';options={'use_highways':1,'exclude_unpaved':True}
+    else:
+        bounds={'height':(1,10),'width':(1,10),'length':(2,50),'weight':(.1,150),'axle_load':(.1,40),'axle_count':(2,20)}
+        if not isinstance(t,dict) or any(not finite(t.get(k)) or not lo<=t[k]<=hi for k,(lo,hi) in bounds.items()) or t['axle_count']%1 or t['axle_load']>t['weight'] or not isinstance(t.get('hazmat'),bool):raise ValueError('Check truck dimensions and loaded weight.')
+        truck={k:t[k] for k in bounds};truck.update(hazmat=t['hazmat'],hgv_no_access_penalty=43200,use_truck_route=.5,use_highways=1,exclude_unpaved=True)
+        costing='truck';options=truck
+    payload={'locations':[dict(lon=x['lon'],lat=x['lat'],type='break',search_cutoff=2000) for x in loc],'costing':costing,'costing_options':{costing:options},'format':'osrm','shape_format':'geojson','units':'kilometers'}
+    url=os.getenv('VALHALLA_URL','http://127.0.0.1:8003')+'/route'
+    result=read(url,payload=payload)
+    if costing=='truck' and result.get('code')=='Ok' and result.get('routes'):
+        alternative_payload={**payload,'costing_options':{'truck':{**options,'use_truck_route':0}}}
+        try:
+            alternative=read(url,payload=alternative_payload,timeout=5)
+            if preferable_truck_alternative(result,alternative):result=alternative
+        except (OSError,ValueError,KeyError,TypeError):
+            pass # A failed optional comparison must not discard a valid route.
+    result=add_timing(result)
     if result.get('code')!='Ok':return result
     # The map needs geometry and timing, not duplicated turn-by-turn step geometry.
     keys=('distance','duration','geometry','elapsedSeconds')

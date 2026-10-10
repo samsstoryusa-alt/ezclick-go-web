@@ -1,45 +1,36 @@
 "use client";
-import {useId,useRef,useState,type CSSProperties,type PointerEvent} from 'react';
-import {Mic,ChevronRight} from 'lucide-react';
+import {useEffect,useRef,useState} from 'react';
+
+import VoiceRouteConfirm,{type VoiceTrip} from './voice-route-confirm';
+import {Mic} from 'lucide-react';
 import './voice-route-drawer.css';
-export default function VoiceRouteDrawer({suspended=false}:{suspended?:boolean}){
- const [open,setOpen]=useState(false);
- const [offset,setOffset]=useState<number|null>(null);
- const drawer=useRef<HTMLElement>(null);
- const id=useId();
- const handle=useRef<HTMLButtonElement>(null);
- const drag=useRef<{id:number;x:number;y:number;offset:number;current:number;moved:boolean}|null>(null);
- const swiped=useRef(false);
- function start(event:PointerEvent<HTMLButtonElement>){
-  if(!event.isPrimary||event.button!==0)return;
-  event.stopPropagation();swiped.current=false;
-  const current=drawer.current?new DOMMatrixReadOnly(getComputedStyle(drawer.current).transform).m41:(open?0:64);
-  const initial=Math.max(0,Math.min(64,current));
-  drag.current={id:event.pointerId,x:event.clientX,y:event.clientY,offset:initial,current:initial,moved:false};
-  setOffset(initial);
-  event.currentTarget.setPointerCapture(event.pointerId);
- }
- function move(event:PointerEvent<HTMLButtonElement>){
-  const origin=drag.current;if(!origin||origin.id!==event.pointerId)return;
-  event.stopPropagation();
-  const dx=event.clientX-origin.x,dy=event.clientY-origin.y;
-  if(Math.hypot(dx,dy)>4)origin.moved=true;
-  origin.current=Math.max(0,Math.min(64,origin.offset+dx));
-  setOffset(origin.current);
- }
- function cancel(){drag.current=null;setOffset(null);swiped.current=true;}
- function end(event:PointerEvent<HTMLButtonElement>){
-  const origin=drag.current;if(!origin||origin.id!==event.pointerId)return;
-  move(event);drag.current=null;
-  if(origin.moved){setOpen(origin.current<32);swiped.current=true;}
-  setOffset(null);
-  if(event.currentTarget.hasPointerCapture(event.pointerId))event.currentTarget.releasePointerCapture(event.pointerId);
- }
- return <aside ref={drawer} style={offset===null?undefined:{"--voice-offset":`${offset}px`,"--voice-progress":1-offset/64} as CSSProperties} className={`voice-route-drawer ${open?'is-open':''} ${suspended?'is-suspended':''} ${offset!==null?'is-dragging':''}`} inert={suspended} aria-hidden={suspended} aria-label="Voice route preview" onKeyDown={event=>{if(event.key==='Escape'){cancel();setOpen(false);handle.current?.focus();}}}>
-  <button ref={handle} className="voice-drawer-handle" type="button" aria-label={open?'Close voice controls':'Open voice controls'} aria-expanded={open} aria-controls={id} onPointerDown={start} onPointerMove={move} onPointerUp={end} onPointerCancel={cancel} onLostPointerCapture={()=>{if(drag.current)cancel();}} onClick={event=>{const suppress=swiped.current&&event.detail>0;swiped.current=false;if(!suppress)setOpen(value=>!value);}}><span className="voice-handle-surface"><Mic className="voice-handle-mic" size={19}/><ChevronRight className="voice-handle-chevron" size={19}/></span></button>
-  <div id={id} className="voice-drawer-content" inert={!open} aria-hidden={!open}>
-   <button type="button" className="voice-drawer-mic" disabled aria-label="Voice input is not connected yet" aria-describedby={`${id}-notice`}><Mic size={24}/></button>
-  </div>
-  <div id={`${id}-notice`} className="voice-drawer-notice" aria-hidden={!open}>Preview · microphone not connected</div>
- </aside>;
+export default function VoiceRouteDrawer({suspended=false,onConfirm,onVisibilityChange}:{suspended?:boolean;onVisibilityChange?:(visible:boolean)=>void;onConfirm:(trip:VoiceTrip)=>void}){
+
+ const [panel,setPanel]=useState(false),[mounted,setMounted]=useState(false);
+ const panelRef=useRef<HTMLDivElement>(null);
+ useEffect(()=>{
+  const surface=panelRef.current,stage=surface?.closest<HTMLElement>('.weather-map-stage');
+  if(!surface||!stage)return;
+  let frame=0;
+  const measure=()=>{
+   frame=0;const box=stage.getBoundingClientRect();
+   const visibleRect=(selector:string)=>Array.from(stage.querySelectorAll<HTMLElement>(selector)).map(el=>el.getBoundingClientRect()).find(rect=>rect.width>0&&rect.height>0);
+   const clear=visibleRect('.mobile-route-undo'),navigate=visibleRect('.mobile-route-back')??visibleRect('.mobile-route-navigate');
+   const left=Math.max(12,clear?clear.right-box.left+10:12);
+   const right=Math.max(12,navigate?box.right-navigate.left+10:12);
+   surface.style.left=`${left}px`;surface.style.right=`${right}px`;
+   surface.style.bottom=`${Math.max(12,clear?box.bottom-clear.bottom:12)}px`;
+  };
+  const schedule=()=>{if(!frame)frame=requestAnimationFrame(measure);};
+  const resize=new ResizeObserver(schedule);resize.observe(stage);
+  const mutations=new MutationObserver(schedule);mutations.observe(stage,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+  window.addEventListener('resize',schedule);schedule();
+  return()=>{resize.disconnect();mutations.disconnect();window.removeEventListener('resize',schedule);cancelAnimationFrame(frame);};
+ },[]);
+ useEffect(()=>{onVisibilityChange?.(panel&&!suspended);},[panel,suspended,onVisibilityChange]);
+ function closePanel(){setPanel(false);panelRef.current?.querySelector('iframe')?.contentWindow?.postMessage({type:'voice-close'},location.origin);}
+ useEffect(()=>{if(suspended)panelRef.current?.querySelector('iframe')?.contentWindow?.postMessage({type:'voice-close'},location.origin);},[suspended]);
+
+ return <><div ref={panelRef} className={`voice-route-panel-wrap ${panel&&!suspended?'is-open':''}`} inert={!panel||suspended} aria-hidden={!panel||suspended}>{mounted&&<VoiceRouteConfirm active={panel&&!suspended} onConfirm={onConfirm} onClose={closePanel}/>}</div>
+ <button type="button" className="voice-direct-launch" hidden={suspended||panel} aria-label="Start voice input" onClick={()=>{setMounted(true);setPanel(true);}}><Mic size={25}/></button></>;
 }

@@ -157,21 +157,19 @@
 @media(prefers-reduced-motion:reduce){.route-sheet .forecast-stack-card{transition:none}}
 
 .route-sheet .route-settings-toggle{display:none}
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
-.route-sheet .route-settings-toggle{display:block;margin-left:auto;font-size:11px;min-height:36px;width:auto;padding:6px 10px}
-.route-summary-view .route-primary-actions,.route-summary-view>.truck-profile,.route-summary-view>.truck-confirm,.route-summary-view>.route-body>strong,.route-summary-view>.route-body>p:not(.route-error),.route-summary-view>.route-body>.route-place{display:none}
-.route-summary-view .route-body{padding-top:0}
-.route-summary-view .route-summary{margin:0 0 5px;font-size:12px}
-.route-summary-view .route-weather{margin-top:5px;padding-top:5px}
-.route-summary-view .route-weather-title{margin-bottom:4px}
-.route-summary-view .route-weather-legend{margin:5px 0;gap:5px;font-size:9px}
-.route-summary-view .forecast-overview{margin:4px 0;gap:2px}
-.route-summary-view .forecast-tools{margin:4px 0}
-.route-summary-view .route-timing-toggle{min-height:34px;padding:5px 8px}
-.weather-left-stack.route-active .weather-mobile-expand{position:sticky;top:0;background:#102634;min-height:28px}
-.route-summary-view .forecast-stack{max-height:190px}
-.mobile-expanded .route-summary-view .forecast-stack{max-height:320px}
-}
+:where(.weather-compact-ui) .route-sheet .route-settings-toggle{display:block;margin-left:auto;font-size:11px;min-height:36px;width:auto;padding:6px 10px}
+:where(.weather-compact-ui) .route-summary-view .route-primary-actions,:where(.weather-compact-ui) .route-summary-view>.truck-profile,:where(.weather-compact-ui) .route-summary-view>.truck-confirm,:where(.weather-compact-ui) .route-summary-view>.route-body>strong,:where(.weather-compact-ui) .route-summary-view>.route-body>p:not(.route-error),:where(.weather-compact-ui) .route-summary-view>.route-body>.route-place{display:none}
+:where(.weather-compact-ui) .route-summary-view .route-body{padding-top:0}
+:where(.weather-compact-ui) .route-summary-view .route-summary{margin:0 0 5px;font-size:12px}
+:where(.weather-compact-ui) .route-summary-view .route-weather{margin-top:5px;padding-top:5px}
+:where(.weather-compact-ui) .route-summary-view .route-weather-title{margin-bottom:4px}
+:where(.weather-compact-ui) .route-summary-view .route-weather-legend{margin:5px 0;gap:5px;font-size:9px}
+:where(.weather-compact-ui) .route-summary-view .forecast-overview{margin:4px 0;gap:2px}
+:where(.weather-compact-ui) .route-summary-view .forecast-tools{margin:4px 0}
+:where(.weather-compact-ui) .route-summary-view .route-timing-toggle{min-height:34px;padding:5px 8px}
+:where(.weather-compact-ui) .weather-left-stack.route-active .weather-mobile-expand{position:sticky;top:0;background:#102634;min-height:28px}
+:where(.weather-compact-ui) .route-summary-view .forecast-stack{max-height:190px}
+:where(.weather-compact-ui) .mobile-expanded .route-summary-view .forecast-stack{max-height:320px}
 @media(max-width:950px) and (max-height:500px) and (orientation:landscape){
 .route-summary-view .forecast-stack,.mobile-expanded .route-summary-view .forecast-stack{max-height:210px}
 }
@@ -180,21 +178,19 @@
 .route-sheet .route-settings-toggle{display:block;margin-left:auto;font-size:11px;min-height:36px;width:auto;padding:6px 10px}
 .route-summary-view .route-primary-actions,.route-summary-view>.truck-profile,.route-summary-view>.truck-confirm,.route-summary-view>.route-body>strong,.route-summary-view>.route-body>p:not(.route-error),.route-summary-view>.route-body>.route-place{display:none}
 .route-summary-view .route-body{padding-top:0}
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
-.weather-left-stack.route-active:has(.route-summary-view){height:62%;overflow:hidden;display:flex;flex-direction:column;gap:0}
-.weather-left-stack.route-active.mobile-expanded:has(.route-summary-view){height:76%}
-.route-summary-view.is-open{display:flex;flex-direction:column;flex:1;min-height:0}
-.route-summary-view .route-navigation{flex-shrink:0}
-.route-summary-view>.route-body{display:flex;flex-direction:column;flex:1;min-height:0;padding-bottom:0;animation:none}
-.route-summary-view .route-summary{flex-shrink:0}
-.route-summary-view .route-weather{display:flex;flex-direction:column;flex:1;min-height:0}
-.route-summary-view .route-weather>*{flex-shrink:0}
-.route-summary-view .route-weather-title,.route-summary-view .forecast-count,.route-summary-view .route-weather>a{display:none}
-.route-summary-view .forecast-stack,.mobile-expanded .route-summary-view .forecast-stack{flex:1;min-height:80px;max-height:none}
-.route-summary-view .route-about-toggle{min-height:26px;padding:4px;font-size:10px}
-.route-summary-view .route-options-collapse.is-expanded{max-height:140px;overflow-y:auto}
-.weather-left-stack.route-active:has(.route-summary-view) .weather-mobile-expand{position:static}
-}
+:where(.weather-compact-ui) .weather-left-stack.route-active:has(.route-summary-view){height:62%;overflow:hidden;display:flex;flex-direction:column;gap:0}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-expanded:has(.route-summary-view){height:76%}
+:where(.weather-compact-ui) .route-summary-view.is-open{display:flex;flex-direction:column;flex:1;min-height:0}
+:where(.weather-compact-ui) .route-summary-view .route-navigation{flex-shrink:0}
+:where(.weather-compact-ui) .route-summary-view>.route-body{display:flex;flex-direction:column;flex:1;min-height:0;padding-bottom:0;animation:none}
+:where(.weather-compact-ui) .route-summary-view .route-summary{flex-shrink:0}
+:where(.weather-compact-ui) .route-summary-view .route-weather{display:flex;flex-direction:column;flex:1;min-height:0}
+:where(.weather-compact-ui) .route-summary-view .route-weather>*{flex-shrink:0}
+:where(.weather-compact-ui) .route-summary-view .route-weather-title,:where(.weather-compact-ui) .route-summary-view .forecast-count,:where(.weather-compact-ui) .route-summary-view .route-weather>a{display:none}
+:where(.weather-compact-ui) .route-summary-view .forecast-stack,:where(.weather-compact-ui) .mobile-expanded .route-summary-view .forecast-stack{flex:1;min-height:80px;max-height:none}
+:where(.weather-compact-ui) .route-summary-view .route-about-toggle{min-height:26px;padding:4px;font-size:10px}
+:where(.weather-compact-ui) .route-summary-view .route-options-collapse.is-expanded{max-height:140px;overflow-y:auto}
+:where(.weather-compact-ui) .weather-left-stack.route-active:has(.route-summary-view) .weather-mobile-expand{position:static}
 @media(max-width:950px) and (max-height:500px) and (orientation:landscape){
 .weather-left-stack.route-active:has(.route-summary-view),.weather-left-stack.route-active.mobile-expanded:has(.route-summary-view){height:calc(100% - 32px)}
 .route-summary-view .route-timing-toggle,.route-summary-view .route-weather-legend,.route-summary-view .route-about-toggle,.route-active:has(.route-summary-view) .weather-mobile-expand{display:none}
@@ -212,7 +208,7 @@
 
 /* Forecast callouts are tied to sample coordinates, never inferred road closures. */
 .forecast-symbol{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:32px;height:32px;color:#a6deeb}
-.forecast-symbol svg{display:block;margin:0!important}
+.forecast-symbol svg{display:block;margin:0!important;transition:color 280ms ease-out}
 .forecast-symbol--snow,.forecast-symbol--ice{color:#caf3ff}
 .forecast-symbol--storm{color:#f0c977}
 .forecast-symbol--closure{color:#f09599}
@@ -232,7 +228,7 @@
 @keyframes forecast-storm-glow{0%,100%{opacity:.75;filter:drop-shadow(0 0 0 transparent)}50%{opacity:1;filter:drop-shadow(0 0 5px #e9b35f55)}}
 @keyframes forecast-wind-drift{0%,100%{transform:translateX(-2px)}50%{transform:translateX(2px)}}
 @keyframes forecast-rain-drift{0%,100%{transform:translateY(-1px)}50%{transform:translateY(2px)}}
-@media(prefers-reduced-motion:reduce){.forecast-symbol svg{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.forecast-symbol svg{animation:none!important;transition:none}}
 
 /* Route hint: actual arrival forecast, with space for long place names. */
 .route-forecast-hint{display:flex;flex-direction:column;align-items:stretch;gap:7px;padding:11px 12px}
@@ -241,7 +237,7 @@
 .hint-wind{display:flex;align-items:center;flex-wrap:wrap;gap:5px;font-size:11px;color:#a6c9d8;border-top:1px solid #97c4da26;padding-top:7px}.hint-wind b{font-weight:500;color:#def0f7}.hint-details{font-size:9px;color:#96b7c7}
 .forecast-symbol--storm svg{animation:none}.storm-scene{animation:storm-cloud-drift 4s ease-in-out infinite;transform-origin:center}.storm-cloud{animation:none}.storm-bolt{animation:storm-bolt-glow 3.8s ease-in-out infinite}.storm-drop{animation:storm-drop-fall 1.8s ease-in-out infinite}.storm-drop-two{animation-delay:.7s}
 @keyframes storm-cloud-drift{0%,100%{transform:translateX(-.65px)}50%{transform:translateX(.65px)}}
-@keyframes storm-bolt-glow{0%,35%,75%,100%{opacity:.4;filter:none}48%,60%{opacity:1;filter:drop-shadow(0 0 2px #ffce78)}}
+@keyframes storm-bolt-glow{0%,35%,75%,100%{opacity:.4;filter:none}48%,60%{opacity:1;filter:drop-shadow(0 0 2px currentColor)}}
 @keyframes storm-drop-fall{0%{opacity:0;transform:translateY(-1px)}35%{opacity:.8}100%{opacity:0;transform:translateY(2px)}}
 @media(prefers-reduced-motion:reduce){.forecast-symbol--storm svg *{animation:none!important}}
 
@@ -286,6 +282,7 @@
 /* Gentle entrance is independent of the map's positioning transform. */
 .route-forecast-hint{--hint-accent:#9adce9;gap:10px;padding:13px 14px;background:linear-gradient(145deg,#142e3dfc,#0d2231fc);border-color:#95c9dd55;box-shadow:0 10px 26px #020b164d,inset 0 1px 0 #e0f5ff0a;animation:hint-soft-enter .38s cubic-bezier(.22,1,.36,1) both}
 .route-forecast-hint.hint-caution{--hint-accent:#e9b35f;border-color:#e9b35f80}.route-forecast-hint.hint-high{--hint-accent:#ee737e;border-color:#ee737e80}
+.route-forecast-hint.hint-low{--hint-accent:#8ee4c2;border-color:#8ee4c280}.route-forecast-hint.hint-unknown{--hint-accent:#bba6ff;border-color:#bba6ff80}
 .route-forecast-hint:is(.hint-caution,.hint-high):before{content:'';position:absolute;left:0;top:15px;bottom:15px;width:3px;border-radius:0 3px 3px 0;background:var(--hint-accent)}
 .route-forecast-hint .hint-time{color:#aac4d2}.route-forecast-hint .hint-weather{font-size:13px;gap:5px 10px}.route-forecast-hint .hint-weather b{font-size:16px;font-weight:650}.route-forecast-hint .hint-wind{padding-top:9px}
 .weather-left-stack.route-active{box-shadow:0 12px 34px #020b1659,14px 0 34px #020b1626}
@@ -306,7 +303,10 @@
 .departure-options{padding:10px 0 12px;margin-bottom:10px;border-bottom:1px solid #8bcddd26}.route-sheet .departure-compare{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;font-size:12px;font-weight:600;background:linear-gradient(145deg,#245569,#143247);border-color:#8ed8e755}.departure-note{font-size:10px!important;color:#96b6c7!important;line-height:1.5!important;margin:7px 0 0!important}.departure-verdict{font-size:12px!important;line-height:1.5!important;color:#d9edf5!important;margin:10px 0!important}.departure-choices{display:grid;gap:8px}.departure-choice{display:grid;grid-template-columns:1fr auto;gap:6px 8px;padding:10px;border:1px solid #91c4d333;border-radius:12px;background:#0c213180}.departure-choice.is-recommended{border-color:#95ddc888;background:#153b3b66}.departure-choice>strong{display:flex;gap:6px;flex-wrap:wrap;font-size:12px}.departure-choice small{font-size:9px;color:#a7ecd6}.departure-choice>time,.departure-choice>span{grid-column:1;font-size:10px;color:#b8d1df;line-height:1.4}.route-sheet .departure-choice>button{grid-column:2;grid-row:1 / 4;align-self:center;font-size:10px;min-height:38px;padding:6px 9px}.route-sheet .departure-options button:disabled{opacity:.45;cursor:default}.departure-options [aria-live]>p{font-size:12px;color:#b7d7e5}
 
 .route-sheet .departure-close{display:block;margin:7px 0 0 auto;font-size:10px;min-height:30px;padding:4px 8px;background:transparent;border-color:#87bfd033}
-@media(max-width:767px),(max-width:950px) and (max-height:500px){.route-summary-view .route-weather:has(.departure-options.is-open)>:not(.departure-options){display:none}.route-summary-view .departure-options.is-open{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin-bottom:0;scrollbar-width:thin}.route-summary-view .departure-options{padding:5px 0 7px;margin-bottom:4px}.route-summary-view .departure-options:not(.is-open)>.departure-note{display:none}}
+:where(.weather-compact-ui) .route-summary-view .route-weather:has(.departure-options.is-open)>:not(.departure-options){display:none}
+:where(.weather-compact-ui) .route-summary-view .departure-options.is-open{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin-bottom:0;scrollbar-width:thin}
+:where(.weather-compact-ui) .route-summary-view .departure-options{padding:5px 0 7px;margin-bottom:4px}
+:where(.weather-compact-ui) .route-summary-view .departure-options:not(.is-open)>.departure-note{display:none}
 
 .departure-field{display:grid;gap:6px;min-width:0;font-size:11px;color:#a8c4d5}.route-sheet .departure-picker-trigger{display:flex;align-items:center;gap:8px;font-size:12px;width:100%;text-align:left;background:#183b4d;border-color:#89cfdf55}
 .departure-picker{box-sizing:border-box;width:min(360px,calc(100vw - 24px));max-height:calc(100dvh - 28px);padding:0;border:1px solid #8fd6e65c;border-radius:20px;background:#102635;color:#e0f3fa;box-shadow:0 24px 80px #0009;font-family:inherit;overflow:auto;overscroll-behavior:contain;color-scheme:dark;scrollbar-width:thin}.departure-picker[open]{animation:departure-calendar-enter .25s ease-out}.departure-picker::backdrop{background:#030d18aa;backdrop-filter:blur(5px)}.departure-picker-inner{padding:18px}.departure-picker header{display:flex;align-items:center;justify-content:space-between;gap:10px}.departure-picker h2{margin:0;font-size:17px}.departure-picker p{font-size:11px;line-height:1.5;color:#a5c4d2;margin:5px 0}.departure-picker button{font:inherit;color:#d6edf6;background:#183a4d;border:1px solid #8acbdd26;border-radius:9px;cursor:pointer;min-height:34px;display:inline-flex;align-items:center;justify-content:center;transition:background-color .2s,border-color .2s,transform .2s,box-shadow .2s}.departure-picker button:hover:not(:disabled){background:#2a586c;border-color:#a2e2ef77;transform:translateY(-1px)}.departure-picker button:active:not(:disabled){transform:scale(.96)}.departure-picker button:focus-visible{outline:2px solid #a5eafa;outline-offset:2px}.departure-picker button:disabled{opacity:.28;cursor:default}.departure-picker button[aria-pressed=true]{background:#76cddd;color:#082230;border-color:#b8f1fa;box-shadow:0 2px 9px #53c7dd25}.departure-picker header>button{width:34px;background:transparent}.departure-month{display:flex;align-items:center;justify-content:space-between;margin:18px 0 12px}.departure-month strong{font-size:13px}.departure-month button{width:34px}.departure-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.departure-days>span{font-size:10px;text-align:center;color:#8cadbf;padding-bottom:5px}.departure-days button{font-size:12px;min-height:34px;padding:0;background:transparent;border-color:transparent}.departure-clock{display:grid;grid-template-columns:1fr 18px 1fr;align-items:center;gap:8px;margin-top:18px}.departure-clock>div>span{display:block;text-align:center;font-size:10px;color:#9fbece;margin-bottom:6px}.departure-clock>b{text-align:center;color:#85bccf}.departure-wheel{height:114px;overflow-y:auto;scroll-behavior:smooth;scroll-snap-type:y proximity;overscroll-behavior:contain;scrollbar-width:thin;background:#081d2a;border:1px solid #82bed12b;border-radius:11px;padding:4px;display:flex;flex-direction:column;gap:4px}.departure-wheel button{width:100%;min-height:34px;flex-shrink:0;scroll-snap-align:center;font-size:14px;font-variant-numeric:tabular-nums}.departure-picker .departure-picked{text-align:center;color:#d7f0f9;font-size:13px;margin:13px 0}.departure-picker footer{display:flex;gap:8px}.departure-picker footer button{flex:1;font-size:12px;min-height:40px;padding:8px}.departure-picker .departure-picker-apply{background:#73cada;color:#08212c;font-weight:650}.departure-picker .departure-picker-error{color:#ffb3b9}@keyframes departure-calendar-enter{from{opacity:0;transform:translateY(7px) scale(.98)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){.departure-picker[open]{animation:none}.departure-picker button{transition:none}.departure-wheel{scroll-behavior:auto}}
@@ -350,27 +350,25 @@
 .route-options-collapse.is-expanded>div{transform:translateY(0)}
 .route-summary-view .route-options-collapse:has(.departure-inline){flex:0 0 auto;max-height:none;overflow:hidden}
 .forecast-results{min-height:0;transition:opacity .3s ease}.forecast-results.is-refreshing{opacity:.38;pointer-events:none}.route-weather .forecast-refresh-status{height:14px;line-height:14px;margin:2px 0;flex-shrink:0}
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
- .route-summary-view .route-weather{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
- .route-summary-view .forecast-results{flex:0 0 auto}
- .route-summary-view .forecast-stack,.mobile-expanded .route-summary-view .forecast-stack{flex:none;max-height:240px}
- .route-weather .route-weather-legend{gap:3px;font-size:8px}.route-weather-legend>span{padding:4px;gap:3px}.route-weather-legend svg{width:11px;height:11px}
-}
+:where(.weather-compact-ui) .route-summary-view .route-weather{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+:where(.weather-compact-ui) .route-summary-view .forecast-results{flex:0 0 auto}
+:where(.weather-compact-ui) .route-summary-view .forecast-stack,:where(.weather-compact-ui) .mobile-expanded .route-summary-view .forecast-stack{flex:none;max-height:240px}
+:where(.weather-compact-ui) .route-weather .route-weather-legend{gap:3px;font-size:8px}
+:where(.weather-compact-ui) .route-weather-legend>span{padding:4px;gap:3px}
+:where(.weather-compact-ui) .route-weather-legend svg{width:11px;height:11px}
 @media(prefers-reduced-motion:reduce){.route-options-collapse,.route-options-collapse>div,.forecast-results{transition:none}.route-options-collapse>div{transform:none}}
 
 /* Mobile route overview: one content scroller, mounted details, map-first summary. */
 .route-mobile-brief{display:none}
 .route-forecast-details{display:contents}.route-forecast-details>div{display:contents}
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
- .route-summary-view>.route-body{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;display:block;scroll-padding:8px}
- .route-summary-view .route-weather{overflow:visible;display:block;min-height:0}
- .route-summary-view .forecast-stack,.mobile-expanded .route-summary-view .forecast-stack{max-height:none;min-height:0;overflow:visible;flex:none;touch-action:pan-y}
- .route-summary-view .route-options-collapse.is-expanded{max-height:none;overflow:hidden}
- .route-sheet .forecast-stop{min-height:44px}
- .route-sheet .route-timing-toggle,.route-sheet .route-settings-toggle,.route-sheet .route-heading>button{min-height:44px}
- .route-sheet .route-heading>button:last-child{min-width:44px}
- .weather-corner-globe{left:8px;right:auto;top:14px;bottom:auto}
-}
+:where(.weather-compact-ui) .route-summary-view>.route-body{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;display:block;scroll-padding:8px}
+:where(.weather-compact-ui) .route-summary-view .route-weather{overflow:visible;display:block;min-height:0}
+:where(.weather-compact-ui) .route-summary-view .forecast-stack,:where(.weather-compact-ui) .mobile-expanded .route-summary-view .forecast-stack{max-height:none;min-height:0;overflow:visible;flex:none;touch-action:pan-y}
+:where(.weather-compact-ui) .route-summary-view .route-options-collapse.is-expanded{max-height:none;overflow:hidden}
+:where(.weather-compact-ui) .route-sheet .forecast-stop{min-height:44px}
+:where(.weather-compact-ui) .route-sheet .route-timing-toggle,:where(.weather-compact-ui) .route-sheet .route-settings-toggle,:where(.weather-compact-ui) .route-sheet .route-heading>button{min-height:44px}
+:where(.weather-compact-ui) .route-sheet .route-heading>button:last-child{min-width:44px}
+:where(.weather-compact-ui) .weather-corner-globe{left:8px;right:auto;top:14px;bottom:auto}
 @media(max-width:767px) and (orientation:portrait){
  .weather-left-stack.route-active:has(.route-summary-view){height:250px;max-height:76%;padding-bottom:8px}
  .weather-left-stack.route-active.mobile-expanded:has(.route-summary-view){height:76%;max-height:76%}
@@ -391,174 +389,160 @@
 
 /* Approved mobile workflow: existing palette, fixed card, thumb controls. */
 .mobile-route-status,.mobile-route-actions{display:none}
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
- .weather-left-stack.route-active.mobile-route-shell,.weather-left-stack.route-active.mobile-route-shell.mobile-expanded,.weather-left-stack.route-active.mobile-route-shell:has(.route-summary-view),.weather-left-stack.route-active.mobile-route-shell.mobile-expanded:has(.route-summary-view){left:8px;right:8px;top:auto;bottom:calc(22px + env(safe-area-inset-bottom));width:auto;max-width:none;height:224px;max-height:calc(100% - 112px);padding:7px 8px;overflow:hidden;gap:0;transition:height .35s cubic-bezier(.22,1,.36,1),opacity .25s ease,transform .35s ease,visibility 0s}
- .weather-left-stack.mobile-route-shell>.weather-mobile-expand{display:none!important}
- .mobile-route-workflow>.route-navigation,.mobile-route-workflow>.route-options-collapse,.mobile-route-workflow>.truck-profile,.mobile-route-workflow>.truck-confirm,.mobile-route-workflow .route-body>.route-summary{display:none}
- .mobile-route-workflow .route-body,.mobile-route-workflow.route-summary-view>.route-body{padding:0;margin:0;display:block;overflow:visible;animation:none}
- .mobile-route-workflow .route-body>strong,.mobile-route-workflow .route-body>p:not(.route-error),.mobile-route-workflow .route-body>.route-place{display:none}
- .mobile-route-workflow .route-weather{margin:0;padding:0;border-top:0}
- .mobile-route-workflow:not(.has-route)>.mobile-route-status,.mobile-route-workflow.mobile-point-stage>.mobile-route-status,.mobile-route-workflow.mobile-truck-stage>.mobile-route-status{display:block;text-align:center;font-size:12px;color:#b8d4df;line-height:1.5;padding:8px 3px}
- .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-point-stage):not(:has(.mobile-truck-stage)):not(:has(.mobile-initial-stage)){height:78px}
- .mobile-route-workflow.mobile-point-stage>.route-body{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s,visibility 0s .25s}
- .mobile-route-workflow:not(.mobile-point-stage)>.route-body{opacity:1;visibility:visible;transition:opacity .25s,visibility 0s}
- .weather-left-stack.mobile-route-shell:has(.mobile-truck-stage),.weather-left-stack.mobile-route-shell.mobile-expanded:has(.mobile-truck-stage){height:260px;overflow-y:auto;overscroll-behavior:contain}
- .mobile-route-workflow.mobile-truck-stage>.truck-profile,.mobile-route-workflow.mobile-truck-stage>.truck-confirm{display:block}
- .mobile-route-workflow.mobile-truck-stage>.truck-confirm{min-height:44px;padding:10px 5px}
- .weather-left-stack.mobile-route-shell.route-info-hidden,.weather-left-stack.mobile-route-shell.route-info-hidden.mobile-expanded,.weather-left-stack.mobile-route-shell.route-info-hidden:has(.route-summary-view),.weather-left-stack.mobile-route-shell.route-info-hidden:has(.mobile-point-stage),.weather-left-stack.mobile-route-shell.route-info-hidden:has(.mobile-truck-stage){height:0;padding-block:0;border-width:0;opacity:0;visibility:hidden;transform:translateY(8px);pointer-events:none;transition:height .35s cubic-bezier(.22,1,.36,1),opacity .25s ease,transform .35s ease,visibility 0s .35s}
- .mobile-route-actions.is-visible{display:block;position:absolute;left:12px;right:12px;bottom:calc(var(--weather-sheet-height,78px) + 28px + env(safe-area-inset-bottom));height:44px;z-index:5;pointer-events:none}
- .mobile-route-icon{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;width:44px;height:44px;min-height:44px;padding:3px 0;border:1px solid #516377;border-radius:10px;background:linear-gradient(145deg,#203b51,#091727 75%);color:#b9d9e7;cursor:pointer;box-shadow:inset 0 1px 0 #a9e8ff22,0 3px 8px #0003;pointer-events:auto;transition:border-color .25s,box-shadow .25s,opacity .25s}
- .mobile-route-icon svg{width:24px;height:24px;filter:drop-shadow(0 2px 2px #0006)}.mobile-route-icon span{font-size:8px;line-height:11px;font-weight:600;letter-spacing:.3px}.mobile-route-icon:disabled{opacity:.4;cursor:default}.mobile-route-icon:focus-visible{outline:2px solid #70dcf4;outline-offset:3px}.mobile-route-icon:not(:disabled):hover{border-color:#9ae9f6;box-shadow:inset 0 0 12px #70dcf42b,0 0 16px #70dcf444}.mobile-route-undo{left:0}.mobile-route-set{right:0}
- .mobile-point-choices{position:absolute;right:0;bottom:54px;display:flex;gap:6px;padding:7px;border:1px solid #516377;border-radius:12px;background:#091727f5;opacity:0;visibility:hidden;transform:translateY(7px);transition:opacity .25s,transform .3s ease,visibility 0s .3s;pointer-events:none}
- .mobile-point-choices.is-open{opacity:1;visibility:visible;transform:none;pointer-events:auto;transition:opacity .25s,transform .3s ease,visibility 0s}
- .mobile-point-choices button{min-height:44px;min-width:44px;padding:8px 12px;border:1px solid #526b7b;border-radius:10px;background:#152d40;color:#d5eef7;font-size:12px;cursor:pointer}
- .weather-map-stage:has(.mobile-point-stage) .route-forecast-hint{opacity:0;visibility:hidden;pointer-events:none}
-}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell,:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell.mobile-expanded,:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell:has(.route-summary-view),:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell.mobile-expanded:has(.route-summary-view){left:var(--weather-card-left,8px);right:var(--weather-card-right,8px);top:auto;bottom:calc(22px + env(safe-area-inset-bottom));width:var(--weather-card-width,auto);max-width:none;height:224px;max-height:calc(100% - 112px);padding:7px 8px;overflow:hidden;gap:0;transition:height .35s cubic-bezier(.22,1,.36,1),opacity .25s ease,transform .35s ease,visibility 0s}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell>.weather-mobile-expand{display:none!important}
+:where(.weather-compact-ui) .mobile-route-workflow>.route-navigation,:where(.weather-compact-ui) .mobile-route-workflow>.route-options-collapse,:where(.weather-compact-ui) .mobile-route-workflow>.truck-profile,:where(.weather-compact-ui) .mobile-route-workflow>.truck-confirm,:where(.weather-compact-ui) .mobile-route-workflow .route-body>.route-summary{display:none}
+:where(.weather-compact-ui) .mobile-route-workflow .route-body,:where(.weather-compact-ui) .mobile-route-workflow.route-summary-view>.route-body{padding:0;margin:0;display:block;overflow:visible;animation:none}
+:where(.weather-compact-ui) .mobile-route-workflow .route-body>strong,:where(.weather-compact-ui) .mobile-route-workflow .route-body>p:not(.route-error),:where(.weather-compact-ui) .mobile-route-workflow .route-body>.route-place{display:none}
+:where(.weather-compact-ui) .mobile-route-workflow .route-weather{margin:0;padding:0;border-top:0}
+:where(.weather-compact-ui) .mobile-route-workflow:not(.has-route)>.mobile-route-status,:where(.weather-compact-ui) .mobile-route-workflow.mobile-point-stage>.mobile-route-status,:where(.weather-compact-ui) .mobile-route-workflow.mobile-truck-stage>.mobile-route-status{display:block;text-align:center;font-size:12px;color:#b8d4df;line-height:1.5;padding:8px 3px}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-point-stage):not(:has(.mobile-truck-stage)):not(:has(.mobile-initial-stage)){height:78px}
+:where(.weather-compact-ui) .mobile-route-workflow.mobile-point-stage>.route-body{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s,visibility 0s .25s}
+:where(.weather-compact-ui) .mobile-route-workflow:not(.mobile-point-stage)>.route-body{opacity:1;visibility:visible;transition:opacity .25s,visibility 0s}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-truck-stage),:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell.mobile-expanded:has(.mobile-truck-stage){height:260px;overflow-y:auto;overscroll-behavior:contain}
+:where(.weather-compact-ui) .mobile-route-workflow.mobile-truck-stage>.truck-profile,:where(.weather-compact-ui) .mobile-route-workflow.mobile-truck-stage>.truck-confirm{display:block}
+:where(.weather-compact-ui) .mobile-route-workflow.mobile-truck-stage>.truck-confirm{min-height:44px;padding:10px 5px}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell.route-info-hidden,:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell.route-info-hidden.mobile-expanded,:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell.route-info-hidden:has(.route-summary-view),:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell.route-info-hidden:has(.mobile-point-stage),:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell.route-info-hidden:has(.mobile-truck-stage){height:0;padding-block:0;border-width:0;opacity:0;visibility:hidden;transform:translateY(8px);pointer-events:none;transition:height .35s cubic-bezier(.22,1,.36,1),opacity .25s ease,transform .35s ease,visibility 0s .35s}
+:where(.weather-compact-ui) .mobile-route-actions.is-visible{display:block;position:absolute;left:12px;right:12px;bottom:calc(var(--weather-sheet-height,78px) + 28px + env(safe-area-inset-bottom));height:44px;z-index:5;pointer-events:none}
+:where(.weather-compact-ui) .mobile-route-icon{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;width:44px;height:44px;min-height:44px;padding:3px 0;border:1px solid #516377;border-radius:10px;background:linear-gradient(145deg,#203b51,#091727 75%);color:#b9d9e7;cursor:pointer;box-shadow:inset 0 1px 0 #a9e8ff22,0 3px 8px #0003;pointer-events:auto;transition:border-color .25s,box-shadow .25s,opacity .25s}
+:where(.weather-compact-ui) .mobile-route-icon svg{width:24px;height:24px;filter:drop-shadow(0 2px 2px #0006)}
+:where(.weather-compact-ui) .mobile-route-icon span{font-size:8px;line-height:11px;font-weight:600;letter-spacing:.3px}
+:where(.weather-compact-ui) .mobile-route-icon:disabled{opacity:.4;cursor:default}
+:where(.weather-compact-ui) .mobile-route-icon:focus-visible{outline:2px solid #70dcf4;outline-offset:3px}
+:where(.weather-compact-ui) .mobile-route-icon:not(:disabled):hover{border-color:#9ae9f6;box-shadow:inset 0 0 12px #70dcf42b,0 0 16px #70dcf444}
+:where(.weather-compact-ui) .mobile-route-undo{left:0}
+:where(.weather-compact-ui) .mobile-route-set{right:0}
+:where(.weather-compact-ui) .mobile-route-back{right:100px}
+:where(.weather-compact-ui) .mobile-point-choices{position:absolute;right:0;bottom:54px;display:flex;gap:6px;padding:7px;border:1px solid #516377;border-radius:12px;background:#091727f5;opacity:0;visibility:hidden;transform:translateY(7px);transition:opacity .25s,transform .3s ease,visibility 0s .3s;pointer-events:none}
+:where(.weather-compact-ui) .mobile-point-choices.is-open{opacity:1;visibility:visible;transform:none;pointer-events:auto;transition:opacity .25s,transform .3s ease,visibility 0s}
+:where(.weather-compact-ui) .mobile-point-choices button{min-height:44px;min-width:44px;padding:8px 12px;border:1px solid #526b7b;border-radius:10px;background:#152d40;color:#d5eef7;font-size:12px;cursor:pointer}
+:where(.weather-compact-ui) .weather-map-stage:has(.mobile-point-stage) .route-forecast-hint{opacity:0;visibility:hidden;pointer-events:none}
 @media(max-width:950px) and (max-height:500px) and (orientation:landscape){
  .weather-left-stack.route-active.mobile-route-shell,.weather-left-stack.route-active.mobile-route-shell.mobile-expanded,.weather-left-stack.route-active.mobile-route-shell:has(.route-summary-view){left:8px;right:auto;width:330px;max-width:calc(100% - 90px);bottom:calc(22px + env(safe-area-inset-bottom));height:224px;max-height:calc(100% - 150px)}
 }
 @media(prefers-reduced-motion:reduce){.weather-left-stack.route-active.mobile-route-shell,.weather-left-stack.route-active.mobile-route-shell.route-info-hidden,.mobile-route-workflow>.route-body,.mobile-route-icon,.mobile-point-choices,.mobile-point-choices.is-open{transition:none!important;transform:none}}
 
-@media(max-width:767px),(max-width:950px) and (max-height:500px){.mobile-route-workflow .route-body>.route-error{display:none}.mobile-route-status .mobile-route-retry{display:block;min-height:44px;margin:10px auto 0;font-size:12px}}
+:where(.weather-compact-ui) .mobile-route-workflow .route-body>.route-error{display:none}
+
+:where(.weather-compact-ui) .mobile-route-status .mobile-route-retry{display:block;min-height:44px;margin:10px auto 0;font-size:12px}
 
 /* Point controls track the compact strip or forecast panel without reserving an empty card. */
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
- .mobile-point-choices{right:50px;bottom:0;height:44px;padding:0;gap:6px;border:0;border-radius:0;background:none;transform:translateX(12px);overflow:visible}
- .mobile-point-choices.is-open{transform:translateX(0)}
- .mobile-point-choices .mobile-route-choice{position:relative;min-width:44px;padding:3px 0;background:linear-gradient(145deg,#203b51,#091727 75%);font-size:8px}
- .mobile-route-choice .mobile-route-letter{display:grid;place-items:center;width:24px;height:24px;border:1px solid #8acedd;border-radius:50%;background:#102d40;font-size:14px;line-height:24px}
- .mobile-route-choice.is-selected{border-color:#adeaf3;box-shadow:inset 0 0 12px #70dcf42b,0 0 12px #70dcf422}
- .mobile-point-choices .mobile-route-delete{left:0;bottom:54px;min-width:44px;padding:3px 0;border-color:#a9798866;background:linear-gradient(145deg,#203b51,#091727 75%);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(5px);transition:opacity .25s,transform .3s,visibility 0s .3s}
- .mobile-point-choices .mobile-route-delete.at-b{left:50px}
- .mobile-point-choices .mobile-route-delete.is-visible{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0);transition-delay:0s}
- .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-route-retry){height:128px}
-}
+:where(.weather-compact-ui) .mobile-point-choices{right:150px;bottom:0;height:44px;padding:0;gap:6px;border:0;border-radius:0;background:none;transform:translateX(12px);overflow:visible}
+:where(.weather-compact-ui) .mobile-point-choices.is-open{transform:translateX(0)}
+:where(.weather-compact-ui) .mobile-point-choices .mobile-route-choice{position:relative;min-width:44px;padding:3px 0;background:linear-gradient(145deg,#203b51,#091727 75%);font-size:8px}
+:where(.weather-compact-ui) .mobile-route-choice .mobile-route-letter{display:grid;place-items:center;width:24px;height:24px;border:1px solid #8acedd;border-radius:50%;background:#102d40;font-size:14px;line-height:24px}
+:where(.weather-compact-ui) .mobile-route-choice.is-selected{border-color:#adeaf3;box-shadow:inset 0 0 12px #70dcf42b,0 0 12px #70dcf422}
+:where(.weather-compact-ui) .mobile-point-choices .mobile-route-delete{left:0;bottom:54px;min-width:44px;padding:3px 0;border-color:#a9798866;background:linear-gradient(145deg,#203b51,#091727 75%);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(5px);transition:opacity .25s,transform .3s,visibility 0s .3s}
+:where(.weather-compact-ui) .mobile-point-choices .mobile-route-delete.at-b{left:50px}
+:where(.weather-compact-ui) .mobile-point-choices .mobile-route-delete.is-visible{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0);transition-delay:0s}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-route-retry){height:128px}
 @media(max-width:950px) and (max-height:500px) and (orientation:landscape){.mobile-route-actions.is-visible{left:12px;right:auto;width:322px}}
 @media(prefers-reduced-motion:reduce){.mobile-point-choices .mobile-route-delete,.mobile-point-choices .mobile-route-delete.is-visible{transition:none;transform:none}}
 
 /* Restore the existing location and 24-hour player before a route is ready. */
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
- .weather-left-stack.route-active.mobile-route-shell>.point-weather,.weather-left-stack.route-active.mobile-route-shell>.weather-radar-controls{display:block!important;flex:none;max-height:0;margin:0;padding:0;overflow:hidden;opacity:0;visibility:hidden;transition:max-height .35s ease,opacity .25s ease,visibility 0s .35s}
- .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-initial-stage){height:224px}
- .weather-left-stack.route-active.mobile-route-shell:has(.mobile-initial-stage)>.point-weather,.weather-left-stack.route-active.mobile-route-shell:has(.mobile-initial-stage)>.weather-radar-controls{max-height:110px;opacity:1;visibility:visible;transition-delay:0s}
- .mobile-route-workflow.mobile-initial-stage>.mobile-route-status{padding:2px 0 7px;font-size:11px}
- .mobile-route-workflow.mobile-initial-stage>.route-body{max-height:0;overflow:hidden}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-weather-heading{display:flex;margin:3px 0;font-size:10px}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-weather-heading strong{font-size:10px}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-place{display:flex;align-items:baseline;gap:8px;margin:0;padding:0}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-place>strong{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-place>span{display:flex;margin:0;font-size:10px;white-space:nowrap}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) :is(.point-place-region,.weather-units-row,.point-weather-credit){display:none}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-weather-values{display:flex;justify-content:space-between;gap:10px}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-weather-row{min-height:26px}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-weather-row>span{display:none}
- .weather-left-stack.mobile-route-shell>.weather-radar-controls>.radar-toggle,.weather-left-stack.mobile-route-shell>.weather-radar-controls>.radar-player:not(.radar-timeline){display:none}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-timeline{padding-top:5px;margin-top:4px}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-player-row button{min-height:44px;min-width:44px}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-player-row input{height:44px}
-}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell>.point-weather,:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell>.weather-radar-controls{display:block!important;flex:none;max-height:0;margin:0;padding:0;overflow:hidden;opacity:0;visibility:hidden;transition:max-height .35s ease,opacity .25s ease,visibility 0s .35s}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-initial-stage){height:224px}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell:has(.mobile-initial-stage)>.point-weather,:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell:has(.mobile-initial-stage)>.weather-radar-controls{max-height:110px;opacity:1;visibility:visible;transition-delay:0s}
+:where(.weather-compact-ui) .mobile-route-workflow.mobile-initial-stage>.mobile-route-status{padding:2px 0 7px;font-size:11px}
+:where(.weather-compact-ui) .mobile-route-workflow.mobile-initial-stage>.route-body{max-height:0;overflow:hidden}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-weather-heading{display:flex;margin:3px 0;font-size:10px}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-weather-heading strong{font-size:10px}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-place{display:flex;align-items:baseline;gap:8px;margin:0;padding:0}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-place>strong{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-place>span{display:flex;margin:0;font-size:10px;white-space:nowrap}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) :is(.point-place-region,.weather-units-row,.point-weather-credit){display:none}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-weather-values{display:flex;justify-content:space-between;gap:10px}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-weather-row{min-height:26px}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-weather-row>span{display:none}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell>.weather-radar-controls>.radar-toggle,:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell>.weather-radar-controls>.radar-player:not(.radar-timeline){display:none}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-timeline{padding-top:5px;margin-top:4px}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-player-row button{min-height:44px;min-width:44px}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-player-row input{height:44px}
 @media(prefers-reduced-motion:reduce){.weather-left-stack.route-active.mobile-route-shell>.point-weather,.weather-left-stack.route-active.mobile-route-shell>.weather-radar-controls{transition:none}}
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>.weather-radar-controls:not(:has(.radar-timeline))>.radar-player{display:block;padding:8px 0;margin:0;border:0;background:none;box-shadow:none}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>.weather-radar-controls:not(:has(.radar-timeline))>.radar-player>small{display:none}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>.weather-radar-controls>.radar-toggle[aria-pressed=false]{display:block;min-height:44px;margin-top:6px}
-}/* Initial weather card: reuse the live layer toggles in its existing footer space. */
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>.weather-radar-controls:not(:has(.radar-timeline))>.radar-player{display:block;padding:8px 0;margin:0;border:0;background:none;box-shadow:none}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>.weather-radar-controls:not(:has(.radar-timeline))>.radar-player>small{display:none}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>.weather-radar-controls>.radar-toggle[aria-pressed=false]{display:block;min-height:44px;margin-top:6px}/* Initial weather card: reuse the live layer toggles in its existing footer space. */
 .weather-layer-label-short{display:none}
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
- .weather-left-stack.route-active.mobile-route-shell>.wind-controls{display:contents!important}
- .weather-left-stack.route-active.mobile-route-shell>.wind-controls>:not(.radar-toggle){display:none}
- .weather-left-stack.route-active.mobile-route-shell>.wind-controls>.radar-toggle,.weather-left-stack.route-active.mobile-route-shell>.weather-radar-controls>.radar-toggle{display:flex!important;position:absolute;bottom:4px;align-items:center;justify-content:center;gap:3px;width:calc(50% - 15px);height:44px;min-height:44px;margin:0;padding:5px 8px;font-size:11px;border-radius:10px;opacity:0;visibility:hidden;pointer-events:none;transform:none;transition:opacity .25s ease,background-color .25s ease,border-color .25s ease,color .25s ease,box-shadow .25s ease,visibility 0s .25s}
- .weather-left-stack.route-active.mobile-route-shell>.weather-radar-controls>.radar-toggle{left:10px}
- .weather-left-stack.route-active.mobile-route-shell>.wind-controls>.radar-toggle{right:10px}
- .weather-left-stack.route-active.mobile-route-shell:has(.mobile-initial-stage)>.wind-controls>.radar-toggle,.weather-left-stack.route-active.mobile-route-shell:has(.mobile-initial-stage)>.weather-radar-controls>.radar-toggle{opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s}
- .weather-left-stack.route-active.mobile-route-shell:has(.mobile-initial-stage)>.weather-radar-controls{overflow:visible}
- .weather-left-stack.route-active.mobile-route-shell:has(.mobile-initial-stage)>.point-weather{border-radius:0;padding-inline:2px}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-place{min-width:0;flex-wrap:nowrap;text-align:left}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-place>strong{display:block;min-width:0;padding-left:1px;line-height:17px;-webkit-line-clamp:unset;overflow-wrap:normal}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-place>span{flex:none}
- .mobile-route-workflow.mobile-initial-stage>.mobile-route-status{padding-bottom:3px}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-timeline{margin-top:0}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .weather-layer-label-full{display:none}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .weather-layer-label-short{display:inline}
-}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell>.wind-controls{display:contents!important}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell>.wind-controls>:not(.radar-toggle){display:none}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell>.wind-controls>.radar-toggle,:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell>.weather-radar-controls>.radar-toggle{display:flex!important;position:absolute;bottom:4px;align-items:center;justify-content:center;gap:3px;width:calc(50% - 15px);height:44px;min-height:44px;margin:0;padding:5px 8px;font-size:11px;border-radius:10px;opacity:0;visibility:hidden;pointer-events:none;transform:none;transition:opacity .25s ease,background-color .25s ease,border-color .25s ease,color .25s ease,box-shadow .25s ease,visibility 0s .25s}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell>.weather-radar-controls>.radar-toggle{left:10px}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell>.wind-controls>.radar-toggle{right:10px}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell:has(.mobile-initial-stage)>.wind-controls>.radar-toggle,:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell:has(.mobile-initial-stage)>.weather-radar-controls>.radar-toggle{opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell:has(.mobile-initial-stage)>.weather-radar-controls{overflow:visible}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell:has(.mobile-initial-stage)>.point-weather{border-radius:0;padding-inline:2px}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-place{min-width:0;flex-wrap:nowrap;text-align:left}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-place>strong{display:block;min-width:0;padding-left:1px;line-height:17px;-webkit-line-clamp:unset;overflow-wrap:normal}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .point-place>span{flex:none}
+:where(.weather-compact-ui) .mobile-route-workflow.mobile-initial-stage>.mobile-route-status{padding-bottom:3px}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-timeline{margin-top:0}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .weather-layer-label-full{display:none}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .weather-layer-label-short{display:inline}
 @media(prefers-reduced-motion:reduce){.weather-left-stack.route-active.mobile-route-shell>.wind-controls>.radar-toggle,.weather-left-stack.route-active.mobile-route-shell>.weather-radar-controls>.radar-toggle{transition:none}}
 /* Quieter initial layer toggles: 32px visual surface within the same 44px touch target. */
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>:is(.wind-controls,.weather-radar-controls)>.radar-toggle{isolation:isolate;background:transparent;border:0;box-shadow:none;color:#9bb8c8;font-weight:500;transform:none}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>:is(.wind-controls,.weather-radar-controls)>.radar-toggle::before{content:'';position:absolute;inset:6px 0;z-index:-1;pointer-events:none;border:1px solid #8ebacf24;border-radius:9px;background:#b4d8e605;transition:background-color .25s ease,border-color .25s ease}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>:is(.wind-controls,.weather-radar-controls)>.radar-toggle[aria-pressed=true]{color:#b9dbe5}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>:is(.wind-controls,.weather-radar-controls)>.radar-toggle[aria-pressed=true]::before{background:#82cddd12;border-color:#94d9e638}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>:is(.wind-controls,.weather-radar-controls)>.radar-toggle:focus-visible{outline:2px solid #8acbdf;outline-offset:0}
-}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>:is(.wind-controls,.weather-radar-controls)>.radar-toggle{isolation:isolate;background:transparent;border:0;box-shadow:none;color:#9bb8c8;font-weight:500;transform:none}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>:is(.wind-controls,.weather-radar-controls)>.radar-toggle::before{content:'';position:absolute;inset:6px 0;z-index:-1;pointer-events:none;border:1px solid #8ebacf24;border-radius:9px;background:#b4d8e605;transition:background-color .25s ease,border-color .25s ease}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>:is(.wind-controls,.weather-radar-controls)>.radar-toggle[aria-pressed=true]{color:#b9dbe5}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>:is(.wind-controls,.weather-radar-controls)>.radar-toggle[aria-pressed=true]::before{background:#82cddd12;border-color:#94d9e638}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>:is(.wind-controls,.weather-radar-controls)>.radar-toggle:focus-visible{outline:2px solid #8acbdf;outline-offset:0}
 @media(hover:hover) and (pointer:fine) and (max-width:767px){.weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>:is(.wind-controls,.weather-radar-controls)>.radar-toggle:hover::before{background:#82cddd20;border-color:#94d9e65a}}
 @media(prefers-reduced-motion:reduce){.weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>:is(.wind-controls,.weather-radar-controls)>.radar-toggle::before{transition:none}}
 /* Selected forecast time takes the duplicate time row's space in the initial panel. */
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage):has(.radar-timeline) .point-weather-heading{display:none}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-timeline{padding-top:3px}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-timeline .radar-player-heading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;margin-bottom:0;min-height:30px;text-align:center}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-timeline .radar-player-heading strong{font-size:9px;line-height:12px;font-weight:500;color:#96b4c4}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-timeline .radar-player-heading time{font-size:14px;line-height:18px;font-weight:600;font-variant-numeric:tabular-nums;color:#dceef6;white-space:nowrap}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-player-row button{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;height:44px;min-height:44px;min-width:44px;padding:0 5px;background:transparent;border:0;box-shadow:none;color:#c2dce8;font-size:11px;transform:none}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-player-row button::before{content:'';position:absolute;inset:6px 2px;z-index:-1;pointer-events:none;border:1px solid #6c9aaf66;border-radius:8px;background:#102b3a80;transition:background-color .25s ease,border-color .25s ease}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-player-row button:focus-visible{outline:2px solid #8acbdf;outline-offset:0}
-}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage):has(.radar-timeline) .point-weather-heading{display:none}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-timeline{padding-top:3px}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-timeline .radar-player-heading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;margin-bottom:0;min-height:30px;text-align:center}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-timeline .radar-player-heading strong{font-size:9px;line-height:12px;font-weight:500;color:#96b4c4}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-timeline .radar-player-heading time{font-size:14px;line-height:18px;font-weight:600;font-variant-numeric:tabular-nums;color:#dceef6;white-space:nowrap}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-player-row button{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;height:44px;min-height:44px;min-width:44px;padding:0 5px;background:transparent;border:0;box-shadow:none;color:#c2dce8;font-size:11px;transform:none}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-player-row button::before{content:'';position:absolute;inset:6px 2px;z-index:-1;pointer-events:none;border:1px solid #6c9aaf66;border-radius:8px;background:#102b3a80;transition:background-color .25s ease,border-color .25s ease}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-player-row button:focus-visible{outline:2px solid #8acbdf;outline-offset:0}
 @media(hover:hover) and (pointer:fine) and (max-width:767px){.weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-player-row button:hover::before{background:#244b5d80;border-color:#94d9e67a}}
 @media(prefers-reduced-motion:reduce){.weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-player-row button::before{transition:none}}
 
 /* Weather off collapses the initial sheet while its player finishes fading out. */
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
- .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-initial-stage):has(.is-weather-disabled){height:144px}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .weather-radar-controls>.radar-player{transition:opacity .25s ease,transform .35s ease;opacity:1;transform:translateY(0)}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .is-weather-disabled>.radar-player{opacity:0;transform:translateY(6px);pointer-events:none}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage):has(.is-weather-disabled) .point-weather-heading{display:flex}
-}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-initial-stage):has(.is-weather-disabled){height:144px}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .weather-radar-controls>.radar-player{transition:opacity .25s ease,transform .35s ease;opacity:1;transform:translateY(0)}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .is-weather-disabled>.radar-player{opacity:0;transform:translateY(6px);pointer-events:none}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage):has(.is-weather-disabled) .point-weather-heading{display:flex}
 @media(prefers-reduced-motion:reduce){.weather-left-stack.mobile-route-shell .weather-radar-controls>.radar-player{transition:none!important;transform:none!important}}
 
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .is-weather-enabled>.radar-player{animation:weather-player-enter .3s ease-out both}
-}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .is-weather-enabled>.radar-player{animation:weather-player-enter .3s ease-out both}
 @keyframes weather-player-enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.weather-left-stack.mobile-route-shell .weather-radar-controls>.radar-player{animation:none!important}}
 
 /* Mobile intensity key mirrors the precipitation renderer: rain hues, snow density. */
 .mobile-precip-intensity{display:none}
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
- .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-initial-stage):has(.is-weather-enabled){height:236px;padding-top:8px}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>.weather-radar-controls{max-height:142px}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .mobile-precip-intensity{display:block;margin-top:3px;height:22px;font-size:9px;line-height:12px;color:#9db9c9}
- .precip-intensity-scale{display:flex;justify-content:space-between;font-size:8px;line-height:10px;margin-bottom:3px}
- .precip-intensity-bars{display:grid;grid-template-columns:1fr 1fr;gap:14px}
- .precip-intensity-bars>span{display:flex;flex-direction:column;gap:5px;min-width:0} .precip-intensity-bars>span>span{display:flex;justify-content:space-between;width:100%;gap:4px}.precip-intensity-bars small{font-size:8px;color:#91afbf}
- .precip-intensity-bars i{display:block;width:100%;height:5px;border-radius:5px}
- .precip-rain-gradient{background:linear-gradient(90deg,#2d8ba9,#2ba6b2,#37be94,#5cc96a,#dbc14b,#e28343,#cc515c)}
- .precip-snow-gradient{background:linear-gradient(90deg,#c0a5f72b,#c0a5f78c,#c0a5f7)}
-}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-initial-stage):has(.is-weather-enabled){height:236px;padding-top:8px}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage)>.weather-radar-controls{max-height:142px}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .mobile-precip-intensity{display:block;margin-top:3px;height:22px;font-size:9px;line-height:12px;color:#9db9c9}
+:where(.weather-compact-ui) .precip-intensity-scale{display:flex;justify-content:space-between;font-size:8px;line-height:10px;margin-bottom:3px}
+:where(.weather-compact-ui) .precip-intensity-bars{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+:where(.weather-compact-ui) .precip-intensity-bars>span{display:flex;flex-direction:column;gap:5px;min-width:0}
+:where(.weather-compact-ui) .precip-intensity-bars>span>span{display:flex;justify-content:space-between;width:100%;gap:4px}
+:where(.weather-compact-ui) .precip-intensity-bars small{font-size:8px;color:#91afbf}
+:where(.weather-compact-ui) .precip-intensity-bars i{display:block;width:100%;height:5px;border-radius:5px}
+:where(.weather-compact-ui) .precip-rain-gradient{background:linear-gradient(90deg,#2d8ba9,#2ba6b2,#37be94,#5cc96a,#dbc14b,#e28343,#cc515c)}
+:where(.weather-compact-ui) .precip-snow-gradient{background:linear-gradient(90deg,#c0a5f72b,#c0a5f78c,#c0a5f7)}
 
 /* Compact the initial forecast without shrinking its text or touch targets. */
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
- .weather-left-stack.mobile-route-shell:has(.is-weather-enabled) .mobile-route-workflow.mobile-initial-stage>.mobile-route-status{padding-top:0;padding-bottom:2px}
- .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-timeline{padding-top:1px}
-}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.is-weather-enabled) .mobile-route-workflow.mobile-initial-stage>.mobile-route-status{padding-top:0;padding-bottom:2px}
+:where(.weather-compact-ui) .weather-left-stack.mobile-route-shell:has(.mobile-initial-stage) .radar-timeline{padding-top:1px}
 
 /* Keep route points inside the map, including during mobile pan/zoom. */
 .route-markers{overflow:hidden}
 
 /* Keep the mobile truck confirmation aligned with the existing glass controls. */
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
- .mobile-route-workflow.mobile-truck-stage>.truck-profile{border-top:0;padding:4px 0 8px}
- .mobile-route-workflow.mobile-truck-stage .truck-profile-toggle{min-height:44px;padding:8px 10px;border-radius:10px;gap:9px;background:#a5d7e90b;border-color:#92c9da38}
- .mobile-route-workflow.mobile-truck-stage>.truck-confirm{display:flex;align-items:center;justify-content:flex-start;gap:10px;width:100%;min-height:48px;margin:0;padding:10px;border:1px solid #92c9da50;border-radius:10px;background:#a5d7e90b;color:#d7edf4;font-size:12px;line-height:1.4;text-align:left}
- .mobile-route-workflow.mobile-truck-stage>.truck-confirm input{display:block;flex:0 0 18px;width:18px;height:18px;margin:0;accent-color:#8ddbe9}
- .mobile-route-workflow.mobile-truck-stage>.truck-confirm::before{display:none}
- .mobile-route-workflow.mobile-truck-stage>.truck-confirm:hover{background:#a5d7e91c;border-color:#a5d7e96b}
- .mobile-route-workflow.mobile-truck-stage>.mobile-route-status{padding:6px 8px 8px;font-size:11px;line-height:1.45}
-}
+:where(.weather-compact-ui) .mobile-route-workflow.mobile-truck-stage>.truck-profile{border-top:0;padding:4px 0 8px}
+:where(.weather-compact-ui) .mobile-route-workflow.mobile-truck-stage .truck-profile-toggle{min-height:44px;padding:8px 10px;border-radius:10px;gap:9px;background:#a5d7e90b;border-color:#92c9da38}
+:where(.weather-compact-ui) .mobile-route-workflow.mobile-truck-stage>.truck-confirm{display:flex;align-items:center;justify-content:flex-start;gap:10px;width:100%;min-height:48px;margin:0;padding:10px;border:1px solid #92c9da50;border-radius:10px;background:#a5d7e90b;color:#d7edf4;font-size:12px;line-height:1.4;text-align:left}
+:where(.weather-compact-ui) .mobile-route-workflow.mobile-truck-stage>.truck-confirm input{display:block;flex:0 0 18px;width:18px;height:18px;margin:0;accent-color:#8ddbe9}
+:where(.weather-compact-ui) .mobile-route-workflow.mobile-truck-stage>.truck-confirm::before{display:none}
+:where(.weather-compact-ui) .mobile-route-workflow.mobile-truck-stage>.truck-confirm:hover{background:#a5d7e91c;border-color:#a5d7e96b}
+:where(.weather-compact-ui) .mobile-route-workflow.mobile-truck-stage>.mobile-route-status{padding:6px 8px 8px;font-size:11px;line-height:1.45}
 
-@media(max-width:767px),(max-width:950px) and (max-height:500px){
- .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-truck-stage){height:160px;overflow-y:auto;overscroll-behavior:contain}
- .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-truck-stage>.truck-profile.is-expanded){height:360px}
-}
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-truck-stage){height:160px;overflow-y:auto;overscroll-behavior:contain}
+
+:where(.weather-compact-ui) .weather-left-stack.route-active.mobile-route-shell:not(.route-info-hidden):has(.mobile-truck-stage>.truck-profile.is-expanded){height:360px}
 
 /* Keep wheel gestures and the selection glow inside the departure picker. */
 .departure-inline-wheel{overscroll-behavior:none;touch-action:pan-y}
@@ -568,3 +552,22 @@
 .departure-inline-wheel-frame:focus-within:before,.departure-inline-wheel-frame:hover:before{background:#8bdce51b;border-color:#9ad9e469;box-shadow:inset 0 0 14px #8bdce522,0 0 10px #8bdce514}
 .route-sheet .departure-inline-wheel button:hover{background:transparent}
 @media(prefers-reduced-motion:reduce){.departure-inline-wheel-frame,.departure-inline-wheel-frame:before{transition:none}}
+
+/* Route opens only the two city fields; a second tap restores the timeline. */
+.route-sheet.route-cities-only>:not(.route-search-collapse){max-height:0!important;min-height:0!important;padding-block:0!important;margin-block:0!important;opacity:0!important;visibility:hidden!important;overflow:hidden!important;pointer-events:none!important}
+.weather-left-stack.route-active:has(.route-cities-only){height:auto!important;max-height:calc(100% - 100px);overflow-y:auto;display:block;padding:10px}
+.weather-left-stack.route-active:has(.route-cities-only)>:is(.point-weather,.wind-controls,.weather-radar-controls,.weather-mobile-expand){max-height:0!important;min-height:0!important;padding-block:0!important;margin-block:0!important;opacity:0!important;visibility:hidden!important;overflow:hidden!important;pointer-events:none!important}
+.route-sheet.route-cities-only{max-height:none!important;overflow:visible!important;padding:0!important}
+.weather-left-stack.route-active:has(.route-cities-only):has(.route-place-search.is-searching){height:auto!important}
+
+/* Keep long-press dragging on the pin instead of opening the iOS text callout. */
+.route-pin{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.route-via-markers{position:absolute;inset:0;pointer-events:none;z-index:6}
+.route-via-pin{position:absolute;left:0;top:0;width:48px;height:48px;border:0;background:transparent;color:#bfffee;pointer-events:auto;touch-action:none;cursor:grab;display:grid;place-items:center}
+.route-via-pin span{width:25px;height:25px;display:grid;place-items:center;background:#123344;border:2px solid #88e3d1;border-radius:7px;box-shadow:0 2px 8px #0008;font-size:12px}
+.route-via-ghost{position:absolute;left:0;top:0;width:36px;height:36px;border:2px solid #a1ffe4;border-radius:50%;background:#123344;color:white;display:grid;place-items:center;font-size:22px;opacity:0;pointer-events:none;z-index:12}
+.route-via-ghost.is-visible{opacity:1}
+.route-via-list{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;flex-wrap:wrap;justify-content:center;gap:5px;max-width:calc(100% - 160px);z-index:7}
+.route-via-list button{border:1px solid #488c9b;border-radius:14px;padding:6px 10px;background:#102a3bef;color:#d7f7f5;font:12px inherit;max-width:210px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background 250ms ease-out}
+.route-via-list button:hover{background:#205060}.route-via-list button:disabled{opacity:.65}
+@media(prefers-reduced-motion:reduce){.route-via-list button{transition:none}}

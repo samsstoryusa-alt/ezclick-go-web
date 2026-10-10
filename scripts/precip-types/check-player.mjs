@@ -44,3 +44,9 @@ cadence.dispose();assert.equal(events.size,0,'remove camera listeners');assert.e
 console.log('Radar replacement retains one map source, preserves playback, seeks and disposes cleanly');
 
 
+
+// Switch rendering budgets while keeping the same source/player and timeline.
+let fps=15;const qualityPlayer=createRadarPlayer(map,[canvas(),canvas()],()=>{},undefined,undefined,()=>fps);qualityPlayer.play(true);
+let stamp=10000;
+for(const target of [15,30,45,15]){fps=target;let count=0;for(let i=0;i<=120;i++){for(const [id,fn] of [...queue]){queue.delete(id);fn(stamp+i*1000/60);}if(i===0)count=updates;}const draws=updates-count;assert.ok(Math.abs(draws-target*2)<=2,'quality cadence '+target+' fps: '+draws);stamp+=3000;}
+qualityPlayer.dispose();assert.equal(queue.size,0);console.log('PASS: live 15/30/45/15 fps changes with one player and cleanup');

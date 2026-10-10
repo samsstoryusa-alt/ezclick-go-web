@@ -413,3 +413,711 @@ const romanianCatalog: Record<string, string> = {
   "precip.": "precip.",
   "min breaks": "min pauză"
 };
+
+Object.assign(catalog,{"Voice route":["Ruta por voz","Голосовой маршрут","Голосовий маршрут","语音路线","आवाज़ से मार्ग","ਆਵਾਜ਼ ਰਾਹੀਂ ਰਸਤਾ","Itinéraire vocal","Sprachroute","Rota por voz","المسار الصوتي"],"Trip assistant":["Asistente de viaje","Помощник в поездке","Помічник у поїздці","出行助手","यात्रा सहायक","ਯਾਤਰਾ ਸਹਾਇਕ","Assistant de voyage","Reiseassistent","Assistente de viagem","مساعد الرحلة"],"Start recording":["Grabar","Начать запись","Почати запис","开始录音","रिकॉर्डिंग शुरू करें","ਰਿਕਾਰਡਿੰਗ ਸ਼ੁਰੂ ਕਰੋ","Enregistrer","Aufnahme starten","Gravar","بدء التسجيل"],"Done":["Listo","Готово","Готово","完成","हो गया","ਮੁਕੰਮਲ","Terminé","Fertig","Concluído","تم"],"Cancel":["Cancelar","Отмена","Скасувати","取消","रद्द करें","ਰੱਦ ਕਰੋ","Annuler","Abbrechen","Cancelar","إلغاء"],"Tap to turn on the microphone.":["Toca para activar el micrófono.","Микрофон включится только по нажатию.","Натисніть, щоб увімкнути мікрофон.","点击开启麦克风。","माइक्रोफ़ोन चालू करने के लिए टैप करें।","ਮਾਈਕ ਚਾਲੂ ਕਰਨ ਲਈ ਟੈਪ ਕਰੋ।","Touchez pour activer le microphone.","Tippen, um das Mikrofon einzuschalten.","Toque para ativar o microfone.","اضغط لتشغيل الميكروفون."],"Recording cancelled.":["Grabación cancelada.","Запись отменена.","Запис скасовано.","录音已取消。","रिकॉर्डिंग रद्द।","ਰਿਕਾਰਡਿੰਗ ਰੱਦ।","Enregistrement annulé.","Aufnahme abgebrochen.","Gravação cancelada.","تم إلغاء التسجيل."],"Ask another question.":["Haz otra pregunta.","Можно задать следующий вопрос.","Можна поставити наступне питання.","可以继续提问。","एक और सवाल पूछें।","ਹੋਰ ਸਵਾਲ ਪੁੱਛੋ।","Posez une autre question.","Stellen Sie eine weitere Frage.","Faça outra pergunta.","اطرح سؤالًا آخر."]});
+Object.assign(romanianCatalog,{"Voice route":"Traseu vocal","Trip assistant":"Asistent de călătorie","Start recording":"Începe înregistrarea","Done":"Gata","Cancel":"Anulează","Tap to turn on the microphone.":"Apasă pentru a porni microfonul.","Recording cancelled.":"Înregistrare anulată.","Ask another question.":"Pune altă întrebare."});
+
+// Local voice controls do not need a second AI completion.
+Object.assign(catalog,{
+  "Route cleared.": [
+    "Ruta borrada.",
+    "Маршрут очищен.",
+    "Маршрут очищено.",
+    "路线已清除。",
+    "मार्ग साफ़ किया गया।",
+    "ਰਸਤਾ ਮਿਟਾਇਆ ਗਿਆ।",
+    "Itinéraire effacé.",
+    "Route gelöscht.",
+    "Rota apagada.",
+    "تم مسح المسار."
+  ],
+  "Build a route first.": [
+    "Primero crea una ruta.",
+    "Сначала постройте маршрут.",
+    "Спочатку побудуйте маршрут.",
+    "请先规划路线。",
+    "पहले मार्ग बनाएँ।",
+    "ਪਹਿਲਾਂ ਰਸਤਾ ਬਣਾਓ।",
+    "Créez d’abord un itinéraire.",
+    "Erstellen Sie zuerst eine Route.",
+    "Primeiro crie uma rota.",
+    "أنشئ مسارًا أولًا."
+  ],
+  "Showing the full route.": [
+    "Mostrando toda la ruta.",
+    "Показываю весь маршрут.",
+    "Показую весь маршрут.",
+    "正在显示完整路线。",
+    "पूरा मार्ग दिखा रहा हूँ।",
+    "ਪੂਰਾ ਰਸਤਾ ਦਿਖਾ ਰਿਹਾ ਹਾਂ।",
+    "Affichage de tout l’itinéraire.",
+    "Die gesamte Route wird angezeigt.",
+    "Mostrando toda a rota.",
+    "يتم عرض المسار بالكامل."
+  ],
+  "Wind layer on.": [
+    "Capa de viento activada.",
+    "Слой ветра включён.",
+    "Шар вітру ввімкнено.",
+    "风图层已开启。",
+    "हवा की परत चालू है।",
+    "ਹਵਾ ਦੀ ਪਰਤ ਚਾਲੂ ਹੈ।",
+    "Couche de vent activée.",
+    "Windebene eingeschaltet.",
+    "Camada de vento ativada.",
+    "تم تشغيل طبقة الرياح."
+  ],
+  "Wind layer off.": [
+    "Capa de viento desactivada.",
+    "Слой ветра выключен.",
+    "Шар вітру вимкнено.",
+    "风图层已关闭。",
+    "हवा की परत बंद है।",
+    "ਹਵਾ ਦੀ ਪਰਤ ਬੰਦ ਹੈ।",
+    "Couche de vent désactivée.",
+    "Windebene ausgeschaltet.",
+    "Camada de vento desativada.",
+    "تم إيقاف طبقة الرياح."
+  ],
+  "Precipitation layer on.": [
+    "Capa de precipitación activada.",
+    "Слой осадков включён.",
+    "Шар опадів ввімкнено.",
+    "降水图层已开启。",
+    "वर्षा की परत चालू है।",
+    "ਮੀਂਹ ਦੀ ਪਰਤ ਚਾਲੂ ਹੈ।",
+    "Couche de précipitations activée.",
+    "Niederschlagsebene eingeschaltet.",
+    "Camada de precipitação ativada.",
+    "تم تشغيل طبقة الهطول."
+  ],
+  "Precipitation layer off.": [
+    "Capa de precipitación desactivada.",
+    "Слой осадков выключен.",
+    "Шар опадів вимкнено.",
+    "降水图层已关闭。",
+    "वर्षा की परत बंद है।",
+    "ਮੀਂਹ ਦੀ ਪਰਤ ਬੰਦ ਹੈ।",
+    "Couche de précipitations désactivée.",
+    "Niederschlagsebene ausgeschaltet.",
+    "Camada de precipitação desativada.",
+    "تم إيقاف طبقة الهطول."
+  ],
+  "Kilometers and Celsius enabled.": [
+    "Kilómetros y Celsius activados.",
+    "Километры и градусы Цельсия включены.",
+    "Кілометри та градуси Цельсія ввімкнено.",
+    "已启用公里和摄氏度。",
+    "किलोमीटर और सेल्सियस चालू हैं।",
+    "ਕਿਲੋਮੀਟਰ ਅਤੇ ਸੈਲਸੀਅਸ ਚਾਲੂ ਹਨ।",
+    "Kilomètres et Celsius activés.",
+    "Kilometer und Celsius aktiviert.",
+    "Quilômetros e Celsius ativados.",
+    "تم تفعيل الكيلومترات والدرجة المئوية."
+  ],
+  "Miles and Fahrenheit enabled.": [
+    "Millas y Fahrenheit activados.",
+    "Мили и градусы Фаренгейта включены.",
+    "Милі та градуси Фаренгейта ввімкнено.",
+    "已启用英里和华氏度。",
+    "मील और फ़ारेनहाइट चालू हैं।",
+    "ਮੀਲ ਅਤੇ ਫਾਰਨਹੀਟ ਚਾਲੂ ਹਨ।",
+    "Miles et Fahrenheit activés.",
+    "Meilen und Fahrenheit aktiviert.",
+    "Milhas e Fahrenheit ativados.",
+    "تم تفعيل الأميال ودرجة فهرنهايت."
+  ],
+  "The map is not ready for this command.": [
+    "El mapa aún no está listo para esta orden.",
+    "Карта пока не готова к этой команде.",
+    "Карта ще не готова до цієї команди.",
+    "地图尚未准备好执行此命令。",
+    "मानचित्र अभी इस आदेश के लिए तैयार नहीं है।",
+    "ਨਕਸ਼ਾ ਅਜੇ ਇਸ ਹੁਕਮ ਲਈ ਤਿਆਰ ਨਹੀਂ ਹੈ।",
+    "La carte n’est pas prête pour cette commande.",
+    "Die Karte ist für diesen Befehl noch nicht bereit.",
+    "O mapa ainda não está pronto para este comando.",
+    "الخريطة ليست جاهزة لهذا الأمر بعد."
+  ],
+  "Delete both points and the current route?": [
+    "¿Borrar ambos puntos y la ruta actual?",
+    "Удалить обе точки и текущий маршрут?",
+    "Видалити обидві точки та поточний маршрут?",
+    "删除两个点和当前路线？",
+    "दोनों बिंदु और वर्तमान मार्ग हटाएँ?",
+    "ਦੋਵੇਂ ਬਿੰਦੂ ਅਤੇ ਮੌਜੂਦਾ ਰਸਤਾ ਮਿਟਾਉਣਾ ਹੈ?",
+    "Supprimer les deux points et l’itinéraire actuel ?",
+    "Beide Punkte und die aktuelle Route löschen?",
+    "Apagar os dois pontos e a rota atual?",
+    "هل تريد حذف النقطتين والمسار الحالي؟"
+  ],
+  "Yes, clear the route": [
+    "Sí, borrar la ruta",
+    "Да, удалить маршрут",
+    "Так, видалити маршрут",
+    "是，清除路线",
+    "हाँ, मार्ग हटाएँ",
+    "ਹਾਂ, ਰਸਤਾ ਮਿਟਾਓ",
+    "Oui, effacer l’itinéraire",
+    "Ja, Route löschen",
+    "Sim, apagar a rota",
+    "نعم، امسح المسار"
+  ],
+  "Route clearing cancelled.": [
+    "Borrado de ruta cancelado.",
+    "Удаление отменено.",
+    "Видалення скасовано.",
+    "已取消清除路线。",
+    "मार्ग हटाना रद्द किया गया।",
+    "ਰਸਤਾ ਮਿਟਾਉਣਾ ਰੱਦ ਕੀਤਾ ਗਿਆ।",
+    "Effacement de l’itinéraire annulé.",
+    "Löschen der Route abgebrochen.",
+    "Limpeza da rota cancelada.",
+    "تم إلغاء مسح المسار."
+  ],
+  "Checking…": [
+    "Comprobando…",
+    "Проверяю…",
+    "Перевіряю…",
+    "正在检查…",
+    "जाँच रहा हूँ…",
+    "ਜਾਂਚ ਰਿਹਾ ਹਾਂ…",
+    "Vérification…",
+    "Wird geprüft…",
+    "Verificando…",
+    "جارٍ التحقق…"
+  ],
+  "Your daily voice allowance is used up. It resets at midnight in New York.": [
+    "Tu límite diario de voz se ha agotado. Se restablece a medianoche en Nueva York.",
+    "Ваш дневной лимит голосовых обращений исчерпан. Он обновится в полночь по Нью-Йорку.",
+    "Ваш денний ліміт голосових звернень вичерпано. Він оновиться опівночі за часом Нью-Йорка.",
+    "您的每日语音额度已用完，将在纽约时间午夜重置。",
+    "आपकी दैनिक आवाज़ सीमा समाप्त हो गई है। यह न्यूयॉर्क में आधी रात को रीसेट होगी।",
+    "ਤੁਹਾਡੀ ਰੋਜ਼ਾਨਾ ਆਵਾਜ਼ ਸੀਮਾ ਮੁੱਕ ਗਈ ਹੈ। ਇਹ ਨਿਊਯਾਰਕ ਵਿੱਚ ਅੱਧੀ ਰਾਤ ਨੂੰ ਮੁੜ ਸੈੱਟ ਹੋਵੇਗੀ।",
+    "Votre quota vocal quotidien est épuisé. Il est réinitialisé à minuit à New York.",
+    "Ihr tägliches Sprachkontingent ist aufgebraucht. Es wird um Mitternacht in New York zurückgesetzt.",
+    "Sua cota diária de voz acabou. Ela é renovada à meia-noite em Nova York.",
+    "نفدت حصتك الصوتية اليومية. تتجدد عند منتصف الليل بتوقيت نيويورك."
+  ],
+  "The shared daily voice allowance is used up. It resets at midnight in New York.": [
+    "El límite diario compartido de voz se ha agotado. Se restablece a medianoche en Nueva York.",
+    "Общий дневной лимит голосовых обращений исчерпан. Он обновится в полночь по Нью-Йорку.",
+    "Загальний денний ліміт голосових звернень вичерпано. Він оновиться опівночі за часом Нью-Йорка.",
+    "共享每日语音额度已用完，将在纽约时间午夜重置。",
+    "साझा दैनिक आवाज़ सीमा समाप्त हो गई है। यह न्यूयॉर्क में आधी रात को रीसेट होगी।",
+    "ਸਾਂਝੀ ਰੋਜ਼ਾਨਾ ਆਵਾਜ਼ ਸੀਮਾ ਮੁੱਕ ਗਈ ਹੈ। ਇਹ ਨਿਊਯਾਰਕ ਵਿੱਚ ਅੱਧੀ ਰਾਤ ਨੂੰ ਮੁੜ ਸੈੱਟ ਹੋਵੇਗੀ।",
+    "Le quota vocal quotidien partagé est épuisé. Il est réinitialisé à minuit à New York.",
+    "Das gemeinsame tägliche Sprachkontingent ist aufgebraucht. Es wird um Mitternacht in New York zurückgesetzt.",
+    "A cota diária compartilhada de voz acabou. Ela é renovada à meia-noite em Nova York.",
+    "نفدت الحصة الصوتية اليومية المشتركة. تتجدد عند منتصف الليل بتوقيت نيويورك."
+  ]
+});
+Object.assign(romanianCatalog,{
+  "Route cleared.": "Traseul a fost șters.",
+  "Build a route first.": "Construiește mai întâi un traseu.",
+  "Showing the full route.": "Se afișează întregul traseu.",
+  "Wind layer on.": "Stratul de vânt este activat.",
+  "Wind layer off.": "Stratul de vânt este dezactivat.",
+  "Precipitation layer on.": "Stratul de precipitații este activat.",
+  "Precipitation layer off.": "Stratul de precipitații este dezactivat.",
+  "Kilometers and Celsius enabled.": "Kilometrii și gradele Celsius sunt activate.",
+  "Miles and Fahrenheit enabled.": "Milele și gradele Fahrenheit sunt activate.",
+  "The map is not ready for this command.": "Harta nu este încă pregătită pentru această comandă.",
+  "Delete both points and the current route?": "Ștergi ambele puncte și traseul actual?",
+  "Yes, clear the route": "Da, șterge traseul",
+  "Route clearing cancelled.": "Ștergerea traseului a fost anulată.",
+  "Checking…": "Se verifică…",
+  "Your daily voice allowance is used up. It resets at midnight in New York.": "Limita ta vocală zilnică a fost epuizată. Se resetează la miezul nopții în New York.",
+  "The shared daily voice allowance is used up. It resets at midnight in New York.": "Limita vocală zilnică comună a fost epuizată. Se resetează la miezul nopții în New York."
+});
+
+Object.assign(catalog,{
+  "Graphics quality": [
+    "Calidad gráfica",
+    "Качество графики",
+    "Якість графіки",
+    "画质",
+    "ग्राफ़िक्स गुणवत्ता",
+    "ਗ੍ਰਾਫਿਕਸ ਗੁਣਵੱਤਾ",
+    "Qualité graphique",
+    "Grafikqualität",
+    "Qualidade gráfica",
+    "جودة الرسومات"
+  ],
+  "Light": [
+    "Ligero",
+    "Лёгкий",
+    "Легкий",
+    "轻量",
+    "हल्का",
+    "ਹਲਕਾ",
+    "Léger",
+    "Leicht",
+    "Leve",
+    "خفيف"
+  ],
+  "Balanced": [
+    "Equilibrado",
+    "Сбалансированный",
+    "Збалансований",
+    "均衡",
+    "संतुलित",
+    "ਸੰਤੁਲਿਤ",
+    "Équilibré",
+    "Ausgewogen",
+    "Equilibrado",
+    "متوازن"
+  ],
+  "Maximum": [
+    "Máximo",
+    "Максимальный",
+    "Максимальний",
+    "最高",
+    "अधिकतम",
+    "ਵੱਧ ਤੋਂ ਵੱਧ",
+    "Maximum",
+    "Maximum",
+    "Máximo",
+    "أقصى"
+  ],
+  "Visual effects only. Forecast accuracy stays the same.": [
+    "Solo efectos visuales. La precisión del pronóstico no cambia.",
+    "Только визуальные эффекты. Точность прогноза не меняется.",
+    "Лише візуальні ефекти. Точність прогнозу не змінюється.",
+    "仅调整视觉效果。预报准确性不变。",
+    "केवल दृश्य प्रभाव। पूर्वानुमान की सटीकता समान रहती है।",
+    "ਸਿਰਫ਼ ਦ੍ਰਿਸ਼ ਪ੍ਰਭਾਵ। ਪੂਰਵ ਅਨੁਮਾਨ ਦੀ ਸਟੀਕਤਾ ਨਹੀਂ ਬਦਲਦੀ।",
+    "Effets visuels uniquement. La précision des prévisions reste identique.",
+    "Nur visuelle Effekte. Die Vorhersagegenauigkeit bleibt gleich.",
+    "Somente efeitos visuais. A precisão da previsão permanece igual.",
+    "تأثيرات مرئية فقط. دقة التوقعات لا تتغير."
+  ]
+});
+Object.assign(romanianCatalog,{
+  "Graphics quality": "Calitate grafică",
+  "Light": "Redusă",
+  "Balanced": "Echilibrată",
+  "Maximum": "Maximă",
+  "Visual effects only. Forecast accuracy stays the same.": "Doar efecte vizuale. Precizia prognozei rămâne aceeași."
+});
+
+Object.assign(catalog,{
+  "Continue route": [
+    "Continuar ruta",
+    "Продолжить маршрут",
+    "Продовжити маршрут",
+    "继续路线",
+    "मार्ग जारी रखें",
+    "ਰੂਟ ਜਾਰੀ ਰੱਖੋ",
+    "Reprendre le trajet",
+    "Route fortsetzen",
+    "Continuar rota",
+    "متابعة المسار"
+  ],
+  "Saved trip · fresh forecast": [
+    "Viaje guardado · pronóstico actualizado",
+    "Сохранённая поездка · свежий прогноз",
+    "Збережена поїздка · свіжий прогноз",
+    "已保存行程 · 最新预报",
+    "सहेजी गई यात्रा · ताज़ा पूर्वानुमान",
+    "ਸੰਭਾਲੀ ਯਾਤਰਾ · ਤਾਜ਼ਾ ਪੂਰਵ ਅਨੁਮਾਨ",
+    "Trajet enregistré · prévisions actualisées",
+    "Gespeicherte Fahrt · aktuelle Vorhersage",
+    "Viagem salva · previsão atualizada",
+    "رحلة محفوظة · توقعات محدثة"
+  ],
+  "Driving time": [
+    "Tiempo de conducción",
+    "В движении",
+    "У русі",
+    "驾驶时间",
+    "ड्राइविंग समय",
+    "ਡਰਾਈਵਿੰਗ ਸਮਾਂ",
+    "Temps de conduite",
+    "Fahrzeit",
+    "Tempo de condução",
+    "وقت القيادة"
+  ],
+  "Total time including breaks": [
+    "Tiempo total con descansos",
+    "Общее время с остановками",
+    "Загальний час із зупинками",
+    "含休息的总时间",
+    "विश्राम सहित कुल समय",
+    "ਵਿਰਾਮ ਸਮੇਤ ਕੁੱਲ ਸਮਾਂ",
+    "Temps total avec pauses",
+    "Gesamtzeit mit Pausen",
+    "Tempo total com paradas",
+    "الوقت الإجمالي مع الاستراحات"
+  ]
+});
+Object.assign(romanianCatalog,{
+  "Continue route": "Continuă traseul",
+  "Saved trip · fresh forecast": "Călătorie salvată · prognoză actualizată",
+  "Driving time": "Timp de condus",
+  "Total time including breaks": "Timp total cu pauze"
+});
+
+Object.assign(catalog,{"Total":["Total","Всего","Разом","总计","कुल","ਕੁੱਲ","Total","Gesamt","Total","الإجمالي"]});
+Object.assign(romanianCatalog,{"Total":"Total"});
+
+// Support form copy: es, ru, uk, zh, hi, pa, fr, de, pt, ar; Romanian separately.
+Object.assign(catalog,{
+  "Report a problem": [
+    "Informar de un problema",
+    "Сообщить об ошибке",
+    "Повідомити про помилку",
+    "报告问题",
+    "समस्या की रिपोर्ट करें",
+    "ਸਮੱਸਿਆ ਦੀ ਰਿਪੋਰਟ ਕਰੋ",
+    "Signaler un problème",
+    "Problem melden",
+    "Relatar um problema",
+    "الإبلاغ عن مشكلة"
+  ],
+  "Close support": [
+    "Cerrar soporte",
+    "Закрыть поддержку",
+    "Закрити підтримку",
+    "关闭支持窗口",
+    "सहायता बंद करें",
+    "ਸਹਾਇਤਾ ਬੰਦ ਕਰੋ",
+    "Fermer l’assistance",
+    "Support schließen",
+    "Fechar suporte",
+    "إغلاق الدعم"
+  ],
+  "Tell us what happened and what you expected. Do not include passwords or sensitive information.": [
+    "Cuéntanos qué pasó y qué esperabas. No incluyas contraseñas ni información sensible.",
+    "Опишите, что произошло и что вы ожидали. Не указывайте пароли и конфиденциальные данные.",
+    "Опишіть, що сталося та чого ви очікували. Не вказуйте паролі та конфіденційні дані.",
+    "请描述发生了什么以及您的预期。请勿填写密码或敏感信息。",
+    "बताएँ कि क्या हुआ और आप क्या उम्मीद कर रहे थे। पासवर्ड या संवेदनशील जानकारी न दें।",
+    "ਦੱਸੋ ਕਿ ਕੀ ਹੋਇਆ ਅਤੇ ਤੁਸੀਂ ਕੀ ਉਮੀਦ ਕੀਤੀ ਸੀ। ਪਾਸਵਰਡ ਜਾਂ ਸੰਵੇਦਨਸ਼ੀਲ ਜਾਣਕਾਰੀ ਨਾ ਦਿਓ।",
+    "Décrivez le problème et le résultat attendu. N’indiquez ni mot de passe ni information sensible.",
+    "Beschreiben Sie das Problem und das erwartete Ergebnis. Geben Sie keine Passwörter oder sensiblen Daten an.",
+    "Conte o que aconteceu e o que esperava. Não inclua senhas nem informações sensíveis.",
+    "صف ما حدث وما كنت تتوقعه. لا تدرج كلمات مرور أو معلومات حساسة."
+  ],
+  "What went wrong?": [
+    "¿Qué falló?",
+    "Что пошло не так?",
+    "Що пішло не так?",
+    "遇到了什么问题？",
+    "क्या समस्या हुई?",
+    "ਕੀ ਸਮੱਸਿਆ ਆਈ?",
+    "Quel est le problème ?",
+    "Was ist schiefgelaufen?",
+    "O que deu errado?",
+    "ما المشكلة؟"
+  ],
+  "Email for a reply (optional)": [
+    "Email para responderte (opcional)",
+    "Email для ответа (необязательно)",
+    "Email для відповіді (необов’язково)",
+    "回复邮箱（选填）",
+    "जवाब के लिए ईमेल (वैकल्पिक)",
+    "ਜਵਾਬ ਲਈ ਈਮੇਲ (ਵਿਕਲਪਿਕ)",
+    "E-mail pour la réponse (facultatif)",
+    "E-Mail für die Antwort (optional)",
+    "Email para resposta (opcional)",
+    "بريد للرد (اختياري)"
+  ],
+  "Include technical details": [
+    "Incluir datos técnicos",
+    "Приложить технические данные",
+    "Додати технічні дані",
+    "附上技术信息",
+    "तकनीकी जानकारी शामिल करें",
+    "ਤਕਨੀਕੀ ਜਾਣਕਾਰੀ ਸ਼ਾਮਲ ਕਰੋ",
+    "Joindre les données techniques",
+    "Technische Angaben beifügen",
+    "Incluir dados técnicos",
+    "إرفاق التفاصيل التقنية"
+  ],
+  "Browser, device, app version and settings. No locations, routes or voice recordings.": [
+    "Navegador, dispositivo, versión de la app y ajustes. Sin ubicaciones, rutas ni grabaciones de voz.",
+    "Браузер, устройство, версия приложения и настройки. Без геолокации, маршрутов и голосовых записей.",
+    "Браузер, пристрій, версія застосунку та налаштування. Без геолокації, маршрутів і голосових записів.",
+    "浏览器、设备、应用版本和设置。不包含位置、路线或语音录音。",
+    "ब्राउज़र, डिवाइस, ऐप का संस्करण और सेटिंग। स्थान, मार्ग या आवाज़ की रिकॉर्डिंग नहीं।",
+    "ਬ੍ਰਾਊਜ਼ਰ, ਡਿਵਾਈਸ, ਐਪ ਵਰਜਨ ਅਤੇ ਸੈਟਿੰਗਾਂ। ਟਿਕਾਣੇ, ਰੂਟ ਜਾਂ ਆਵਾਜ਼ ਰਿਕਾਰਡਿੰਗਾਂ ਨਹੀਂ।",
+    "Navigateur, appareil, version et paramètres. Sans positions, itinéraires ni enregistrements vocaux.",
+    "Browser, Gerät, App-Version und Einstellungen. Keine Standorte, Routen oder Sprachaufnahmen.",
+    "Navegador, dispositivo, versão e configurações. Sem localização, rotas ou gravações de voz.",
+    "المتصفح والجهاز وإصدار التطبيق والإعدادات. بدون مواقع أو مسارات أو تسجيلات صوتية."
+  ],
+  "View technical details": [
+    "Ver datos técnicos",
+    "Посмотреть технические данные",
+    "Переглянути технічні дані",
+    "查看技术信息",
+    "तकनीकी जानकारी देखें",
+    "ਤਕਨੀਕੀ ਜਾਣਕਾਰੀ ਵੇਖੋ",
+    "Voir les données techniques",
+    "Technische Angaben anzeigen",
+    "Ver dados técnicos",
+    "عرض التفاصيل التقنية"
+  ],
+  "Your report goes to EZ Click Support. A server copy is kept for 30 days.": [
+    "Tu informe se envía a EZ Click Support. Se guarda una copia en el servidor durante 30 días.",
+    "Обращение получит EZ Click Support. Копия на сервере хранится 30 дней.",
+    "Звернення отримає EZ Click Support. Копія на сервері зберігається 30 днів.",
+    "报告将发送至 EZ Click Support。服务器副本保存30天。",
+    "आपकी रिपोर्ट EZ Click Support को भेजी जाती है। सर्वर पर प्रति 30 दिनों तक रहती है।",
+    "ਤੁਹਾਡੀ ਰਿਪੋਰਟ EZ Click Support ਨੂੰ ਜਾਂਦੀ ਹੈ। ਸਰਵਰ ਉੱਤੇ ਕਾਪੀ 30 ਦਿਨ ਰਹਿੰਦੀ ਹੈ।",
+    "Votre signalement est envoyé à EZ Click Support. Une copie reste sur le serveur pendant 30 jours.",
+    "Ihre Meldung geht an EZ Click Support. Eine Serverkopie wird 30 Tage aufbewahrt.",
+    "Seu relato vai para EZ Click Support. Uma cópia fica no servidor por 30 dias.",
+    "يصل بلاغك إلى EZ Click Support. تُحفظ نسخة على الخادم لمدة 30 يومًا."
+  ],
+  "Send report": [
+    "Enviar informe",
+    "Отправить обращение",
+    "Надіслати звернення",
+    "发送报告",
+    "रिपोर्ट भेजें",
+    "ਰਿਪੋਰਟ ਭੇਜੋ",
+    "Envoyer le signalement",
+    "Meldung senden",
+    "Enviar relato",
+    "إرسال البلاغ"
+  ],
+  "Sending report…": [
+    "Enviando…",
+    "Отправляем…",
+    "Надсилаємо…",
+    "正在发送…",
+    "भेज रहे हैं…",
+    "ਭੇਜ ਰਹੇ ਹਾਂ…",
+    "Envoi en cours…",
+    "Wird gesendet…",
+    "Enviando…",
+    "جارٍ الإرسال…"
+  ],
+  "Report received": [
+    "Informe recibido",
+    "Обращение принято",
+    "Звернення прийнято",
+    "已收到报告",
+    "रिपोर्ट प्राप्त हुई",
+    "ਰਿਪੋਰਟ ਮਿਲ ਗਈ",
+    "Signalement reçu",
+    "Meldung eingegangen",
+    "Relato recebido",
+    "تم استلام البلاغ"
+  ],
+  "Keep this number for your follow-up.": [
+    "Guarda este número para el seguimiento.",
+    "Сохраните этот номер для переписки с поддержкой.",
+    "Збережіть цей номер для листування з підтримкою.",
+    "请保留此编号以便跟进。",
+    "आगे संपर्क के लिए यह नंबर रखें।",
+    "ਅੱਗੇ ਸੰਪਰਕ ਲਈ ਇਹ ਨੰਬਰ ਸੰਭਾਲੋ।",
+    "Conservez ce numéro pour le suivi.",
+    "Bewahren Sie diese Nummer für Rückfragen auf.",
+    "Guarde este número para acompanhar o atendimento.",
+    "احتفظ بهذا الرقم للمتابعة."
+  ],
+  "Back to map": [
+    "Volver al mapa",
+    "Вернуться к карте",
+    "Повернутися до карти",
+    "返回地图",
+    "मानचित्र पर वापस जाएँ",
+    "ਨਕਸ਼ੇ ਉੱਤੇ ਵਾਪਸ ਜਾਓ",
+    "Retour à la carte",
+    "Zurück zur Karte",
+    "Voltar ao mapa",
+    "العودة إلى الخريطة"
+  ],
+  "Report another problem": [
+    "Informar de otro problema",
+    "Сообщить о другой ошибке",
+    "Повідомити про іншу помилку",
+    "报告其他问题",
+    "दूसरी समस्या बताएँ",
+    "ਹੋਰ ਸਮੱਸਿਆ ਦੱਸੋ",
+    "Signaler un autre problème",
+    "Weiteres Problem melden",
+    "Relatar outro problema",
+    "الإبلاغ عن مشكلة أخرى"
+  ],
+  "You can also email us:": [
+    "También puedes escribirnos:",
+    "Также можно написать на почту:",
+    "Також можна написати на пошту:",
+    "也可以发送邮件：",
+    "आप हमें ईमेल भी कर सकते हैं:",
+    "ਤੁਸੀਂ ਸਾਨੂੰ ਈਮੇਲ ਵੀ ਕਰ ਸਕਦੇ ਹੋ:",
+    "Vous pouvez aussi nous écrire :",
+    "Sie können uns auch schreiben:",
+    "Você também pode enviar um email:",
+    "يمكنك أيضًا مراسلتنا:"
+  ],
+  "Please describe the problem in at least 10 characters.": [
+    "Describe el problema con al menos 10 caracteres.",
+    "Опишите проблему подробнее — минимум 10 символов.",
+    "Опишіть проблему докладніше — щонайменше 10 символів.",
+    "请至少输入10个字符来描述问题。",
+    "कम से कम 10 अक्षरों में समस्या बताएँ।",
+    "ਘੱਟੋ-ਘੱਟ 10 ਅੱਖਰਾਂ ਵਿੱਚ ਸਮੱਸਿਆ ਦੱਸੋ।",
+    "Décrivez le problème en au moins 10 caractères.",
+    "Beschreiben Sie das Problem mit mindestens 10 Zeichen.",
+    "Descreva o problema com pelo menos 10 caracteres.",
+    "صف المشكلة باستخدام 10 أحرف على الأقل."
+  ],
+  "Too many reports. Please try again in an hour or email us.": [
+    "Demasiados informes. Inténtalo en una hora o escríbenos por email.",
+    "Слишком много обращений. Попробуйте через час или напишите на почту.",
+    "Забагато звернень. Спробуйте за годину або напишіть на пошту.",
+    "报告过多。请一小时后重试或发送邮件。",
+    "बहुत अधिक रिपोर्ट हैं। एक घंटे बाद कोशिश करें या ईमेल करें।",
+    "ਬਹੁਤ ਸਾਰੀਆਂ ਰਿਪੋਰਟਾਂ ਹਨ। ਇੱਕ ਘੰਟੇ ਬਾਅਦ ਕੋਸ਼ਿਸ਼ ਕਰੋ ਜਾਂ ਈਮੇਲ ਕਰੋ।",
+    "Trop de signalements. Réessayez dans une heure ou écrivez-nous par e-mail.",
+    "Zu viele Meldungen. Versuchen Sie es in einer Stunde oder per E-Mail.",
+    "Muitos relatos. Tente em uma hora ou envie um email.",
+    "بلاغات كثيرة. حاول بعد ساعة أو راسلنا بالبريد."
+  ],
+  "Could not confirm receipt. Your text is still here. Please retry or email us.": [
+    "No pudimos confirmar la recepción. Tu texto sigue aquí. Reintenta o escríbenos por email.",
+    "Не удалось подтвердить получение. Текст сохранён в этой форме. Повторите отправку или напишите на почту.",
+    "Не вдалося підтвердити отримання. Текст залишився у формі. Спробуйте ще раз або напишіть на пошту.",
+    "无法确认是否收到。文字仍保留在表单中。请重试或发送邮件。",
+    "प्राप्ति की पुष्टि नहीं हो सकी। आपका पाठ फ़ॉर्म में है। फिर से भेजें या ईमेल करें।",
+    "ਮਿਲਣ ਦੀ ਪੁਸ਼ਟੀ ਨਹੀਂ ਹੋਈ। ਤੁਹਾਡਾ ਲਿਖਿਆ ਫਾਰਮ ਵਿੱਚ ਹੈ। ਮੁੜ ਭੇਜੋ ਜਾਂ ਈਮੇਲ ਕਰੋ।",
+    "Réception non confirmée. Votre texte reste dans le formulaire. Réessayez ou écrivez-nous par e-mail.",
+    "Empfang nicht bestätigt. Ihr Text bleibt im Formular. Versuchen Sie es erneut oder per E-Mail.",
+    "Não foi possível confirmar o recebimento. Seu texto continua no formulário. Tente novamente ou envie um email.",
+    "تعذر تأكيد الاستلام. ما زال النص في النموذج. أعد المحاولة أو راسلنا بالبريد."
+  ]
+});
+Object.assign(romanianCatalog,{
+  "Report a problem": "Raportează o problemă",
+  "Close support": "Închide asistența",
+  "Tell us what happened and what you expected. Do not include passwords or sensitive information.": "Descrie ce s-a întâmplat și ce rezultat așteptai. Nu include parole sau informații sensibile.",
+  "What went wrong?": "Ce nu a funcționat?",
+  "Email for a reply (optional)": "Email pentru răspuns (opțional)",
+  "Include technical details": "Include detaliile tehnice",
+  "Browser, device, app version and settings. No locations, routes or voice recordings.": "Browser, dispozitiv, versiunea aplicației și setări. Fără locații, trasee sau înregistrări vocale.",
+  "View technical details": "Vezi detaliile tehnice",
+  "Your report goes to EZ Click Support. A server copy is kept for 30 days.": "Raportul ajunge la EZ Click Support. O copie este păstrată pe server timp de 30 de zile.",
+  "Send report": "Trimite raportul",
+  "Sending report…": "Se trimite…",
+  "Report received": "Raport primit",
+  "Keep this number for your follow-up.": "Păstrează acest număr pentru urmărire.",
+  "Back to map": "Înapoi la hartă",
+  "Report another problem": "Raportează altă problemă",
+  "You can also email us:": "Ne poți scrie și prin email:",
+  "Please describe the problem in at least 10 characters.": "Descrie problema folosind cel puțin 10 caractere.",
+  "Too many reports. Please try again in an hour or email us.": "Prea multe rapoarte. Reîncearcă peste o oră sau scrie-ne prin email.",
+  "Could not confirm receipt. Your text is still here. Please retry or email us.": "Primirea nu a putut fi confirmată. Textul a rămas în formular. Reîncearcă sau scrie-ne prin email."
+});
+
+// Optional AI review and cross-platform navigator notice.
+Object.assign(catalog,{
+  "Allow AI-assisted review (optional)": [
+    "Permitir revisión con IA (opcional)",
+    "Разрешить разбор с помощью AI (необязательно)",
+    "Дозволити аналіз за допомогою ШІ (необов’язково)",
+    "允许 AI 辅助分析（可选）",
+    "AI की मदद से समीक्षा की अनुमति दें (वैकल्पिक)",
+    "AI ਨਾਲ ਸਮੀਖਿਆ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ (ਵਿਕਲਪਿਕ)",
+    "Autoriser l’analyse par IA (facultatif)",
+    "KI-gestützte Prüfung erlauben (optional)",
+    "Permitir análise com IA (opcional)",
+    "السماح بالمراجعة بمساعدة الذكاء الاصطناعي (اختياري)"
+  ],
+  "OpenAI receives your description, language and device system to help review the issue. Your reply email is excluded.": [
+    "OpenAI recibe tu descripción, idioma y sistema del dispositivo para ayudar a revisar el problema. No se incluye tu email de respuesta.",
+    "OpenAI получит описание, язык и систему устройства для разбора ошибки. Email для ответа не передаётся.",
+    "OpenAI отримає опис, мову та систему пристрою для аналізу помилки. Email для відповіді не передається.",
+    "OpenAI 将接收问题描述、语言和设备系统以协助分析，不包含回复邮箱。",
+    "समस्या की समीक्षा के लिए OpenAI को आपका विवरण, भाषा और डिवाइस सिस्टम भेजा जाता है। जवाब वाला ईमेल शामिल नहीं है।",
+    "ਸਮੱਸਿਆ ਦੀ ਸਮੀਖਿਆ ਲਈ OpenAI ਨੂੰ ਵੇਰਵਾ, ਭਾਸ਼ਾ ਅਤੇ ਡਿਵਾਈਸ ਸਿਸਟਮ ਭੇਜਿਆ ਜਾਂਦਾ ਹੈ। ਜਵਾਬ ਵਾਲੀ ਈਮੇਲ ਸ਼ਾਮਲ ਨਹੀਂ ਹੁੰਦੀ।",
+    "OpenAI reçoit votre description, la langue et le système de l’appareil pour aider à analyser le problème. L’e-mail de réponse est exclu.",
+    "OpenAI erhält Ihre Beschreibung, Sprache und das Gerätesystem zur Prüfung des Problems. Die Antwort-E-Mail wird nicht übermittelt.",
+    "A OpenAI recebe sua descrição, idioma e sistema do dispositivo para ajudar na análise. O email para resposta não é incluído.",
+    "تتلقى OpenAI وصفك ولغتك ونظام جهازك للمساعدة في مراجعة المشكلة. لا يُرسل بريد الرد."
+  ],
+  "Destination B opens in your navigation app. It calculates its own route; truck restrictions are not transferred.": [
+    "El destino B se abre en tu app de navegación. Calcula su propia ruta; no se transfieren las restricciones para camiones.",
+    "Точка B откроется в навигаторе. Он рассчитает свой маршрут; ограничения для трака не передаются.",
+    "Точка B відкриється в навігаторі. Він розрахує свій маршрут; обмеження для вантажівки не передаються.",
+    "终点 B 将在导航应用中打开。该应用自行规划路线，不会接收卡车限制。",
+    "गंतव्य B आपके नेविगेशन ऐप में खुलेगा। वह अपना मार्ग बनाएगा; ट्रक प्रतिबंध भेजे नहीं जाते।",
+    "ਮੰਜ਼ਿਲ B ਤੁਹਾਡੀ ਨੇਵੀਗੇਸ਼ਨ ਐਪ ਵਿੱਚ ਖੁੱਲ੍ਹੇਗੀ। ਉਹ ਆਪਣਾ ਰੂਟ ਬਣਾਏਗੀ; ਟਰੱਕ ਪਾਬੰਦੀਆਂ ਨਹੀਂ ਭੇਜੀਆਂ ਜਾਂਦੀਆਂ।",
+    "La destination B s’ouvre dans votre application de navigation. Elle calcule son itinéraire ; les restrictions poids lourds ne sont pas transmises.",
+    "Ziel B öffnet sich in Ihrer Navigations-App. Sie berechnet eine eigene Route; Lkw-Beschränkungen werden nicht übertragen.",
+    "O destino B abre no app de navegação. Ele calcula sua própria rota; restrições para caminhões não são transferidas.",
+    "تُفتح الوجهة B في تطبيق الملاحة. يحسب مساره الخاص؛ ولا تُنقل قيود الشاحنات."
+  ]
+});
+Object.assign(romanianCatalog,{
+  "Allow AI-assisted review (optional)": "Permite analiza cu AI (opțional)",
+  "OpenAI receives your description, language and device system to help review the issue. Your reply email is excluded.": "OpenAI primește descrierea, limba și sistemul dispozitivului pentru analiza problemei. Emailul pentru răspuns nu este transmis.",
+  "Destination B opens in your navigation app. It calculates its own route; truck restrictions are not transferred.": "Destinația B se deschide în aplicația de navigație. Aceasta își calculează traseul; restricțiile pentru camioane nu sunt transferate."
+});
+
+// Explicit navigation-app choice.
+Object.assign(catalog,{
+  "Choose navigation app": [
+    "Elige una app de navegación",
+    "Выберите навигатор",
+    "Виберіть навігатор",
+    "选择导航应用",
+    "नेविगेशन ऐप चुनें",
+    "ਨੇਵੀਗੇਸ਼ਨ ਐਪ ਚੁਣੋ",
+    "Choisir une application de navigation",
+    "Navigations-App wählen",
+    "Escolha o app de navegação",
+    "اختر تطبيق الملاحة"
+  ],
+  "Trucker Path must be installed.": [
+    "Trucker Path debe estar instalado.",
+    "Нужен установленный Trucker Path.",
+    "Потрібен встановлений Trucker Path.",
+    "需要安装 Trucker Path。",
+    "Trucker Path इंस्टॉल होना चाहिए।",
+    "Trucker Path ਇੰਸਟਾਲ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ।",
+    "Trucker Path doit être installé.",
+    "Trucker Path muss installiert sein.",
+    "O Trucker Path deve estar instalado.",
+    "يجب تثبيت Trucker Path."
+  ],
+  "Only destination B is sent. Check the route and vehicle settings in your navigator.": [
+    "Solo se envía el destino B. Revisa la ruta y los ajustes del vehículo en tu navegador.",
+    "Передаётся только точка B. Проверьте маршрут и настройки машины в навигаторе.",
+    "Передається лише точка B. Перевірте маршрут і налаштування автомобіля в навігаторі.",
+    "仅发送终点 B。请在导航应用中检查路线和车辆设置。",
+    "केवल गंतव्य B भेजा जाता है। अपने नेविगेशन ऐप में मार्ग और वाहन की सेटिंग जाँचें।",
+    "ਸਿਰਫ਼ ਮੰਜ਼ਿਲ B ਭੇਜੀ ਜਾਂਦੀ ਹੈ। ਨੇਵੀਗੇਸ਼ਨ ਐਪ ਵਿੱਚ ਰੂਟ ਅਤੇ ਵਾਹਨ ਦੀਆਂ ਸੈਟਿੰਗਾਂ ਜਾਂਚੋ।",
+    "Seule la destination B est transmise. Vérifiez le trajet et les paramètres du véhicule dans votre application.",
+    "Nur Ziel B wird übertragen. Prüfen Sie Route und Fahrzeugeinstellungen in Ihrer Navigations-App.",
+    "Apenas o destino B é enviado. Confira a rota e as configurações do veículo no navegador.",
+    "تُرسل الوجهة B فقط. راجع المسار وإعدادات المركبة في تطبيق الملاحة."
+  ]
+});
+Object.assign(romanianCatalog,{
+  "Choose navigation app": "Alege aplicația de navigație",
+  "Trucker Path must be installed.": "Trucker Path trebuie să fie instalat.",
+  "Only destination B is sent. Check the route and vehicle settings in your navigator.": "Se transmite doar destinația B. Verifică traseul și setările vehiculului în aplicația de navigație."
+});
+
+Object.assign(catalog,{
+  "All 20 voice requests for today are used up. I'm taking a pit stop ☕ See you tomorrow! The limit resets at midnight in New York. The map and forecasts still work.": [
+  "Ya has usado las 20 consultas de voz de hoy. Me voy a boxes ☕ ¡Hasta mañana! El límite se restablece a medianoche en Nueva York. El mapa y los pronósticos siguen funcionando.",
+  "Все 20 голосовых запросов на сегодня использованы. Я на пит-стоп ☕ До завтра! Лимит обновится в полночь по Нью-Йорку. Карта и прогноз работают.",
+  "Усі 20 голосових запитів на сьогодні використано. Я на піт-стоп ☕ До завтра! Ліміт оновиться опівночі за часом Нью-Йорка. Карта та прогноз працюють.",
+  "今天的20次语音请求已用完。我要进站休息一下 ☕ 明天见！额度将在纽约时间午夜重置。地图和天气预报仍可使用。",
+  "आज के सभी 20 वॉइस अनुरोध इस्तेमाल हो गए हैं। मैं पिट स्टॉप पर हूँ ☕ कल मिलते हैं! सीमा न्यूयॉर्क के समयानुसार आधी रात को रीसेट होगी। नक्शा और मौसम का पूर्वानुमान चलते रहेंगे।",
+  "ਅੱਜ ਦੀਆਂ ਸਾਰੀਆਂ 20 ਵੌਇਸ ਬੇਨਤੀਆਂ ਵਰਤ ਲਈਆਂ ਗਈਆਂ ਹਨ। ਮੈਂ ਪਿਟ ਸਟਾਪ ’ਤੇ ਹਾਂ ☕ ਕੱਲ੍ਹ ਮਿਲਦੇ ਹਾਂ! ਹੱਦ ਨਿਊਯਾਰਕ ਦੇ ਸਮੇਂ ਅਨੁਸਾਰ ਅੱਧੀ ਰਾਤ ਨੂੰ ਰੀਸੈੱਟ ਹੋਵੇਗੀ। ਨਕਸ਼ਾ ਅਤੇ ਮੌਸਮ ਦੀ ਭਵਿੱਖਬਾਣੀ ਚੱਲਦੇ ਰਹਿਣਗੇ।",
+  "Les 20 demandes vocales du jour sont utilisées. Je fais un arrêt au stand ☕ À demain ! Le quota se renouvelle à minuit à New York. La carte et les prévisions restent disponibles.",
+  "Alle 20 Sprachanfragen für heute sind verbraucht. Ich mache einen Boxenstopp ☕ Bis morgen! Das Limit wird um Mitternacht in New York zurückgesetzt. Karte und Wettervorhersage bleiben verfügbar.",
+  "As 20 solicitações de voz de hoje foram usadas. Vou fazer um pit stop ☕ Até amanhã! O limite é renovado à meia-noite em Nova York. O mapa e a previsão continuam disponíveis.",
+  "استخدمت جميع الطلبات الصوتية العشرين لهذا اليوم. سأتوقف لاستراحة قصيرة ☕ أراك غدًا! يتجدد الحد عند منتصف الليل بتوقيت نيويورك. تظل الخريطة والتوقعات متاحة."
+]
+});
+Object.assign(romanianCatalog,{
+  "All 20 voice requests for today are used up. I'm taking a pit stop ☕ See you tomorrow! The limit resets at midnight in New York. The map and forecasts still work.": "Ai folosit toate cele 20 de cereri vocale de azi. Fac un pit stop ☕ Ne vedem mâine! Limita se resetează la miezul nopții în New York. Harta și prognoza rămân disponibile."
+});

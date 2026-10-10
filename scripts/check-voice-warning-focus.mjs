@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {mostConcerningCheckpoint as pick} from '../app/route-weather-display.ts';
+const point=(level,available=true)=>({level,available});
+assert.equal(pick([point('caution'),point('low'),point('high')]),2);
+assert.equal(pick([point('high',false),point('caution')]),1);
+assert.equal(pick([point('high'),point('high')]),0);
+assert.equal(pick([point('low'),point('caution'),point('caution')]),1);
+assert.equal(pick([point('low'),point('unknown',false)]),-1);
+assert.equal(pick([]),-1);
+console.log('Voice warning focus: highest known risk, first tie, missing forecasts and clear route PASS');

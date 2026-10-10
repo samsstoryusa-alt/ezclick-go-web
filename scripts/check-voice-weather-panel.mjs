@@ -1,0 +1,47 @@
+import fs from 'node:fs';
+import ts from 'typescript';
+import assert from 'node:assert/strict';
+const cells=[],effects=[],answers=[];let cursor=0,dirty=true,tree,props;
+const same=(a,b)=>a&&b&&a.length===b.length&&a.every((v,i)=>Object.is(v,b[i]));
+const react={useCallback(fn,deps){const i=cursor++;if(!same(cells[i]?.deps,deps))cells[i]={fn,deps};return cells[i].fn;},useEffectEvent(fn){const i=cursor++;if(!cells[i])cells[i]={fn,event:(...args)=>cells[i].fn(...args)};cells[i].fn=fn;return cells[i].event;},useState(initial){const i=cursor++;if(!(i in cells))cells[i]=typeof initial==='function'?initial():initial;return[cells[i],value=>{cells[i]=typeof value==='function'?value(cells[i]):value;dirty=true;}];},useRef(value){const i=cursor++;return cells[i]??(cells[i]={current:value});},useEffect(fn,deps){const i=cursor++;if(!same(cells[i]?.deps,deps)){const old=cells[i];cells[i]={deps};effects.push(()=>{old?.cleanup?.();cells[i].cleanup=fn();});}}};
+const jsx=(type,props)=>({type,props});
+const place={id:'denver',name:'Denver',state:'Colorado',label:'Denver, Colorado',kind:'city',point:[-105,40]};
+const modules={react,'./weather-language':{useWeatherLanguage:()=>({language:'en',t:text=>text})},'react/jsx-runtime':{jsx,jsxs:jsx},'./route-search-data':{parsePlaces:()=>[place]},'./voice-departure':{structuredVoiceDeparture:()=>({leaveNow:true,date:'',time:'',notice:''}),voiceDepartureInstant:()=>''},'./weather-request':{weatherRequest:async()=>({checkedAt:Date.now(),points:[{available:true},{available:true}]}),validForecastResponse:()=>true},'./road-route':{tripApi:()=>'/test'},'./weather-vehicle':{useWeatherVehicle:()=>({vehicle:'truck'})},'./weather-units':{useWeatherUnits:()=>({units:'us'})},'./voice-weather-timing':{checkWeatherTiming:async()=>{throw Error('Unexpected comparison');}},'./voice-weather-answer':{roadAdviceTopics:['compare','stops','arrival'],routeForecastSnapshot:()=>null,scopedForecast:s=>s,weatherAnswer:()=> 'Actual forecast',helpAnswer:()=>'',mapVoiceAction:(_action,t)=>t('Route cleared.')}};
+const compiled=ts.transpileModule(fs.readFileSync('app/voice-weather-panel.tsx','utf8'),{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const abortApi={};new Function('exports',ts.transpileModule(fs.readFileSync('app/abort-timeout.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(abortApi);modules['./abort-timeout']=abortApi;
+const compile=file=>ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const catalog={};new Function('exports',compile('app/weather-translations.ts'))(catalog);
+const voiceLanguage={};new Function('exports','require',compile('app/voice-language.ts'))(voiceLanguage,()=>catalog);modules['./voice-language']=voiceLanguage;
+const api={};new Function('exports','require',compiled)(api,name=>{assert.ok(name in modules,name);return modules[name];});
+globalThis.fetch=async()=>({ok:true,json:async()=>({})});
+async function flush(){for(let i=0;i<12;i++){if(dirty){dirty=false;cursor=0;tree=api.default(props);while(effects.length)effects.shift()();}await new Promise(resolve=>setImmediate(resolve));}}
+function nodes(value){if(!value||typeof value!=='object')return [];if(Array.isArray(value))return value.flatMap(nodes);return[value,...nodes(value.props?.children)];}
+props={command:{intent:'weather',city:'Denver'},onAnswer:(...args)=>answers.push(args)};
+await flush();
+assert.ok(answers.some(([text,final,status])=>text.includes('Choose the forecast city')&&!final&&status==='clarification'));
+assert.equal(answers.filter(a=>a[1]).length,0,'city selection must not consume final answer turn');
+nodes(tree).find(n=>n.type==='select').props.onChange({target:{value:'denver'}});await flush();
+nodes(tree).find(n=>n.type==='button').props.onClick();await flush();
+assert.deepEqual(answers.filter(a=>a[1]),[['Actual forecast',true,'succeeded']]);
+assert.equal(nodes(tree).find(n=>n.type==='button').props.disabled,true);
+props={...props,command:{intent:'weather',topic:'compare',clarification:'Which departure?'}};dirty=true;await flush();
+assert.deepEqual(answers.at(-1),['Which departure?',false,'clarification']);
+console.log('PASS: city selection keeps final turn, actual city forecast emitted once, repeat submit blocked, clarification precedes comparison');
+for(const cell of cells)cell?.cleanup?.();cells.length=0;answers.length=0;dirty=true;
+props={...props,command:{intent:'weather',city:'Denver, Colorado',scope:'city'}};
+await flush();
+assert.deepEqual(answers.filter(a=>a[1]),[['Actual forecast',true,'succeeded']]);
+assert.ok(!answers.some(a=>a[0].includes('Choose the forecast city')));
+console.log('PASS: unique exact city and state resolves directly to forecast');
+
+for(const cell of cells)cell?.cleanup?.();cells.length=0;answers.length=0;dirty=true;
+props={...props,command:{intent:'control',action:'clear_route'}};await flush();
+assert.equal(answers.at(-1)[0],'Delete both points and the current route?');
+assert.ok(nodes(tree).some(n=>n.type==='button'&&n.props.children==='Yes, clear the route'));
+nodes(tree).find(n=>n.type==='button'&&n.props.children==='Cancel').props.onClick();await flush();
+assert.equal(answers.at(-1)[0],'Route clearing cancelled.');
+for(const cell of cells)cell?.cleanup?.();cells.length=0;answers.length=0;dirty=true;
+props={...props,command:{intent:'control',action:'clear_route'}};await flush();
+nodes(tree).find(n=>n.type==='button'&&n.props.children==='Yes, clear the route').props.onClick();await flush();
+assert.equal(answers.at(-1)[0],'Route cleared.');
+console.log('PASS: English Clear prompt/buttons, cancellation and accepted local command reply');

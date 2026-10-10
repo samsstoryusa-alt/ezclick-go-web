@@ -1,9 +1,15 @@
 "use client";
+
 import VoiceRouteDrawer from './voice-route-drawer';
+import WeatherVehicleMenu from './weather-vehicle';
 import WeatherLanguageMenu from './weather-language-menu';
+import WeatherQualityMenu from './weather-quality-menu';
+import WeatherSupport from './weather-support';
+import {getWeatherQuality,qualityProfiles,useWeatherQuality} from './weather-quality';
 import {useWeatherLanguage} from './weather-language';
 import {platformUrl} from './site-links';
-import {standaloneWeather} from './weather-trip-storage';
+import {platformBrandImage,type WeatherBrandImage} from './weather-brand';
+import {standaloneWeather,readTrip} from './weather-trip-storage';
 
 import {useEffect, useRef, useState, type PointerEvent, type KeyboardEvent} from 'react';
 import type {Map as LibreMap} from 'maplibre-gl';
@@ -13,6 +19,9 @@ import './weather-map.css';
 import {applyMapPalette} from './map-night-palette';
 import WeatherLegend from './weather-legend';
 import RadarControls from './radar-controls';
+import SatellitePreview from './satellite-preview';
+import SatelliteControl, {type SatelliteMode} from './satellite-control';
+import SatelliteBasemap from './satellite-basemap';
 import RoadControls from './road-controls';
 import {WeatherRoute} from './weather-route';
 import {WeatherCenterMarker} from './weather-center-marker';
@@ -28,22 +37,56 @@ const INITIAL_VIEW = standaloneWeather() || demoRoute ? {center:[-86.7816,36.162
 const TERRAIN_URL = 'https://tiles.mapterhorn.com/tilejson.json';
 
 
-export default function WeatherMap() {
+export default function WeatherMap({brandImage=platformBrandImage}:{brandImage?:WeatherBrandImage}={}) {
   const {language,dir,t}=useWeatherLanguage();
+  const quality=useWeatherQuality();
   const embeddedTrip = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("embed") === "trip";
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LibreMap | null>(null);
   const scaleRef=useRef<{setUnit:(unit:'imperial'|'metric')=>void}|null>(null);
+  const [satelliteMode,setSatelliteMode]=useState<SatelliteMode>('map');
+  const satellite=satelliteMode!=='map';
   const [weatherTime,setWeatherTime]=useState<number|null>(null);
   const [mobileExpanded,setMobileExpanded]=useState(false);
   const [mobilePortrait,setMobilePortrait]=useState(()=>typeof window!=="undefined"&&matchMedia('(max-width:767px) and (orientation:portrait)').matches);
   useEffect(()=>{const query=matchMedia('(max-width:767px) and (orientation:portrait)');const update=()=>setMobilePortrait(query.matches);query.addEventListener('change',update);return()=>query.removeEventListener('change',update);},[]);
-  const [mobilePresentation,setMobilePresentation]=useState(()=>typeof window!=="undefined"&&matchMedia('(max-width:767px),(max-width:950px) and (max-height:500px)').matches);
-  useEffect(()=>{const query=matchMedia('(max-width:767px),(max-width:950px) and (max-height:500px)');const update=()=>setMobilePresentation(query.matches);query.addEventListener('change',update);return()=>query.removeEventListener('change',update);},[]);
+  const [smallViewport,setSmallViewport]=useState(()=>typeof window!=="undefined"&&matchMedia('(max-width:767px),(max-width:950px) and (max-height:500px)').matches);
+  useEffect(()=>{const query=matchMedia('(max-width:767px),(max-width:950px) and (max-height:500px)');const update=()=>setSmallViewport(query.matches);query.addEventListener('change',update);return()=>query.removeEventListener('change',update);},[]);
+  // Standalone weather shares the phone workflow; viewport size only controls placement.
+  const mobilePresentation=standaloneWeather()||smallViewport;
+  const widePresentation=standaloneWeather()&&!smallViewport;
   const [routeInfoOpen,setRouteInfoOpen]=useState(true);
   const [cameraExpanded,setCameraExpanded]=useState(false);
   const [legendOpen,setLegendOpen]=useState(false);
+  const cameraControlsRef=useRef<HTMLDivElement>(null);
+  const cameraToggleRef=useRef<HTMLButtonElement>(null);
+  useEffect(()=>{
+    const controls=cameraControlsRef.current;
+    if(!mobilePresentation||!cameraExpanded||legendOpen||!controls)return;
+    let timer=0;
+    const restart=()=>{
+      window.clearTimeout(timer);
+      timer=window.setTimeout(()=>{
+        if(controls.querySelector('#weather-camera-tools')?.contains(document.activeElement))cameraToggleRef.current?.focus({preventScroll:true});
+        setCameraExpanded(false);
+      },10000);
+    };
+    controls.addEventListener('pointerdown',restart);
+    controls.addEventListener('pointerup',restart);
+    controls.addEventListener('keydown',restart);
+    controls.addEventListener('focusin',restart);
+    restart();
+    return()=>{
+      window.clearTimeout(timer);
+      controls.removeEventListener('pointerdown',restart);
+      controls.removeEventListener('pointerup',restart);
+      controls.removeEventListener('keydown',restart);
+      controls.removeEventListener('focusin',restart);
+    };
+  },[mobilePresentation,cameraExpanded,legendOpen]);
   const [siteMenuOpen,setSiteMenuOpen]=useState(false);
+  const [supportOpen,setSupportOpen]=useState(false);
+  const [voicePanelOpen,setVoicePanelOpen]=useState(false);
   const siteMenuRef=useRef<HTMLDivElement>(null);
   useEffect(()=>{
     if(!siteMenuOpen)return;
@@ -96,12 +139,17 @@ export default function WeatherMap() {
   }
 
   const [routeActive,setRouteActive]=useState(()=>demoRoute);
+  const [routeCitiesOpen,setRouteCitiesOpen]=useState(false);
+  const [resumeAvailable,setResumeAvailable]=useState(()=>{const saved=readTrip();return !!(saved?.points[0]&&saved.points[1]);});
+  const [resumeRequest,setResumeRequest]=useState(0);
   const [ready, setReady] = useState(false);
   const [mapVisible,setMapVisible]=useState(false);
   const windData=useWindFields(ready);
   const {units,toggle:toggleUnits}=useWeatherUnits();
   useEffect(()=>{scaleRef.current?.setUnit(units==='us'?'imperial':'metric');},[units,ready]);
   const [radarMap, setRadarMap] = useState<LibreMap | null>(null);
+  useEffect(()=>{if(ready)mapRef.current?.setPixelRatio(Math.min(window.devicePixelRatio||1,qualityProfiles[quality].pixelRatio));},[quality,ready]);
+  useEffect(()=>{const receive=(event:Event)=>{const {action,reply,translate=t}=(event as CustomEvent).detail;if(['units_metric','units_us'].includes(action)){const wanted=action==='units_metric'?'metric':'us';if(units!==wanted)toggleUnits();reply(translate(wanted==='metric'?'Kilometers and Celsius enabled.':'Miles and Fahrenheit enabled.'));}};window.addEventListener('voice-map-action',receive);return()=>window.removeEventListener('voice-map-action',receive);},[units,toggleUnits,t]);
   const [terrainReady, setTerrainReady] = useState(false);
   const [threeD, setThreeD] = useState(false);
   const [error, setError] = useState('');
@@ -142,7 +190,7 @@ export default function WeatherMap() {
           style: 'https://tiles.openfreemap.org/styles/positron',
           ...(new URLSearchParams(window.location.search).get('motion')==='1'?{center:[-91,28] as [number,number],zoom:5}:INITIAL_VIEW),
           maxPitch: 65,
-          pixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
+          pixelRatio: Math.min(window.devicePixelRatio || 1, qualityProfiles[getWeatherQuality()].pixelRatio),
           dragPan: true,
           scrollZoom: true,
           touchZoomRotate: true,
@@ -370,21 +418,24 @@ export default function WeatherMap() {
     setThreeD(next);
   }
 
-  return <main lang={language} data-language={language} className={`weather-workspace map-night${embeddedTrip ? " weather-trip-embed" : ""}`}>
+  return <main lang={language} data-language={language} className={`weather-workspace map-night${satellite?" satellite-active":""}${mobilePresentation?" weather-compact-ui":""}${widePresentation?" weather-wide-ui":""}${embeddedTrip ? " weather-trip-embed" : ""}`}>
     <header className="weather-map-header">
-      <a className="weather-map-brand" href={platformUrl}><img src="/media/ezclick-go-logo.png" width="2166" height="726" alt="EZCLICK GO"/></a>
+      <a className="weather-map-brand" href={platformUrl}><img src={brandImage.src} width={brandImage.width} height={brandImage.height} alt={brandImage.alt}/></a>
       <div dir={dir}><h1>{t("Explore the road ahead")}</h1><p>{t("Map & terrain preview")}</p></div>
+      <WeatherVehicleMenu/>
       <button type="button" className="weather-header-units" onClick={toggleUnits} aria-label={units==='us'?'Units: Fahrenheit and miles. Switch to Celsius and kilometers':'Units: Celsius and kilometers. Switch to Fahrenheit and miles'} title={units==='us'?'Switch to °C · km':'Switch to °F · mi'}><span>{units==='us'?'°F · mi':'°C · km'}</span></button>
-      <div ref={siteMenuRef} className={`weather-site-menu ${siteMenuOpen?"is-open":""}`}><button type="button" className="weather-site-menu-toggle" aria-expanded={siteMenuOpen} aria-controls="weather-site-links" onClick={()=>setSiteMenuOpen(v=>!v)}>{t("Menu")}<span aria-hidden="true">☰</span></button><nav id="weather-site-links" aria-label={t("Menu")} dir={dir} inert={!siteMenuOpen} aria-hidden={!siteMenuOpen}><a href={platformUrl}>{t("Home")}</a><a href="/terms">{t("About & weather disclaimer")}</a><WeatherLanguageMenu/></nav></div>
+      <div ref={siteMenuRef} className={`weather-site-menu ${siteMenuOpen?"is-open":""}`}><button type="button" className="weather-site-menu-toggle" aria-expanded={siteMenuOpen} aria-controls="weather-site-links" onClick={()=>setSiteMenuOpen(v=>!v)}>{t("Menu")}<span aria-hidden="true">☰</span></button><nav id="weather-site-links" aria-label={t("Menu")} dir={dir} inert={!siteMenuOpen} aria-hidden={!siteMenuOpen}><a href={platformUrl}>{t("Home")}</a><a href="/terms">{t("About & weather disclaimer")}</a>{standaloneWeather()&&<button type="button" className="weather-support-toggle" onClick={()=>{setSiteMenuOpen(false);setSupportOpen(true);}}>{t("Report a problem")}</button>}<WeatherLanguageMenu/><WeatherQualityMenu/></nav></div>
     </header>
     <section className={`weather-map-stage ${standaloneWeather()&&!mobilePresentation?"desktop-route-ui":""}`} aria-label="Map and terrain preview">
       <div ref={container} className={`weather-map-canvas${mapVisible?" is-map-visible":""}`} />
-      <div className={`weather-globe-control ${cameraExpanded?'camera-expanded':''}`} onKeyDown={event=>{if(event.key==='Escape')setCameraExpanded(false);}}>
-        <button type="button" className="camera-menu-toggle camera-location" aria-label="Map controls" aria-expanded={cameraExpanded} aria-controls="weather-camera-tools" onClick={()=>{setCameraExpanded(v=>!v);setLegendOpen(false);}}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-dark" d="m4 22 12-6 12 6-12 6Z"/><path className="icon-mid" d="m4 16 12-6 12 6-12 6Z"/><path className="icon-light" d="m4 10 12-6 12 6-12 6Z"/></svg></button>
+      {satellite&&<SatelliteBasemap map={radarMap} ready={ready} units={units}/> }
+      <div ref={cameraControlsRef} className={`weather-globe-control ${cameraExpanded?'camera-expanded':''}`} onKeyDown={event=>{if(event.key==='Escape'&&!legendOpen){if(mobilePresentation)cameraToggleRef.current?.focus({preventScroll:true});setCameraExpanded(false);}}}>
+        <button ref={cameraToggleRef} type="button" className="camera-menu-toggle camera-location" aria-label="Map controls" aria-expanded={cameraExpanded} aria-controls="weather-camera-tools" onClick={()=>{setCameraExpanded(v=>!v);setLegendOpen(false);}}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-dark" d="m4 22 12-6 12 6-12 6Z"/><path className="icon-mid" d="m4 16 12-6 12 6-12 6Z"/><path className="icon-light" d="m4 10 12-6 12 6-12 6Z"/></svg></button>
+        <SatelliteControl mode={satelliteMode} ready={ready} onChange={mode=>{setSatelliteMode(mode);setWeatherTime(null);setCameraExpanded(false);}}>{satellite&&<SatellitePreview map={radarMap} ready={ready}/>}</SatelliteControl>
         <div className="weather-camera-tools" id="weather-camera-tools" inert={mobilePresentation&&!cameraExpanded} aria-hidden={mobilePresentation&&!cameraExpanded}><div className="weather-camera-tools-inner">
         <button type="button" className="map-icon-button terrain-toggle" onClick={toggleTerrain} aria-pressed={threeD} aria-label="3D terrain" data-tooltip={threeD ? 'Switch to 2D' : 'Switch to 3D'} disabled={!ready || !terrainReady || terrainError}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-shadow" d="m3 23 13-7 13 7-13 7Z"/><path className="icon-dark" d="m4 20 12-6 12 6-12 7Z"/><path className="icon-light" d={threeD?'m4 20 7-12 5 6 4-9 8 15-12 5Z':'m4 17 12-6 12 6-12 6Z'}/><path className="icon-mid" d={threeD?'m11 8 5 17-12-5Zm9-3 8 15-12 5Z':'m4 17 12 6v4L4 21Z'}/></svg><span>{threeD ? '3D' : '2D'}</span></button>
         <button type="button" className="map-icon-button top-view" aria-label="Top view" data-tooltip="Top view" disabled={!ready} onClick={() => mapRef.current?.easeTo({bearing:0,pitch:0,duration:window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 600})}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-shadow" d="m4 22 12-6 12 6-12 7Z"/><path className="icon-dark" d="m4 19 12-6 12 6-12 7Z"/><path className="icon-light" d="m5 16 11-5 11 5-11 6Z"/><path d="M16 3v10m-4-4 4 4 4-4" stroke="#d1f7ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg><span>{t('Top')}</span></button><RoadControls map={radarMap} ready={ready} />
-        <button type="button" id="weather-legend-toggle" className="map-icon-button" aria-label={t("Legend")} title={t("Legend")} aria-expanded={legendOpen} aria-controls="weather-legend" onClick={()=>setLegendOpen(v=>!v)}><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 8h20M6 16h20M6 24h20" stroke="#92d7e6" strokeWidth="3" strokeLinecap="round"/><circle cx="11" cy="8" r="3" fill="#b9d9e7"/><circle cx="20" cy="16" r="3" fill="#b9d9e7"/><circle cx="15" cy="24" r="3" fill="#b9d9e7"/></svg><span>{t('Legend button')}</span></button></div></div><button type="button" className="map-icon-button route-mode-toggle" aria-label="Plan route" data-tooltip="Plan route" aria-pressed={routeActive&&(!mobilePresentation||routeInfoOpen)} disabled={!ready} onClick={()=>{if(mobilePresentation){if(!routeActive){setRouteActive(true);setRouteInfoOpen(true);}else setRouteInfoOpen(v=>!v);}else setRouteActive(v=>!v);}}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-shadow" d="m11 7 10 0 8 23H3Z"/><path className="icon-dark" d="M12 4h8l7 23H5Z"/><path className="icon-light" d="M12 4h2L9 27H5Zm6 0h2l7 23h-4Z"/><path className="icon-mid" d="M5 27h22v2H5Z"/><path d="M16 6v4m0 4v4m0 4v4" fill="none" stroke="#d1f7ff" strokeWidth="1.5" strokeLinecap="round"/></svg><span>{t('Route')}</span></button><div className="location-control">
+        <button type="button" id="weather-legend-toggle" className="map-icon-button" aria-label={t("Legend")} title={t("Legend")} aria-expanded={legendOpen} aria-controls="weather-legend" onClick={()=>setLegendOpen(v=>!v)}><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 8h20M6 16h20M6 24h20" stroke="#92d7e6" strokeWidth="3" strokeLinecap="round"/><circle cx="11" cy="8" r="3" fill="#b9d9e7"/><circle cx="20" cy="16" r="3" fill="#b9d9e7"/><circle cx="15" cy="24" r="3" fill="#b9d9e7"/></svg><span>{t('Legend button')}</span></button></div></div><button type="button" className="map-icon-button route-mode-toggle" aria-label="Plan route" data-tooltip="Plan route" aria-pressed={routeCitiesOpen} disabled={!ready} onClick={()=>{const next=!routeCitiesOpen;setRouteCitiesOpen(next);setRouteActive(next);setRouteInfoOpen(true);if(mobilePresentation)settleSheet(false);}}><svg viewBox="0 0 32 32" aria-hidden="true"><path className="icon-shadow" d="m11 7 10 0 8 23H3Z"/><path className="icon-dark" d="M12 4h8l7 23H5Z"/><path className="icon-light" d="M12 4h2L9 27H5Zm6 0h2l7 23h-4Z"/><path className="icon-mid" d="M5 27h22v2H5Z"/><path d="M16 6v4m0 4v4m0 4v4" fill="none" stroke="#d1f7ff" strokeWidth="1.5" strokeLinecap="round"/></svg><span>{t('Route')}</span></button><div className="location-control">
           <button type="button" className="camera-location" disabled={!ready||locating} onClick={locateMe} aria-label={locating?'Finding your location':'Go to my location'} data-tooltip="My location" aria-busy={locating}>
             <svg viewBox="0 0 32 32" aria-hidden="true"><path className="location-arrow-shadow" d="M7 17 26 7 19 28 15 20Z"/><path className="location-arrow-light" d="m6 14 20-9-8 20-3-8Z"/><path className="location-arrow-dark" d="m26 5-11 12 3 8Z"/></svg>
           </button>
@@ -399,13 +450,14 @@ export default function WeatherMap() {
         </button>
         <span id="globe-help">Drag to rotate & tilt</span>
       </div>
-      {typeof window!=="undefined"&&new URLSearchParams(window.location.search).get("voice-preview")==="1"&&<VoiceRouteDrawer suspended={cameraExpanded||legendOpen||siteMenuOpen}/>}
-      <WeatherLegend open={legendOpen} onClose={()=>setLegendOpen(false)} map={radarMap} units={units}/><WeatherCenterMarker /><div ref={sheetRef} inert={mobilePresentation&&routeActive&&!routeInfoOpen} className={`weather-left-stack ${routeActive?"route-active":""} ${mobilePresentation&&routeActive?"mobile-route-shell":""} ${mobilePresentation&&routeActive&&!routeInfoOpen?"route-info-hidden":""} ${mobileExpanded?"mobile-expanded":""}`}><button type="button" className="weather-mobile-expand" aria-label={routeActive?(mobileExpanded?"Collapse route forecasts":"Expand route forecasts"):(mobileExpanded?"Close weather settings":"Open weather settings")} aria-expanded={mobileExpanded} onPointerDown={beginSheet} onPointerMove={pullSheet} onPointerUp={releaseSheet} onPointerCancel={()=>{sheetDrag.current=null;settleSheet(mobileExpanded);}} onClick={()=>{if(skipSheetClick.current){skipSheetClick.current=false;return;}settleSheet(!mobileExpanded);}}><span className="sheet-grip" aria-hidden="true"/><span className="sheet-grip-label">{mobileExpanded?"Swipe down to collapse":routeActive?"Swipe up for more forecasts":"Swipe up for settings"}</span></button><WeatherRoute map={radarMap} active={routeActive} mobilePresentation={mobilePresentation} onShowInfo={()=>{setRouteActive(true);setRouteInfoOpen(true);}} onClose={()=>{if(mobilePresentation)setRouteInfoOpen(false);else setRouteActive(false);}} compactMobile={mobilePortrait&&!mobileExpanded} onExpand={()=>{if(mobilePortrait)settleSheet(true);}}/><PointWeather map={radarMap} ready={ready} time={weatherTime} windFrames={windData.frames} units={units} onToggleUnits={toggleUnits} /><WindControls map={radarMap} ready={ready} time={weatherTime} frames={windData.frames} status={windData.status} units={units} /><RadarControls map={radarMap} ready={ready} onTimeChange={setWeatherTime} units={units} /></div>
+      {typeof window!=="undefined"&&(import.meta.env.VITE_PUBLIC_VOICE_BETA==="1"||new URLSearchParams(window.location.search).get("voice-preview")==="1")&&<VoiceRouteDrawer onVisibilityChange={setVoicePanelOpen} suspended={legendOpen||siteMenuOpen||supportOpen} onConfirm={trip=>window.dispatchEvent(new CustomEvent("weather-voice-trip",{detail:trip}))}/>}
+      <div className={`weather-resume-collapse ${resumeAvailable&&!routeActive?'is-visible':''}`} inert={!resumeAvailable||routeActive} aria-hidden={!resumeAvailable||routeActive}><button type="button" disabled={!ready} onClick={()=>{setRouteCitiesOpen(false);setRouteActive(true);setRouteInfoOpen(true);setResumeRequest(v=>v+1);if(mobilePresentation)settleSheet(false);}}><strong>{t('Continue route')}</strong><small>{t('Saved trip · fresh forecast')}</small></button></div><WeatherLegend open={legendOpen} onClose={()=>setLegendOpen(false)} map={radarMap} units={units}/><WeatherCenterMarker /><div ref={sheetRef} inert={voicePanelOpen||(mobilePresentation&&routeActive&&!routeInfoOpen)} aria-hidden={voicePanelOpen||undefined} className={`weather-left-stack ${voicePanelOpen?"is-behind-voice":""} ${routeActive?"route-active":""} ${mobilePresentation&&routeActive?"mobile-route-shell":""} ${mobilePresentation&&routeActive&&!routeInfoOpen?"route-info-hidden":""} ${mobileExpanded?"mobile-expanded":""}`}><button type="button" className="weather-mobile-expand" aria-label={routeActive?(mobileExpanded?"Collapse route forecasts":"Expand route forecasts"):(mobileExpanded?"Close weather settings":"Open weather settings")} aria-expanded={mobileExpanded} onPointerDown={beginSheet} onPointerMove={pullSheet} onPointerUp={releaseSheet} onPointerCancel={()=>{sheetDrag.current=null;settleSheet(mobileExpanded);}} onClick={()=>{if(skipSheetClick.current){skipSheetClick.current=false;return;}settleSheet(!mobileExpanded);}}><span className="sheet-grip" aria-hidden="true"/><span className="sheet-grip-label">{mobileExpanded?"Swipe down to collapse":routeActive?"Swipe up for more forecasts":"Swipe up for settings"}</span></button><WeatherRoute resumeRequest={resumeRequest} map={radarMap} active={routeActive} citiesOnly={routeCitiesOpen} onClear={()=>{setResumeAvailable(false);setRouteCitiesOpen(false);setRouteActive(false);setRouteInfoOpen(true);settleSheet(false);}} mobilePresentation={mobilePresentation} onShowInfo={()=>{setRouteCitiesOpen(false);setRouteActive(true);setRouteInfoOpen(true);}} onClose={()=>{setRouteCitiesOpen(false);setRouteActive(false);setRouteInfoOpen(true);if(mobilePresentation)settleSheet(false);}} compactMobile={(mobilePortrait||widePresentation)&&!mobileExpanded} onExpand={()=>{if(mobilePortrait||widePresentation)settleSheet(true);}}/>{!satellite&&<><PointWeather map={radarMap} ready={ready} time={weatherTime} windFrames={windData.frames} units={units} onToggleUnits={toggleUnits} /><WindControls map={radarMap} ready={ready} time={weatherTime} frames={windData.frames} status={windData.status} units={units} /><RadarControls map={radarMap} ready={ready} onTimeChange={setWeatherTime} units={units} /></>}</div>
 
       {!ready && !error && <p className="weather-map-message" role="status">{t('Loading your map…')}</p>}
       {error && <div className="weather-map-message" role="alert"><p>{error}</p><button type="button" onClick={() => {setMapVisible(false); setReady(false); setTerrainReady(false); setThreeD(false); setError(''); setTerrainError(false); setAttempt(value => value + 1);}}>Reload map</button></div>}
       {terrainError && !error && <p className="weather-map-message" role="status">Elevation is temporarily unavailable. You can still explore the base map.</p>}
       <aside className="weather-map-note"><strong>Your map. Your perspective.</strong><p>Drag to explore · Scroll to zoom · Pinch on mobile</p><span>Enable Rain radar to see recent precipitation echoes.</span></aside>
     </section>
+    {standaloneWeather()&&<WeatherSupport open={supportOpen} onClose={()=>setSupportOpen(false)} returnFocus={siteMenuRef} context={{language,quality,units,map:error?"unavailable":terrainError?"terrain-unavailable":ready?"ready":"loading",routeActive}}/>}
   </main>;
 }

@@ -1,4 +1,5 @@
 import {VectorTile} from '@mapbox/vector-tile';
+import {throwIfAborted,withAbortTimeout} from './abort-timeout';
 import {PbfReader} from 'pbf';
 import type {Map as LibreMap} from 'maplibre-gl';
 import type * as MapLibre from 'maplibre-gl';
@@ -19,9 +20,7 @@ export function installSoftVegetation(map:LibreMap,lib:typeof MapLibre){
   if(!value){
    value=catalog.then(async template=>{
     const url=template.replace('{z}',String(z)).replace('{x}',String(x)).replace('{y}',String(y));
-    const r=await fetch(url,{signal:AbortSignal.any([lifetime.signal,AbortSignal.timeout(15000)])});
-    if(!r.ok)throw Error('Vegetation tile unavailable');
-    return new VectorTile(new PbfReader(await r.arrayBuffer()));
+    return withAbortTimeout(lifetime.signal,15000,async signal=>{const r=await fetch(url,{signal});if(!r.ok)throw Error('Vegetation tile unavailable');return new VectorTile(new PbfReader(await r.arrayBuffer()));});
    });
    cache.set(key,value);void value.catch(()=>cache.delete(key));
    if(cache.size>72)cache.delete(cache.keys().next().value!);
@@ -38,7 +37,7 @@ export function installSoftVegetation(map:LibreMap,lib:typeof MapLibre){
    const dx=i%3-1,dy=Math.floor(i/3)-1;
    return {dx,dy,data:y+dy<0||y+dy>=2**z?null:await tile(z,x+dx,y+dy)};
   }));
-  controller.signal.throwIfAborted();
+  throwIfAborted(controller.signal);
   for(const {dx,dy,data} of neighbours){
    if(!data)continue;
    ctx.save();ctx.beginPath();ctx.rect(pad+dx*size,pad+dy*size,size,size);ctx.clip();
@@ -61,9 +60,9 @@ export function installSoftVegetation(map:LibreMap,lib:typeof MapLibre){
   }
   const out=document.createElement('canvas');out.width=out.height=size;
   const result=out.getContext('2d')!;result.filter='blur(7px)';result.drawImage(raw,-pad,-pad);
-  controller.signal.throwIfAborted();
+  throwIfAborted(controller.signal);
   const bitmap=await createImageBitmap(out);raw.width=out.width=1;
-  if(controller.signal.aborted){bitmap.close();controller.signal.throwIfAborted();}
+  if(controller.signal.aborted){bitmap.close();throwIfAborted(controller.signal);}
   return {data:bitmap};
  });
  map.addSource('soft-vegetation',{type:'raster',tiles:[`${protocol}://tiles/{z}/{x}/{y}`],tileSize:512,maxzoom:14});

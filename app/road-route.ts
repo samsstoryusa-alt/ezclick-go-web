@@ -1,32 +1,36 @@
 import {weatherRequest} from './weather-request';
 import {useEffect,useLayoutEffect,useRef,useState} from 'react';
 import type {Map as LibreMap} from 'maplibre-gl';
+import {roadRouteKey,validViaPoints} from './route-waypoints';
 export const tripApi=()=>document.documentElement.dataset.weatherStandalone !== 'true' && ['localhost','127.0.0.1'].includes(window.location.hostname)?'http://127.0.0.1:8767':'/trip-api';
+export type VehicleType="truck"|"car";
 export type RoutePoint=[number,number];
 export type RoadRoute={key:string;distance:number;duration:number;coordinates:RoutePoint[];elapsedSeconds?:number[]};
 export type TruckProfile={height:number;width:number;length:number;weight:number;axle_load:number;axle_count:number;hazmat:boolean};
 export const DEFAULT_TRUCK:TruckProfile={height:4.1148,width:2.5908,length:21.9456,weight:36.2873896,axle_load:9.0718474,axle_count:5,hazmat:false};
 export function validTruck(p:TruckProfile){return Number.isFinite(p.height)&&p.height>=1&&p.height<=10&&Number.isFinite(p.width)&&p.width>=1&&p.width<=10&&Number.isFinite(p.length)&&p.length>=2&&p.length<=50&&Number.isFinite(p.weight)&&p.weight>0&&p.weight<=150&&Number.isFinite(p.axle_load)&&p.axle_load>0&&p.axle_load<=p.weight&&Number.isInteger(p.axle_count)&&p.axle_count>=2&&p.axle_count<=20;}
-export async function loadRoadRoute(a:RoutePoint,b:RoutePoint,signal:AbortSignal,truck:TruckProfile=DEFAULT_TRUCK){
- if(!validTruck(truck))throw new Error('Check your truck dimensions and weight.');
+export async function loadRoadRoute(a:RoutePoint,b:RoutePoint,signal:AbortSignal,truck:TruckProfile=DEFAULT_TRUCK,vehicle:VehicleType="truck",via:RoutePoint[]=[]){
+ if(vehicle==='truck'&&!validTruck(truck))throw new Error('Check your truck dimensions and weight.');
+ if(!validViaPoints(via))throw new Error('Check your intermediate points (maximum five).');
  const normalize=(p:RoutePoint)=>({lon:(((p[0]+180)%360)+360)%360-180,lat:p[1],type:'break',search_cutoff:2000});
- const locations=[normalize(a),normalize(b)];
- const data=await weatherRequest(tripApi()+'/route',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({locations,truck}),signal}) as {code?:string;error_code?:number;error?:string;routes?:{distance:number;duration:number;elapsedSeconds?:number[];geometry?:{type?:string;coordinates:unknown}}[]};
- if(data.code==='NoSegment'||data.error_code===171)throw new Error('Move your points closer to a road accessible to this truck.');
- if(data.code==='NoRoute'||data.error_code===442)throw new Error('No route found for these truck settings.');
+ const locations=[a,...via,b].map(normalize);
+ const data=await weatherRequest(tripApi()+'/route',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(vehicle==='car'?{locations,vehicle}:{locations,truck,vehicle}),signal}) as {code?:string;error_code?:number;error?:string;routes?:{distance:number;duration:number;elapsedSeconds?:number[];geometry?:{type?:string;coordinates:unknown}}[]};
+ if(data.code==='NoSegment'||data.error_code===171)throw new Error('Move your points closer to a road accessible to this vehicle.');
+ if(data.code==='NoRoute'||data.error_code===442)throw new Error('No route found for this vehicle.');
  const route=data.routes?.[0];
- if(data.code!=='Ok'||!route||!Number.isFinite(route.distance)||route.distance<0||!Number.isFinite(route.duration)||route.duration<0||route.geometry?.type!=='LineString'||!Array.isArray(route.geometry.coordinates)||route.geometry.coordinates.length<2||!route.geometry.coordinates.every((p:unknown)=>Array.isArray(p)&&p.length>=2&&Number.isFinite(p[0])&&Number.isFinite(p[1])))throw new Error('Could not read this truck route. Please try again.');
+ if(data.code!=='Ok'||!route||!Number.isFinite(route.distance)||route.distance<0||!Number.isFinite(route.duration)||route.duration<0||route.geometry?.type!=='LineString'||!Array.isArray(route.geometry.coordinates)||route.geometry.coordinates.length<2||!route.geometry.coordinates.every((p:unknown)=>Array.isArray(p)&&p.length>=2&&Number.isFinite(p[0])&&Number.isFinite(p[1])))throw new Error('Could not read this vehicle route. Please try again.');
  return {distance:route.distance as number,duration:route.duration as number,coordinates:route.geometry.coordinates as RoutePoint[],elapsedSeconds:route.elapsedSeconds?.length===route.geometry.coordinates.length&&route.elapsedSeconds.every((v,i,a)=>Number.isFinite(v)&&v>=0&&(i===0||v>=a[i-1]))?route.elapsedSeconds:undefined};
 }
-export function useRoadRoute(map:LibreMap|null,active:boolean,points:[RoutePoint|null,RoutePoint|null],truck:TruckProfile){
+export function useRoadRoute(map:LibreMap|null,active:boolean,points:[RoutePoint|null,RoutePoint|null],truck:TruckProfile,vehicle:VehicleType="truck",via:RoutePoint[]=[]){
  const [coverage,setCoverage]=useState<'colorado'|'contiguous-us'|null>(null);
  useEffect(()=>{if(!active)return;let disposed=false,controller:AbortController|null=null;const refresh=async()=>{controller?.abort();controller=new AbortController();const timer=setTimeout(()=>controller?.abort(),6000);try{const r=await fetch(tripApi()+'/health',{signal:controller.signal});const v:unknown=await r.json();if(!disposed&&r.ok&&v&&typeof v==='object'&&'coverage' in v&&(v.coverage==='colorado'||v.coverage==='contiguous-us'))setCoverage(v.coverage);}catch{}finally{clearTimeout(timer);}};void refresh();const poll=setInterval(refresh,60000);return()=>{disposed=true;controller?.abort();clearInterval(poll);};},[active]);
  const [saved,setSaved]=useState<RoadRoute|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState('');
- const key=JSON.stringify({points,truck}),latest=useRef({key,active});
+ const key=roadRouteKey(points,truck,vehicle,via),latest=useRef({key,active});
  const [previous,setPrevious]=useState({key,active});
  // Reset render state with its inputs; an obsolete error/loading flag never flashes.
  if(previous.key!==key||previous.active!==active){setPrevious({key,active});setBusy(false);setError('');if(!points[0]&&!points[1])setSaved(null);}
  const request=useRef<AbortController|null>(null),lastStarted=useRef(0);
+ function cancelBuild(){const controller=request.current;request.current=null;controller?.abort();setBusy(false);setError('');}
  const route=saved?.key===key?saved:null;
  useLayoutEffect(()=>{
   latest.current={key,active};
@@ -39,7 +43,7 @@ export function useRoadRoute(map:LibreMap|null,active:boolean,points:[RoutePoint
   if(Date.now()-lastStarted.current<1100)return;
   lastStarted.current=Date.now();const controller=new AbortController();request.current=controller;setBusy(true);setError('');
   const timer=setTimeout(()=>controller.abort(),45000);
-  try{const result=await loadRoadRoute(points[0],points[1],controller.signal,truck);if(request.current===controller&&!controller.signal.aborted&&latest.current.key===key&&latest.current.active)setSaved({...result,key});}
+  try{const result=await loadRoadRoute(points[0],points[1],controller.signal,truck,vehicle,via);if(request.current===controller&&!controller.signal.aborted&&latest.current.key===key&&latest.current.active)setSaved({...result,key});}
   catch(e){if(request.current===controller&&latest.current.key===key&&latest.current.active)setError(controller.signal.aborted?'Route took too long. Try again.':e instanceof Error?e.message:'Could not build route.');}
   finally{clearTimeout(timer);if(request.current===controller){request.current=null;setBusy(false);}}
  }
@@ -68,5 +72,5 @@ export function useRoadRoute(map:LibreMap|null,active:boolean,points:[RoutePoint
   });
   return()=>{cancelAnimationFrame(frame);map.off('style.load',draw);for(const id of ['ezclick-trip-selected','ezclick-trip-selected-glow','ezclick-trip-selected-outline',...ids.slice().reverse()])if(map.getLayer(id))map.removeLayer(id);if(map.getSource(source))map.removeSource(source);};
  },[map,route,active]);
- return {route,busy,error,build,coverage,hasPrevious:!!saved};
+ return {route,busy,error,build,cancelBuild,coverage,hasPrevious:!!saved};
 }

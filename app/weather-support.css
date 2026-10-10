@@ -1,0 +1,40 @@
+.weather-site-menu nav .weather-support-toggle{display:block;width:100%;text-align:start;padding:14px 12px;color:#d4e3ef;background:transparent;border:0;border-radius:8px;font:inherit;cursor:pointer;transition:background-color .3s ease,color .3s ease}
+.weather-site-menu nav .weather-support-toggle:hover,.weather-site-menu nav .weather-support-toggle:focus-visible{background:#20394e;color:#a2e9f7}
+.weather-support{box-sizing:border-box;width:min(480px,calc(100vw - 24px));max-height:calc(100dvh - 32px);margin:auto;padding:0;border:1px solid #39758d;border-radius:20px;background:#0b1928;color:#e3eef6;box-shadow:0 18px 65px #0008,0 0 22px #2cabdd16;opacity:0;transform:translateY(12px);transition:opacity .28s ease-out,transform .28s ease-out;overflow:auto;overscroll-behavior:contain;color-scheme:dark}
+.weather-support[data-visible=true]{opacity:1;transform:translateY(0)}
+.weather-support::backdrop{background:#020812b3;opacity:0;transition:opacity .28s ease-out}
+.weather-support[data-visible=true]::backdrop{opacity:1}
+.weather-support-panel{padding:24px;font:14px/1.5 system-ui,sans-serif}
+.weather-support header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.support-eyebrow{font-size:10px;letter-spacing:1.7px;color:#7fc5db}
+.weather-support h2{font-size:23px;line-height:1.2;margin:6px 0 0;font-weight:650}
+.support-close{min-width:44px;min-height:44px;border:1px solid #344858;border-radius:12px;font:26px/1 system-ui;color:#cfdfeb;background:#172838;cursor:pointer}
+.weather-support p{margin:0 0 16px;color:#aebdcb}
+.weather-support fieldset{margin:0;padding:0;border:0;min-width:0}
+.weather-support label{display:block;margin:14px 0 6px;font-size:13px;font-weight:600}
+.weather-support textarea,.weather-support input[type=email]{box-sizing:border-box;display:block;width:100%;padding:11px 12px;border:1px solid #405569;border-radius:11px;background:#07121e;color:#edf6fb;font:16px/1.45 system-ui,sans-serif}
+.weather-support textarea{resize:vertical;min-height:108px;max-height:240px}
+.weather-support :is(textarea,input,button,a):focus-visible{outline:2px solid #6ddafa;outline-offset:3px}
+.weather-support .support-check{display:flex;align-items:center;gap:10px;min-height:44px;margin:8px 0 0;cursor:pointer}
+.support-check input{width:18px;height:18px;margin:0;accent-color:#53c5e6;flex:none}
+.weather-support .support-hint{font-size:12px;line-height:1.45;color:#98adbd;margin:0 0 8px}
+.support-link{border:0;background:transparent;font:inherit;font-size:12px;color:#86d9ef;padding:9px 0;min-height:40px;cursor:pointer;text-align:start}
+.support-details-toggle{display:flex;justify-content:space-between;align-items:center;width:100%}
+.support-details{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .3s ease-out,opacity .3s ease-out}
+.support-details.is-open{grid-template-rows:1fr;opacity:1}
+.support-details>div{overflow:hidden;min-height:0}
+.support-details pre{box-sizing:border-box;margin:0 0 14px;max-width:100%;padding:12px;border:1px solid #253e50;border-radius:10px;background:#07121e;color:#b5cad8;font:11px/1.55 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.weather-support .support-error{color:#ffbfad;font-size:13px;margin:4px 0 12px}
+.support-error:empty{display:none}
+/* Keep the gradient and hit area fixed; only fade colors and the soft glow. */
+.support-primary{width:100%;min-height:46px;border:1px solid #7bcde5;border-radius:12px;margin-top:8px;padding:11px 15px;background-color:#18516b;background-image:linear-gradient(#2c7793d9,#2c779300);box-shadow:inset 0 1px #c5f1ff25,0 0 10px #65e2ee12;color:#f3fcff;font:600 14px/1.4 system-ui;cursor:pointer;transition:background-color .35s ease,border-color .35s ease,box-shadow .35s ease,color .35s ease,opacity .25s ease}
+.support-primary:not(:disabled):focus-visible{background-color:#286b85;border-color:#a0edf2;box-shadow:inset 0 1px #d5f8ff40,0 0 16px #65e2ee38}
+@media(hover:hover) and (pointer:fine){.support-primary:not(:disabled):hover{background-color:#286b85;border-color:#a0edf2;box-shadow:inset 0 1px #d5f8ff40,0 0 16px #65e2ee38}}
+.support-primary:not(:disabled):active{background-color:#1a4b63;border-color:#8edce8;box-shadow:inset 0 1px 4px #0003,0 0 10px #65e2ee24}
+.support-primary:disabled{opacity:.6;cursor:wait}
+.weather-support footer{display:flex;flex-wrap:wrap;gap:2px 5px;margin-top:18px;padding-top:14px;border-top:1px solid #293c4c;font-size:12px;color:#98adbd}
+.weather-support footer a{color:#93ddef;text-decoration:none;overflow-wrap:anywhere}
+.support-success{text-align:center;padding:10px 0 4px}.support-success-icon{display:inline-grid;place-items:center;width:42px;height:42px;background:#2b94892b;border:1px solid #4eada6;border-radius:50%;color:#9aebe4;font-size:24px}
+.support-success h3{margin:12px 0 6px;font-size:20px}.support-success .support-ticket{display:block;margin:12px 0 18px;color:#a4e8fb;font:600 17px/1.4 ui-monospace,monospace;letter-spacing:1px}
+@media(max-width:500px){.weather-support-panel{padding:18px}.weather-support{max-height:calc(100dvh - 20px);border-radius:17px}.weather-support h2{font-size:21px}}
+@media(prefers-reduced-motion:reduce){.weather-support,.weather-support::backdrop,.support-details,.weather-support button{transition:none;transform:none}}

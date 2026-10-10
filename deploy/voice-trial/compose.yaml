@@ -1,0 +1,24 @@
+services:
+  voice:
+    image: node@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
+    container_name: ezclick-voice-beta
+    restart: unless-stopped
+    network_mode: host
+    user: "1000:1000"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 256m
+    pids_limit: 64
+    working_dir: /app
+    env_file: voice.env
+    environment:
+      VOICE_TRIAL_PORT: "5196"
+      VOICE_TRIAL_SEND: "1"
+      VOICE_TRIAL_UNLIMITED: "0"
+      VOICE_PUBLIC_ORIGIN: "https://weather.ezclickgo.com"
+      VOICE_PUBLIC_USAGE_FILE: /data/usage.json
+    volumes:
+      - ./app:/app:ro
+      - ./data:/data
+    command: [node, server.mjs]

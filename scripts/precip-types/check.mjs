@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
-import {nearestTypeFrame} from '../../app/precip-types.ts';
+import fs from 'node:fs';
+import ts from 'typescript';
+import * as abortApi from '../../app/abort-timeout.ts';
 import {precipColor} from '../../app/weather-palette.ts';
+const api={};new Function('exports','require',ts.transpileModule(fs.readFileSync(new URL('../../app/precip-types.ts',import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(api,name=>{assert.equal(name,'./abort-timeout');return abortApi;});
+const {nearestTypeFrame}=api;
 assert.equal(nearestTypeFrame([{time:1000000,url:'a'}],1240001),null);
 assert.equal(nearestTypeFrame([{time:1000000,url:'a'},{time:1100000,url:'b'}],1090000)?.url,'b');
 assert.deepEqual(precipColor(0,255,0,2).slice(0,3),[192,165,247]);

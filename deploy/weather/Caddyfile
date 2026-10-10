@@ -1,5 +1,27 @@
 weather.ezclickgo.com {
  encode zstd gzip
+ handle /satellite-tiles/* {
+  reverse_proxy 127.0.0.1:8798
+ }
+ handle /satellite-data/* {
+  reverse_proxy 127.0.0.1:8798
+ }
+ handle_path /support-api/* {
+  request_body {
+   max_size 32KB
+  }
+  reverse_proxy 127.0.0.1:8770 {
+   header_up X-Support-Client-IP {remote_host}
+  }
+ }
+ handle_path /voice-api/* {
+  request_body {
+   max_size 650KB
+  }
+  reverse_proxy 127.0.0.1:5196 {
+   header_up Host 127.0.0.1:5196
+  }
+ }
  handle_path /trip-api/* {
   request_body {
    max_size 16KB
@@ -18,6 +40,12 @@ weather.ezclickgo.com {
 }
 http://127.0.0.1:8088 {
  bind 127.0.0.1
+ handle /satellite-tiles/* {
+  reverse_proxy 127.0.0.1:8798
+ }
+ handle /satellite-data/* {
+  reverse_proxy 127.0.0.1:8798
+ }
  handle_path /trip-api/* {
   request_body {
    max_size 16KB

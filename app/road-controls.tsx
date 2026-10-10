@@ -2,11 +2,11 @@
 import {useEffect,useRef,useSyncExternalStore} from 'react';
 import type {Map as LibreMap,VisibilitySpecification,FilterSpecification} from 'maplibre-gl';
 const subscribe=(fn:()=>void)=>{window.addEventListener('ezclick-roads',fn);window.addEventListener('storage',fn);return()=>{window.removeEventListener('ezclick-roads',fn);window.removeEventListener('storage',fn);};};
-let fallback=false;
-const snapshot=()=>{try{return localStorage.getItem('ezclick-highways-only')==='true';}catch{return fallback;}};
+let fallback=true;
+const snapshot=()=>{try{return localStorage.getItem('ezclick-highways-only')!=='false';}catch{return fallback;}};
 type Paint=Parameters<LibreMap['getPaintProperty']>[1];
 export default function RoadControls({map,ready}:{map:LibreMap|null;ready:boolean}){
- const highways=useSyncExternalStore(subscribe,snapshot,()=>false);
+ const highways=useSyncExternalStore(subscribe,snapshot,()=>true);
  const apply=useRef<(value:boolean)=>void>(()=>{});
  useEffect(()=>{
   if(!map||!ready)return;

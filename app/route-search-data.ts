@@ -1,4 +1,4 @@
-export type SearchPlace={id:string;name:string;detail:string;label:string;point:[number,number]};
+export type SearchPlace={id:string;name:string;detail:string;label:string;point:[number,number];kind?:string;state?:string};
 export function parsePlaces(data:unknown):SearchPlace[]{
  if(!data||typeof data!=='object'||!('features' in data)||!Array.isArray(data.features))throw new Error('Invalid search response');
  const found:SearchPlace[]=[];const seen=new Set<string>();
@@ -11,7 +11,7 @@ export function parsePlaces(data:unknown):SearchPlace[]{
   const detail=[...new Set([text('city'),text('district'),text('state'),text('postcode')].filter(v=>v&&v!==name))].join(' · ');
   if(!name)continue;
   const id=`${c[0]},${c[1]}:${name}`;if(seen.has(id))continue;seen.add(id);
-  found.push({id,name,detail,label:[name,detail].filter(Boolean).join(', '),point:[c[0],c[1]]});
+  found.push({id,name,detail,label:[name,detail].filter(Boolean).join(', '),point:[c[0],c[1]],kind:text('osm_value'),state:text('state')});
   if(found.length===6)break;
  }
  return found;
@@ -21,3 +21,6 @@ export function parseZipPlaces(data:unknown,zip:string):SearchPlace[]{
  if(!data||typeof data!=='object'||!('places' in data)||!Array.isArray(data.places))throw new Error('Invalid ZIP response');
  return parsePlaces({features:data.places.map(p=>({geometry:{type:'Point',coordinates:[p&&typeof p.longitude==='string'&&p.longitude.trim()?Number(p.longitude):NaN,p&&typeof p.latitude==='string'&&p.latitude.trim()?Number(p.latitude):NaN]},properties:{name:p?.['place name'],state:p?.state,postcode:zip,countrycode:'US'}}))});
 }
+
+export function nextSearchHighlight(current:number,direction:'ArrowUp'|'ArrowDown',count:number){if(count<=0)return -1;if(current<0||current>=count)return direction==='ArrowUp'?count-1:0;return (current+(direction==='ArrowDown'?1:-1)+count)%count;}
+export function searchScrollTop(top:number,height:number,itemTop:number,itemHeight:number){return itemTop<top?itemTop:itemTop+itemHeight>top+height?itemTop+itemHeight-height:top;}

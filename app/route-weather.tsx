@@ -8,13 +8,14 @@ import RouteForecastHint from './route-forecast-hint';
 import {weatherRequest,validForecastResponse} from './weather-request';
 import {useWeatherLanguage} from './weather-language';
 import DeparturePicker from './departure-picker';
+import {formatRouteDuration,totalTripSeconds} from './route-duration';
 import {readTrip,saveTrip,currentDeparture,departureZone as deviceDepartureZone} from './weather-trip-storage';
 import type {Map as LibreMap,ExpressionSpecification} from 'maplibre-gl';
 import {tripApi,type RoadRoute,type RoutePoint} from './road-route';
 import {type WeatherUnits,temperature} from './weather-units';
+import {weatherConcernColors as colors,isWeatherWarning,weatherWarningMarkers,mostConcerningCheckpoint} from './route-weather-display';
 type Sample={lon:number;lat:number;fraction:number;mapFraction:number;eta:number};
 type Forecast=Sample&{available:boolean;condition:string;level:'unknown'|'low'|'caution'|'high';temperatureC?:number;windMph?:number;gustMph?:number|null;windDirection?:string;precipProbability?:number|null;place?:string;updatedAt?:string};
-const colors={unknown:'#8293a4',low:'#88ddec',caution:'#e9b35f',high:'#ee737e'};
 function concern(p:Forecast){
  if(!p.available)return 'Forecast unavailable';
  if((p.windMph??0)>=35||(p.gustMph??0)>=45)return 'Strong wind';
@@ -32,7 +33,7 @@ export function sampleRoute(route:RoadRoute,departure:number,stopMinutes:number)
  const total=dist[dist.length-1],count=Math.min(16,Math.max(3,Math.ceil(route.distance/80000)+1));let j=1;
  return Array.from({length:count},(_,i)=>{const fraction=i/(count-1),d=total*fraction;while(j<dist.length-1&&dist[j]<d)j++;const t=(d-dist[j-1])/(dist[j]-dist[j-1]||1),a=c[j-1],b=c[j];return{lon:a[0]+(b[0]-a[0])*t,lat:a[1]+(b[1]-a[1])*t,fraction,mapFraction:i===0?0:i===count-1?1:(projected[j-1]+(projected[j]-projected[j-1])*t)/(projected[projected.length-1]||1),eta:departure+((route.elapsedSeconds?route.elapsedSeconds[j-1]+(route.elapsedSeconds[j]-route.elapsedSeconds[j-1])*t:route.duration*fraction)+fraction*stopMinutes*60)*1000};});
 }
-export default function RouteWeather({route,map,units,active,compactMobile=false,mobilePresentation=false,desktopPresentation=false,onExpand}:{route:RoadRoute;map:LibreMap|null;units:WeatherUnits;active:boolean;compactMobile?:boolean;mobilePresentation?:boolean;desktopPresentation?:boolean;onExpand?:()=>void}){
+export default function RouteWeather({route,map,units,active,autoFocusWarning=false,onAutoFocusHandled,compactMobile=false,mobilePresentation=false,desktopPresentation=false,onExpand}:{route:RoadRoute;map:LibreMap|null;units:WeatherUnits;active:boolean;autoFocusWarning?:boolean;onAutoFocusHandled?:()=>void;compactMobile?:boolean;mobilePresentation?:boolean;desktopPresentation?:boolean;onExpand?:()=>void}){
  const {locale,dir,t}=useWeatherLanguage();
  const compactPresentation=mobilePresentation||desktopPresentation;
  const [allSections,setAllSections]=useState(false);
@@ -49,6 +50,7 @@ export default function RouteWeather({route,map,units,active,compactMobile=false
  const [timingOpen,setTimingOpen]=useState(false),[infoOpen,setInfoOpen]=useState(false);
  const [departure,setDeparture]=useState(()=>currentDeparture(readTrip()?.departure??'',Date.now())),[stops,setStops]=useState(()=>readTrip()?.stops??0),[attempt,retry]=useState(0),[now,setNow]=useState(Date.now),[result,setResult]=useState<{key:string;points:Forecast[];checkedAt:number}|null>(null),[error,setError]=useState(''),[loading,setLoading]=useState(false);
  const [departureZone,setDepartureZone]=useState(()=>readTrip()?.departureZone??deviceDepartureZone());
+ useEffect(()=>{const update=()=>{const trip=readTrip();setDeparture(currentDeparture(trip?.departure??'',Date.now()));setDepartureZone(trip?.departureZone??deviceDepartureZone());setNow(Date.now());};window.addEventListener('weather-voice-departure',update);return()=>window.removeEventListener('weather-voice-departure',update);},[]);
  useEffect(()=>{saveTrip({departure,departureZone,stops});},[departure,departureZone,stops]);
  const depart=departure?new Date(departure).getTime():now;
  const valid=Number.isFinite(depart)&&depart>=now-3600000&&depart<now+6*86400000&&Number.isFinite(stops)&&stops>=0&&stops<=4320;
@@ -56,6 +58,12 @@ export default function RouteWeather({route,map,units,active,compactMobile=false
  const points=useMemo(()=>sampleRoute(route,depart,stops),[route,depart,stops]);
  const forecasts=result?.key===key?result.points:null;
  const displayedForecasts=forecasts??result?.points;
+ const warningMarkers=useMemo(()=>weatherWarningMarkers(forecasts??[]),[forecasts]);
+ const missingForecasts=forecasts?.filter(p=>!p.available).length??0;
+ useEffect(()=>{
+  const receive=(event:Event)=>{if(active&&valid)(event as CustomEvent).detail.reply({points:forecasts&&result&&!loading&&!error?forecasts:points.map(p=>({...p,available:false,condition:'',level:'unknown'})),checkedAt:forecasts&&result&&!loading&&!error?result.checkedAt:Date.now(),distance:route.distance,duration:route.duration+stops*60,units});};
+  window.addEventListener('voice-forecast-request',receive);return()=>window.removeEventListener('voice-forecast-request',receive);
+ },[active,valid,forecasts,result,loading,error,route.distance,route.duration,stops,units,points]);
  useEffect(()=>{
   const refresh=()=>{const clock=Date.now();setDeparture(value=>currentDeparture(value,clock));setNow(clock);};
   const visible=()=>{if(document.visibilityState==='visible')refresh();};
@@ -69,12 +77,22 @@ export default function RouteWeather({route,map,units,active,compactMobile=false
  useEffect(()=>{if(!active||!valid)return;const controller=new AbortController();const deadline=setTimeout(()=>controller.abort(),90000);const delay=setTimeout(()=>{setLoading(true);setError('');weatherRequest(tripApi()+'/weather',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({points}),signal:controller.signal}).then(v=>{if(!validForecastResponse(v,points.length))throw new Error('Incomplete forecast. Please try again.');const checked=v as {points:Forecast[];checkedAt:number};return {...checked,points:checked.points.map((p,i)=>({...p,...points[i]}))};}).then(v=>{if(!controller.signal.aborted)setResult({key,points:v.points,checkedAt:v.checkedAt});}).catch(e=>{if(!controller.signal.aborted&&!disposed)setError(e instanceof Error?e.message:'Forecast unavailable. Please try again.');else if(!disposed)setError('Forecast timed out. Try again.');}).finally(()=>{if(!disposed)setLoading(false);clearTimeout(deadline);});},450);let disposed=false;return()=>{disposed=true;clearTimeout(delay);clearTimeout(deadline);controller.abort();};},[key,active,valid,points]);
  useEffect(()=>{if(!map||!active)return;let painted:unknown=null;const apply=()=>{const source=map.getSource('ezclick-trip-route');if(!map.getLayer('ezclick-trip-line')||!source||source===painted)return;const stops:unknown[]=[];for(const p of forecasts??points.map(p=>({...p,level:'unknown' as const})))stops.push(p.mapFraction,colors[p.level]);const gradient=['interpolate',['linear'],['line-progress'],...stops] as ExpressionSpecification;if(JSON.stringify(map.getPaintProperty('ezclick-trip-line','line-gradient'))!==JSON.stringify(gradient))map.setPaintProperty('ezclick-trip-line','line-gradient',gradient);painted=source;};apply();map.on('style.load',apply);map.on('render',apply);return()=>{map.off('style.load',apply);map.off('render',apply);};},[map,active,forecasts,points]);
  const warningsOnly=warningFilter===key;
- const warningIndices=forecasts?.flatMap((p,i)=>p.level==='caution'||p.level==='high'?[i]:[])??[];
+ const warningIndices=warningMarkers.features.map(point=>point.id);
  const selectedIndex=compactPresentation?Math.min(selected?.routeKey===route.key?selected.index:0,Math.max(0,(displayedForecasts?.length??1)-1)):selected?.key===key?selected.index:-1;
  const hintIndex=selectedIndex>=0?selectedIndex:(warningIndices[0]??-1);
  const selectCheckpoint=useCallback((index:number,showHint=false)=>{if(compactMobile&&!compactPresentation)onExpand?.();if(compactPresentation)setMobileHint(previous=>showHint?{index,routeKey:route.key,open:true}:previous?{...previous,open:false}:null);setSelected({key,routeKey:route.key,index});},[compactMobile,compactPresentation,onExpand,key,route.key]);
  const jumpToCheckpoint=(index:number)=>{setWarningFilter(null);selectCheckpoint(index);};
  const nextWarning=()=>{const index=warningIndices.find(i=>i>selectedIndex)??warningIndices[0];if(index!==undefined)selectCheckpoint(index);};
+ const focusedVoiceRoute=useRef<RoadRoute|null>(null);
+ useEffect(()=>{
+  if(!autoFocusWarning||!active||!map||!forecasts||loading||error||focusedVoiceRoute.current===route)return;
+  focusedVoiceRoute.current=route;
+  const index=mostConcerningCheckpoint(forecasts);
+  // No known warning: retain the full-route view established by route building.
+  if(index>=0)selectCheckpoint(index,true);
+  else{setSelected(null);setMobileHint(null);}
+  onAutoFocusHandled?.();
+ },[autoFocusWarning,active,map,forecasts,loading,error,route,selectCheckpoint,onAutoFocusHandled]);
  useEffect(()=>{
   if(selected?.key!==key||compactMobile||compactPresentation)return;
   const frame=window.setTimeout(()=>{
@@ -100,26 +118,26 @@ export default function RouteWeather({route,map,units,active,compactMobile=false
  useEffect(()=>{
   markerState.current={selectCheckpoint,selectedIndex};
   if(!map?.getSource('ezclick-weather-checkpoints')||!forecasts)return;
-  forecasts.forEach((_,i)=>map.setFeatureState({source:'ezclick-weather-checkpoints',id:i},{chosen:i===selectedIndex}));
- },[map,forecasts,selectCheckpoint,selectedIndex]);
- // Checkpoint markers use the same samples as the cards; no inferred hazard boundaries.
+  warningMarkers.features.forEach(({id})=>map.setFeatureState({source:'ezclick-weather-checkpoints',id},{chosen:id===selectedIndex}));
+ },[map,forecasts,warningMarkers,selectCheckpoint,selectedIndex]);
+ // Only warnings get map markers. Every sample remains in the forecast and route colors.
  useEffect(()=>{
   if(!map||!active||!forecasts)return;
   const source='ezclick-weather-checkpoints',dots=source+'-dots',labels=source+'-labels',aura=source+'-aura';
   const chosen=['boolean',['feature-state','chosen'],false] as ExpressionSpecification;
-  const data={type:'FeatureCollection' as const,features:forecasts.map((p,i)=>({type:'Feature' as const,id:i,properties:{index:i,label:String(i+1),color:colors[p.level]},geometry:{type:'Point' as const,coordinates:[p.lon,p.lat]}}))};
+  const data=warningMarkers;
   const apply=()=>{if(map.getLayer(labels)||!map.getLayer('ezclick-trip-line'))return;
    if(!map.getSource(source))map.addSource(source,{type:'geojson',data});
    if(!map.getLayer(aura))map.addLayer({id:aura,type:'circle',source,paint:{'circle-radius':25,'circle-color':['get','color'],'circle-blur':.75,'circle-opacity':['case',chosen,.38,0]}});
    if(!map.getLayer(dots))map.addLayer({id:dots,type:'circle',source,paint:{'circle-radius':['case',chosen,12,9],'circle-color':'#102636','circle-stroke-color':['get','color'],'circle-stroke-width':['case',chosen,3,2]}});
    if(!map.getLayer(labels))map.addLayer({id:labels,type:'symbol',source,layout:{'text-field':['get','label'],'text-size':11,'text-allow-overlap':true,'text-ignore-placement':true},paint:{'text-color':'#effaff'}});
-   forecasts.forEach((_,i)=>map.setFeatureState({source,id:i},{chosen:i===markerState.current.selectedIndex}));
+   data.features.forEach(({id})=>map.setFeatureState({source,id},{chosen:id===markerState.current.selectedIndex}));
   };
   const click=(e:import('maplibre-gl').MapMouseEvent)=>{const features=map.queryRenderedFeatures(e.point,{layers:[dots]});const index=Number(features[0]?.properties?.index);if(Number.isInteger(index)&&index>=0&&index<forecasts.length){setWarningFilter(null);markerState.current.selectCheckpoint(index,true);}};
   const enter=()=>{map.getCanvas().style.cursor='pointer';};const leave=()=>{map.getCanvas().style.cursor='';};
   apply();map.on('style.load',apply);map.on('render',apply);map.on('click',dots,click);map.on('mouseenter',dots,enter);map.on('mouseleave',dots,leave);
   return()=>{map.off('style.load',apply);map.off('render',apply);map.off('click',dots,click);map.off('mouseenter',dots,enter);map.off('mouseleave',dots,leave);leave();for(const layer of [labels,dots,aura])if(map.getLayer(layer))map.removeLayer(layer);if(map.getSource(source))map.removeSource(source);};
- },[map,active,forecasts]);
+ },[map,active,forecasts,warningMarkers]);
  useEffect(()=>{
   if(!map||!active||!forecasts||selected?.key!==key)return;
   const id='ezclick-trip-selected',i=selected.index,p=forecasts[i];if(!p)return;
@@ -136,9 +154,11 @@ export default function RouteWeather({route,map,units,active,compactMobile=false
    const before=map.getLayer('ezclick-weather-checkpoints-dots')?'ezclick-weather-checkpoints-dots':undefined;
    if(!map.getLayer(outline))map.addLayer({id:outline,source:'ezclick-trip-route',type:'line',layout:{'line-cap':'round','line-join':'round'},paint:{'line-width':10,'line-opacity':0,'line-gradient':['case',['all',['>=',['line-progress'],start],['<=',['line-progress'],end]],'#04101f','rgba(0,0,0,0)']}},before);
    for(const [layer,width,blur] of [[glow,15,5],[id,5,0]] as const){if(!map.getLayer(layer))map.addLayer({id:layer,source:'ezclick-trip-route',type:'line',layout:{'line-cap':'round','line-join':'round'},paint:{'line-width':width,'line-blur':blur,'line-opacity':0,'line-opacity-transition':{duration:0,delay:0},'line-gradient':gradient}},before);}
-   if(!map.getSource(ends))map.addSource(ends,{type:'geojson',data:edgeData});
-   if(!map.getLayer(halo))map.addLayer({id:halo,type:'circle',source:ends,paint:{'circle-radius':13,'circle-color':colors[p.level],'circle-blur':.8,'circle-opacity':0}},before);
-   if(!map.getLayer(ends))map.addLayer({id:ends,type:'circle',source:ends,paint:{'circle-radius':5,'circle-color':'#091b2b','circle-stroke-width':2,'circle-stroke-color':colors[p.level],'circle-opacity':0,'circle-stroke-opacity':0}},before);
+   if(isWeatherWarning(p)){
+    if(!map.getSource(ends))map.addSource(ends,{type:'geojson',data:edgeData});
+    if(!map.getLayer(halo))map.addLayer({id:halo,type:'circle',source:ends,paint:{'circle-radius':13,'circle-color':colors[p.level],'circle-blur':.8,'circle-opacity':0}},before);
+    if(!map.getLayer(ends))map.addLayer({id:ends,type:'circle',source:ends,paint:{'circle-radius':5,'circle-color':'#091b2b','circle-stroke-width':2,'circle-stroke-color':colors[p.level],'circle-opacity':0,'circle-stroke-opacity':0}},before);
+   }
   };
   const paint=(now:number)=>{add();const elapsed=Math.max(0,now-began),fade=motion.matches?1:Math.min(1,elapsed/650),pulse=motion.matches?.65:(1-Math.cos(elapsed/3200*Math.PI*2))/2;
    if(map.getLayer(id))map.setPaintProperty(id,'line-opacity',fade*(.75+.25*pulse));
@@ -220,11 +240,11 @@ export default function RouteWeather({route,map,units,active,compactMobile=false
  {!compactPresentation&&active&&map&&forecasts&&hintIndex>=0&&<RouteForecastHint key={`${key}:${hintIndex}`} map={map} units={units} point={forecasts[hintIndex]} index={hintIndex} onSelect={()=>jumpToCheckpoint(hintIndex)}/>}
  {compactPresentation&&map&&mobileHint&&displayedForecasts?.[mobileHint.index]&&<RouteForecastHint map={map} units={units} point={displayedForecasts[mobileHint.index]} index={mobileHint.index} distance={`${Math.round(displayedForecasts[mobileHint.index].fraction*route.distance/(units==='us'?1609.344:1000)).toLocaleString(locale)} ${units==='us'?'mi':'km'} ${t('from start')}`} compact={mobilePresentation} controlled={desktopPresentation} open={active&&!!forecasts&&mobileHint.open&&mobileHint.routeKey===route.key} onSelect={()=>setMobileHint(previous=>previous?{...previous,open:false}:null)}/>}
  <div dir={dir} className="route-weather-title"><strong>{t("Weather ahead")}</strong><span>{t("At estimated arrival")}</span></div>
- <button type="button" dir={dir} className="route-timing-toggle" aria-label={t("Change departure")} aria-expanded={timingOpen&&(!compactMobile||compactPresentation)} onClick={()=>{if(!compactPresentation)onExpand?.();setTimingOpen(v=>compactPresentation?!v:compactMobile||!v);}}><span className="route-departure-icon"><Clock3 size={18} aria-hidden="true"/></span><span className="route-departure-copy"><strong>{t("Change departure")}</strong><small>{departure?new Date(depart).toLocaleString(locale,{timeZone:departureZone,month:"short",day:"numeric",hour:"2-digit",minute:"2-digit",timeZoneName:"short"}):t("Leave now · your local time")}{stops?' · '+stops+' '+t('min breaks'):''}</small></span><ChevronDown className="route-departure-chevron" size={16} aria-hidden="true"/></button><div className={`route-options-collapse ${timingOpen&&(!compactMobile||compactPresentation)?'is-expanded':''}`} inert={!timingOpen||(compactMobile&&!compactPresentation)}><div><div dir={dir} className="route-timing"><DeparturePicker value={departure} onChange={value=>{setDeparture(value);setDepartureZone(deviceDepartureZone());setNow(Date.now());setTimingOpen(false);}}/><label>{t("Planned breaks · minutes")}<input aria-label={t("Planned break minutes")} type="number" min="0" max="4320" step="30" value={stops} onChange={e=>setStops(Number(e.target.value))}/></label></div>
+ <button type="button" dir={dir} className="route-timing-toggle" aria-label={t("Change departure")} aria-expanded={timingOpen&&(!compactMobile||compactPresentation)} onClick={()=>{if(!compactPresentation)onExpand?.();setTimingOpen(v=>compactPresentation?!v:compactMobile||!v);}}><span className="route-departure-icon"><Clock3 size={18} aria-hidden="true"/></span><span className="route-departure-copy"><strong>{t("Change departure")}</strong><small>{departure?new Date(depart).toLocaleString(locale,{timeZone:departureZone,month:"short",day:"numeric",hour:"2-digit",minute:"2-digit",timeZoneName:"short"}):t("Leave now · your local time")}{' · '+t('Driving time')+' '+formatRouteDuration(route.duration)}{stops?' · '+stops+' '+t('min breaks'):''}</small></span><ChevronDown className="route-departure-chevron" size={16} aria-hidden="true"/></button><div className={`route-options-collapse ${timingOpen&&(!compactMobile||compactPresentation)?'is-expanded':''}`} inert={!timingOpen||(compactMobile&&!compactPresentation)}><div><div dir={dir} className="route-timing"><DeparturePicker value={departure} onChange={value=>{setDeparture(value);setDepartureZone(deviceDepartureZone());setNow(Date.now());setTimingOpen(false);}}/><label>{t("Planned breaks · minutes")}<input aria-label={t("Planned break minutes")} type="number" min="0" max="4320" step="30" value={stops} onChange={e=>setStops(Number(e.target.value))}/></label><p className="route-time-breakdown">{t("Driving time")}: {formatRouteDuration(route.duration)} · {stops} {t("min breaks")} · {t("Total time including breaks")}: {formatRouteDuration(totalTripSeconds(route.duration,stops))}</p></div>
 </div></div>
  {!compactPresentation&&!valid&&<p role="alert">{t("Choose a departure within six days and valid break minutes.")}</p>}
  {compactPresentation&&<div className="route-mobile-carousel" aria-label={t("Route checkpoint forecast")} inert={timingOpen||(desktopPresentation&&allSections)} aria-hidden={timingOpen||(desktopPresentation&&allSections)}>
- <div dir={dir} className="mobile-forecast-status" role="status">{valid&&!error&&forecasts?<span className="mobile-route-totals"><strong>{Math.round(route.distance/(units==='us'?1609.344:1000))} {units==='us'?'mi':'km'}</strong><span aria-hidden="true">·</span><strong>{Math.floor(route.duration/3600)}h {Math.round(route.duration/60)%60}m</strong><small>{mobileIndex+1} / {forecasts.length}</small></span>:<span title={error?t(error):undefined}>{!valid?t("Check departure and breaks"):error?(result?t("Saved forecast · update unavailable"):t(error)):t("Checking route weather…")}</span>}{error&&<button type="button" onClick={()=>retry(n=>n+1)}>{t("Retry")}</button>}</div>
+ <div dir={dir} className="mobile-forecast-status" role="status">{valid&&!error&&forecasts?<span className="mobile-route-totals"><strong>{Math.round(route.distance/(units==='us'?1609.344:1000))} {units==='us'?'mi':'km'}</strong><span aria-hidden="true">·</span><strong title={t("Total time including breaks")} aria-label={`${t("Total time including breaks")}: ${formatRouteDuration(totalTripSeconds(route.duration,stops))}`}><span className="route-total-label">{t("Total")}</span> {formatRouteDuration(totalTripSeconds(route.duration,stops))}</strong></span>:<span title={error?t(error):undefined}>{!valid?t("Check departure and breaks"):error?(result?t("Saved forecast · update unavailable"):t(error)):t("Checking route weather…")}</span>}{valid&&!error&&missingForecasts>0&&<span style={{color:colors.unknown,flex:"0 1 auto"}} title={t("Some forecasts unavailable")}>{t("No data")}: {missingForecasts}</span>}{error&&<button type="button" onClick={()=>retry(n=>n+1)}>{t("Retry")}</button>}</div>
  <div className="mobile-forecast-viewport" tabIndex={forecasts?0:-1} role="region" aria-label={t("Swipe left or right to change checkpoint")} aria-busy={!forecasts}
  onKeyDown={e=>{if(!forecasts)return;if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();selectCheckpoint(Math.max(0,Math.min(forecasts.length-1,mobileIndex+(e.key==='ArrowRight'?1:-1))));}}}
  onPointerDown={e=>{e.stopPropagation();if(!forecasts||e.button!==0)return;swipe.current={id:e.pointerId,x:e.clientX,y:e.clientY,axis:'pending'};e.currentTarget.setPointerCapture(e.pointerId);}}
@@ -233,7 +253,7 @@ export default function RouteWeather({route,map,units,active,compactMobile=false
  onPointerCancel={()=>{swipe.current=null;}} onLostPointerCapture={()=>{swipe.current=null;}} onTouchStart={e=>e.stopPropagation()} onTouchMove={e=>e.stopPropagation()}>
  {!displayedForecasts&&<div dir={dir} className="mobile-forecast-placeholder">{!valid?t("Update departure time in Change departure"):error?t("Forecast unavailable"):t("Loading your route forecast…")}</div>}
  {displayedForecasts?.map((p,i)=>{const {kind,label}=forecastCondition(p),current=i===mobileIndex;return <article dir={dir} key={i} className={`mobile-forecast-card ${current?'is-current':''} ${!forecasts?'is-refreshing':''}`} style={{borderLeftColor:colors[p.level],transform:`translateX(${i<mobileIndex?-12:i>mobileIndex?12:0}px)`}} aria-hidden={!current} inert={!current||!forecasts}>
- <div className="mobile-forecast-place"><WeatherSymbol kind={kind} size={32}/><div><strong title={p.place||t("Location unavailable")}>{p.place||t("Location unavailable")}</strong><span className="mobile-forecast-arrival"><small>{t("Arrival")}</small><time className="mobile-arrival-date" dateTime={new Date(p.eta).toISOString()}>{new Date(p.eta).toLocaleDateString(locale,{month:'short',day:'numeric'})}</time><time className="mobile-arrival-time" dateTime={new Date(p.eta).toISOString()}>{new Date(p.eta).toLocaleTimeString(locale,{hour:'numeric',minute:'2-digit'})}</time><small>{t("your time")}</small></span></div><b>{p.available&&p.temperatureC!=null?`${temperature(p.temperatureC,units)}°${units==='us'?'F':'C'}`:'—'}</b></div>
+ <div className="mobile-forecast-place"><WeatherSymbol kind={kind} size={32} color={colors[p.level]}/><div><strong title={p.place||t("Location unavailable")}>{p.place||t("Location unavailable")}</strong><span className="mobile-forecast-arrival"><small>{t("Arrival")}</small><time className="mobile-arrival-date" dateTime={new Date(p.eta).toISOString()}>{new Date(p.eta).toLocaleDateString(locale,{month:'short',day:'numeric'})}</time><time className="mobile-arrival-time" dateTime={new Date(p.eta).toISOString()}>{new Date(p.eta).toLocaleTimeString(locale,{hour:'numeric',minute:'2-digit'})}</time><small>{t("your time")}</small></span></div><b>{p.available&&p.temperatureC!=null?`${temperature(p.temperatureC,units)}°${units==='us'?'F':'C'}`:'—'}</b></div>
  <div className="mobile-forecast-condition" title={p.condition}>{t(label)}</div>
  <div className="mobile-forecast-wind"><span className="mobile-forecast-wind-reading"><Wind size={14} aria-hidden="true"/><span>{p.available&&p.windMph!=null?speed(p.windMph)+' · '+p.windDirection:t("Wind unavailable")}</span></span><span>{p.available&&p.precipProbability!=null?`${p.precipProbability}% ${t('precip.')}`:t("Precip. —")}</span></div>
  </article>;})}
@@ -260,7 +280,7 @@ export default function RouteWeather({route,map,units,active,compactMobile=false
  {displayedForecasts.map((p,i)=>{if(warningsOnly&&!warningIndices.includes(i))return null;const {kind,label}=forecastCondition(p),opened=selectedIndex===i;return <button type="button" className={`route-weather-card forecast-stack-card${opened?' is-selected':''}`} data-checkpoint={i} key={i} aria-expanded={opened} style={{borderLeftColor:colors[p.level]}} onClick={()=>selectCheckpoint(i)}>
  <span className="forecast-stage">{i+1} / {displayedForecasts.length} · {i===0?t("Departure"):i===displayedForecasts.length-1?t("Arrival"):p.level==='high'?t("Higher concern"):p.level==='caution'?t("Caution"):p.level==='unknown'?t("No data"):t("Along the route")}</span>
  <span className="forecast-place">{p.place?t('Near')+' '+p.place:t("Location unavailable")}</span>
- <span className="forecast-summary"><WeatherSymbol kind={kind} size={20}/><strong>{t(label)}</strong><span aria-hidden="true">{opened?'⌄':'›'}</span></span>
+ <span className="forecast-summary"><WeatherSymbol kind={kind} size={20} color={colors[p.level]}/><strong>{t(label)}</strong><span aria-hidden="true">{opened?'⌄':'›'}</span></span>
  <span className="forecast-meta">{Math.round(p.fraction*route.distance/(units==='us'?1609.344:1000)).toLocaleString(locale)} {units==='us'?'mi':'km'} · <time dateTime={new Date(p.eta).toISOString()}>{new Date(p.eta).toLocaleTimeString(locale,{hour:'numeric',minute:'2-digit'})}</time> · {new Date(p.eta).toLocaleDateString(locale,{month:'short',day:'numeric'})}</span>
  {opened&&<span className="forecast-expanded-details"><span>{p.available&&p.precipProbability!=null?`${p.precipProbability}% ${t('precipitation chance')}`:t("Precipitation chance unavailable")}</span><span><Wind size={16} aria-hidden="true"/> {p.available&&p.windMph!=null?speed(p.windMph):t("Wind unavailable")} {p.windDirection}</span><span>{p.available&&p.gustMph!=null?t('Gusts')+' '+speed(p.gustMph):t("Gust data unavailable")}</span>{concern(p)&&<strong style={{color:colors[p.level]}}>{t(concern(p)??'')}</strong>}<span>{p.condition}{p.available&&p.temperatureC!=null?` · ${temperature(p.temperatureC,units)}°${units==='us'?'F':'C'}`:''}</span><span className="forecast-map-link">{t("Show this section on map ↗")}</span></span>}
  </button>;})}

@@ -1,0 +1,52 @@
+import fs from 'node:fs';
+import ts from 'typescript';
+import assert from 'node:assert/strict';
+const source=ts.transpileModule(fs.readFileSync('app/voice-weather-answer.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const api={};new Function('exports','require',source)(api,()=>({temperature:(c,u)=>Math.round(u==='us'?c*9/5+32:c)}));
+const now=Date.now();
+const point={available:true,eta:now+3600000,place:'Nashville',condition:'Clear',temperatureC:20,windMph:10,precipProbability:0,level:'low'};
+const snapshot={checkedAt:now,distance:160934.4,duration:3600,units:'us',points:[point,{...point,place:'Jacksonville',condition:'Rain',windMph:30,precipProbability:80,level:'caution'},{...point,available:false,level:'unknown'}]};
+const before=JSON.stringify(snapshot);
+assert.match(api.weatherAnswer(snapshot,'rain',now),/Jacksonville/);
+assert.doesNotMatch(api.weatherAnswer(snapshot,'rain',now),/Nashville/);
+assert.match(api.weatherAnswer(snapshot,'wind',now),/30 миль\/ч/);
+assert.match(api.weatherAnswer({...snapshot,units:'metric'},'wind',now),/48 км\/ч/);
+assert.match(api.weatherAnswer(snapshot,'snow',now),/не указаны/);
+assert.match(api.weatherAnswer(snapshot,'summary',now),/части пути прогноза пока нет/);
+assert.match(api.weatherAnswer({...snapshot,checkedAt:now-700000},'summary',now),/устарел/);
+assert.match(api.weatherAnswer({...snapshot,points:[{...point,available:false}]},'summary',now),/недоступен/);
+assert.match(api.weatherAnswer(null,'summary',now),/постройте маршрут/);
+assert.match(api.weatherAnswer(snapshot,'crosswind',now),/нужен расчёт/);
+assert.match(api.weatherAnswer(snapshot,'compare',now),/не изменены/);
+assert.equal(JSON.stringify(snapshot),before);
+console.log('PASS: forecast grounding, missing/stale data, hazard filtering, units, no route mutation, unsupported comparisons/crosswind');
+
+const full={...snapshot,points:[point,{...point,place:'Savannah'},{...point,place:'Charleston',condition:'Rain',windMph:25,level:'caution'}]};
+const summary=api.weatherAnswer(full,'summary',now);
+assert.match(summary,/в начале пути погода спокойная/);
+assert.match(summary,/Ближе к концу маршрута, возле Charleston может пойти дождь и усилиться ветер/);
+assert.doesNotMatch(summary,/Rain|Clear|°|%|\d{2}:\d{2}/);
+assert.ok(summary.length<450);
+assert.match(api.weatherAnswer({...snapshot,points:[point, {...point,place:'Savannah'}]},'summary',now),/в точках маршрута/);
+console.log('PASS: short conversational summary, route order, rain near destination, no raw data dump');
+console.log(summary);
+
+assert.match(api.weatherAnswer(full,'stops',now),/Savannah/);
+assert.match(api.weatherAnswer(full,'stops',now),/конкретная парковка.*не проверены/);
+assert.doesNotMatch(api.weatherAnswer({...full,points:[point,{...point,available:false},full.points[2]]},'stops',now),/можно поискать/);
+console.log('PASS: town before weather is only a search area; missing intervening forecast blocks suggestion');
+for(const topic of ['parking','detour','truck_safety','crosswind']){
+ const car=api.weatherAnswer(snapshot,topic,now,'car');
+ assert.doesNotMatch(car,/трак|прицеп|фур/);
+ assert.notEqual(car,api.weatherAnswer(snapshot,topic,now,'truck'));
+}
+assert.equal(api.weatherAnswer(snapshot,'rain',now,'car'),api.weatherAnswer(snapshot,'rain',now,'truck'));
+console.log('PASS: vehicle-specific advice without invented car hazards or forecast changes');
+const scoped={...full,points:[{...point,condition:'Rain'}, {...point,place:'Denver',temperatureC:-5}]};
+assert.match(api.weatherAnswer(api.scopedForecast(scoped,'destination'),'rain',now),/не указаны/);
+assert.match(api.weatherAnswer(api.scopedForecast(scoped,'origin'),'rain',now),/дождь/);
+assert.match(api.weatherAnswer(api.scopedForecast(scoped,'destination'),'temperature',now),/Denver.*23 °F/);
+assert.match(api.weatherAnswer({...api.scopedForecast(scoped,'destination'),units:'metric'},'temperature',now),/-5 °C/);
+assert.match(api.weatherAnswer({...scoped,checkedAt:0,points:scoped.points.map(p=>({...p,available:false}))},'arrival',now),/Расчётное прибытие/);
+assert.match(api.weatherAnswer({...scoped,points:[{...point,temperatureC:undefined}]},'temperature',now),/Данных о температуре/);
+console.log('PASS: endpoint scope, temperature units, missing measurements, ETA independent of weather freshness/availability');

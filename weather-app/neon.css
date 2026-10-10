@@ -1,0 +1,25 @@
+/* Small static accents: no new layers, timers or continuously animated glow. */
+.weather-workspace .weather-left-stack{border-color:#68dbe85e;background:linear-gradient(135deg,#123044f5,#091727f7 72%);box-shadow:0 6px 18px #0004,0 0 10px #5cddeb14}
+.weather-workspace .point-place>strong,.weather-workspace .point-weather-row strong{color:#f0fbff}
+.weather-workspace .point-weather-row svg{stroke:#91e7ef}
+.weather-workspace .weather-left-stack .radar-timeline{border-top-color:#73e3ed66}
+.weather-workspace .route-search-field{border-color:#73dce95c;box-shadow:inset 0 1px 0 #9beaf00a,0 0 7px #5cdeeb0b}
+.weather-workspace .route-search-field:focus-within{border-color:#93edf1b3;box-shadow:0 0 9px #65e2ee26}
+.weather-workspace .route-mode-toggle{transition:background-color .3s ease,border-color .3s ease,color .3s ease,box-shadow .3s ease}
+.weather-workspace .route-mode-toggle[aria-pressed=true]{border-color:#8feaf0b3;box-shadow:inset 0 0 0 1px #8feaf021,0 0 10px #65e2ee30}
+.weather-workspace .weather-vehicle button[aria-pressed=true]::before{background:#83d7e526;box-shadow:inset 0 0 0 1px #9ceaf09c,0 0 8px #65e2ee24}
+.weather-workspace .voice-handle-surface{border-color:#80e3ee94;box-shadow:3px 3px 10px #0003,0 0 8px #65e2ee26;transition:width .7s cubic-bezier(.28,.1,.22,1),background-color .3s,border-color .3s,box-shadow .3s}
+.weather-workspace .voice-route-drawer.is-open .voice-handle-surface{border-color:#a4f0f1b3;box-shadow:3px 3px 10px #0003,0 0 10px #65e2ee38}
+.weather-workspace .voice-route-panel-wrap{border-color:#7fdee97a;box-shadow:0 8px 20px #0004,0 0 10px #65e2ee1c}
+.weather-workspace .radar-timeline .radar-player-row input[type=range]{appearance:none;background:transparent;accent-color:#8de9ef}
+.weather-workspace .radar-timeline input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:3px;background:#78dbe7;box-shadow:0 0 5px #65e2ee32}
+.weather-workspace .radar-timeline input[type=range]::-webkit-slider-thumb{appearance:none;width:14px;height:14px;margin-top:-5.5px;border-radius:50%;border:1px solid #ddfcff;background:#9cf0f3;box-shadow:0 0 6px #65e2ee65}
+.weather-workspace .radar-timeline input[type=range]::-moz-range-track{height:3px;border-radius:3px;background:#78dbe7;box-shadow:0 0 5px #65e2ee32}
+.weather-workspace .radar-timeline input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;border:1px solid #ddfcff;background:#9cf0f3;box-shadow:0 0 6px #65e2ee65}
+.weather-workspace .radar-timeline input[type=range]:focus-visible{outline:2px solid #a0edf2;outline-offset:2px;border-radius:6px}
+@media(prefers-reduced-motion:reduce){.weather-workspace .route-mode-toggle,.weather-workspace .voice-handle-surface{transition:none}}
+
+/* Keep the taller cloud logo inside the header at every breakpoint. */
+.weather-workspace .weather-map-header{padding-block:8px}
+.weather-workspace .weather-map-brand img{width:146px;height:auto}
+@media(max-width:767px){.weather-workspace .weather-map-header{height:76px;padding-block:4px}.weather-workspace .weather-map-brand img{width:118px;max-height:66px;object-fit:contain}}

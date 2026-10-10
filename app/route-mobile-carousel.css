@@ -43,7 +43,6 @@
 .mobile-forecast-status>.mobile-route-totals{display:flex;align-items:center;justify-content:center;gap:8px;color:#dceef6;overflow:visible;line-height:20px}
 .mobile-route-totals>strong{font-size:15px;font-weight:650;font-variant-numeric:tabular-nums}
 .mobile-route-totals>span{font-size:12px;color:#8aaebb}
-.mobile-route-totals>small{font-size:11px;color:#9bbaca;margin-left:4px;font-variant-numeric:tabular-nums}
 .mobile-forecast-wind>svg{width:15px;height:15px;flex:none}
 .mobile-forecast-wind>span:last-child{font-size:12px;color:#abc8d6}
 @media(hover:hover) and (pointer:fine){.mobile-checkpoint-rail{cursor:grab}.mobile-checkpoint-rail:active{cursor:grabbing}}
@@ -107,3 +106,6 @@
 .route-sheet .mobile-checkpoint-rail>button[aria-pressed=true]::before{background:#183f4b;border-color:#88ddec;box-shadow:inset 0 0 8px #88ddec12}
 .route-sheet .has-mobile-carousel>.route-options-collapse,.has-mobile-carousel>.route-options-collapse>div{height:168px;max-height:168px}
 @media(prefers-reduced-motion:reduce){.route-sheet .mobile-checkpoint-rail>button::before{transition:none}}
+
+
+.route-total-label{font-size:10px;font-weight:400;color:#adc9d6}.route-time-breakdown{font-size:11px;line-height:1.6;color:#c2dce7;margin:6px 0 2px}

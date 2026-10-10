@@ -4,11 +4,12 @@ import ts from 'typescript';
 const road=fs.readFileSync('app/road-route.ts','utf8');
 const validCode=road.slice(road.indexOf('export function validTruck'),road.indexOf('export async function loadRoadRoute'));
 const validExports={};new Function('exports',ts.transpileModule(validCode,{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText)(validExports);
+const waypointApi={};new Function('exports',ts.transpileModule(fs.readFileSync('app/route-waypoints.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText)(waypointApi);
 const source=fs.readFileSync('app/weather-trip-storage.ts','utf8');
 let data=null,blocked=false;
 const storage={getItem:()=>{if(blocked)throw Error('blocked');return data;},setItem:(_,v)=>{if(blocked)throw Error('blocked');data=v;}};
 const doc={documentElement:{dataset:{weatherStandalone:'true'}}};
-const e={};new Function('exports','require','document','localStorage',ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(e,()=>validExports,doc,storage);
+const e={};new Function('exports','require','document','localStorage',ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(e,n=>n==='./route-waypoints'?waypointApi:validExports,doc,storage);
 assert.equal(e.readTrip(),null);
 assert.deepEqual(e.defaultTripPoints(),[null,null]);
 e.saveTrip({departure:''});assert.deepEqual(e.readTrip().points,[null,null]);
@@ -57,3 +58,9 @@ e.saveTrip({departure:''});assert.equal(e.readTrip().pointLabels[e.pointLabelKey
 assert.equal(e.readTrip().pointLabels[e.pointLabelKey([-86.79,36.16])],undefined);
 for(let i=0;i<20;i++)e.savePointLabel([-80,i],'Place '+i);assert.equal(Object.keys(e.readTrip().pointLabels).length,12);
 console.log('PASS: selected names persist, moved points do not reuse old names, label cache bounded');
+
+data=null;e.saveTrip({points:[[-86,36],[-81,30]],via:[[-81.03,34]],departure:'2099-10-09T15:00:00Z',vehicle:'truck',stops:20});
+e.saveTrip({builtKey:'via-route'});assert.deepEqual(e.readTrip().via,[[-81.03,34]]);assert.equal(e.readTrip().stops,20);
+e.saveTrip({via:[]});assert.deepEqual(e.readTrip().via,[]);assert.equal(e.readTrip().departure,'2099-10-09T15:00:00.000Z');
+for(const via of [[[null,34]],[[0,100]],Array(6).fill([-80,30])]){data=JSON.stringify({version:1,points:[null,null],via});assert.equal(e.readTrip(),null);}
+console.log('PASS: via round-trip, removal preserves time/stops, invalid via coordinates and count rejected');

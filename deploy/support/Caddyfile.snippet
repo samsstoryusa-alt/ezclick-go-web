@@ -1,0 +1,9 @@
+# Add inside the weather.ezclickgo.com site, before the static fallback.
+handle_path /support-api/* {
+ request_body {
+  max_size 32KB
+ }
+ reverse_proxy 127.0.0.1:8770 {
+  header_up X-Support-Client-IP {remote_host}
+ }
+}

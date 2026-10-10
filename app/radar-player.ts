@@ -21,7 +21,7 @@ export function blendRadar(context: CanvasRenderingContext2D, first: CanvasImage
   context.globalCompositeOperation = 'source-over';
 }
 
-export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], onPosition: (position:number) => void, onSmoothPosition?: (position:number) => void, motion?:MotionRenderer|null) {
+export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], onPosition: (position:number) => void, onSmoothPosition?: (position:number) => void, motion?:MotionRenderer|null, getFps:()=>number=()=>30) {
   const canvas = document.createElement('canvas');
   canvas.width = images[0].width; canvas.height = images[0].height;
   const context = canvas.getContext('2d');
@@ -62,7 +62,8 @@ export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], on
     // Preserve the frame phase: resetting to now loses fractional display time
     // and turns a 30 fps target into uneven 20 fps on a 60 Hz display.
     // Terrain uploads cost more during movement; retain motion at 20 fps, idle at 30.
-    const frameInterval=1000/((map.isMoving()||map.getContainer().dataset.globeRotating)?20:30);
+    const fps=getFps();
+    const frameInterval=1000/((map.isMoving()||map.getContainer().dataset.globeRotating)?Math.min(fps,20):fps);
     if(lastDraw===null) lastDraw=now;
     else {
       const steps=Math.floor((now-lastDraw+0.01)/frameInterval);
@@ -105,5 +106,3 @@ export function createRadarPlayer(map: LibreMap, images: HTMLCanvasElement[], on
     dispose() {map.off('moveend',resumePublish);motion?.dispose();if(raf)cancelAnimationFrame(raf);if(map.getLayer(RADAR_SOURCE))map.removeLayer(RADAR_SOURCE);if(map.getSource(RADAR_SOURCE))map.removeSource(RADAR_SOURCE);for(const image of [...images,canvas,snapshot,target]){image.width=1;image.height=1;}},
   };
 }
-
-

@@ -55,3 +55,15 @@ __pycache__/
 
 # Standalone weather build
 /dist-weather/
+
+# Local voice pilot usage counter (no credentials)
+**/daily-usage.local.json*
+
+# Private support inbox data (never publish reports or rate-limit keys)
+**/support.sqlite3*
+**/rate-limit.key
+/deploy/support/data/
+
+# Generated satellite tile cache
+/deploy/satellite/tile-cache/
+/deploy/satellite/cache/

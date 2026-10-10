@@ -39,3 +39,15 @@ Validated: Denver-Charlotte 1,585 mi/27.0 driving hours, 20,487 geometry/timing 
 Measured server disk after startup: 96 GiB filesystem, about 58 GiB used and 39 GiB available. US data directory about 50 GiB including ~20 GiB individual routing tiles, their working tar archive and 11.18 GiB source PBF. All web releases together about 1.6 GiB. These figures include retained build source/working copies, not only rendered basemap. External map/weather tile providers remain dependencies.
 
 Final frontend bundle index-Dm54s_H_.js adds measured desktop panel/controls margins when fitting a route, preventing endpoint pins underneath the UI. Mobile padding remains unchanged. Published by installing assets first and atomically replacing index.html; previous bundle retained for open tabs. Public browser cross-state test returned 1,578 mi/27h03 and 16/16 forecasts with a cyan-to-red-to-amber route.
+
+## Vehicle selection (local preview, 2026-10-05)
+Weather menu offers Truck / Car; choice persists under ezclick-weather-vehicle.
+Truck uses DEFAULT_TRUCK (13 ft 6 in height, 72 ft length, 8 ft 6 in width).
+POST /route accepts vehicle: truck | car (omitted remains truck for old clients).
+Car maps to Valhalla auto costing and omits truck dimensions. Route keys include vehicle so old ETA/weather cannot be reused across profiles.
+
+Preview-only routing: gateway PORT=8768, VALHALLA_URL=http://127.0.0.1:8004;
+SSH loopback tunnel 8004 -> OVH 127.0.0.1:8003. Vite forwards /trip-api/route to 8768; weather and health retain the existing 8767 relay. Voice server remains unchanged.
+Before public frontend release, deploy the compatible gateway first; the currently deployed gateway does not support the car payload. Do not publish frontend alone.
+Validated Nashville–Jacksonville through the private router: car ~594 mi / 599 min; truck ~621 mi / 630 min. Coordinates and estimated durations are test-specific, with no live traffic.
+Reference: https://valhalla.github.io/valhalla/api/route/api-reference/

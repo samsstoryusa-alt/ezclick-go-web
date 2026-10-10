@@ -1,4 +1,5 @@
 import {useEffect,useState} from 'react';
+import {withAbortTimeout} from './abort-timeout';
 import {typeServiceBase} from './precip-types';
 import type {WindFrame} from './wind-math';
 export {sampleWind,windPair} from './wind-math';
@@ -11,12 +12,11 @@ export function useWindFields(ready:boolean){
   async function load(){
    if(busy||document.hidden)return;busy=true;
    try{
-    const r=await fetch(typeServiceBase()+'/wind/frames',{signal:AbortSignal.any([controller.signal,AbortSignal.timeout(10000)])});if(!r.ok)throw Error();
-    const data=await r.json() as {frames:Omit<WindFrame,'values'>[]};
+    const data=await withAbortTimeout(controller.signal,10000,async signal=>{const r=await fetch(typeServiceBase()+'/wind/frames',{signal});if(!r.ok)throw Error();return await r.json() as {frames:Omit<WindFrame,'values'>[]};});
     const chosen=(data.frames??[]).filter(f=>Number.isFinite(f.time)&&Number.isFinite(f.run)&&f.time>=Date.now()-5*3600000&&f.time<=Date.now()+26*3600000&&f.run>=Date.now()-18*3600000&&f.nx===720&&f.ny===361&&f.dx===.5&&f.dy===-.5&&f.lon0===-180&&f.lat0===90&&/^\/wind\/\d{13}_\d{13}\.bin$/.test(f.url));
     const loaded=await Promise.all(chosen.map(async f=>{
      if(cache.has(f.url))return cache.get(f.url)!;
-     try{const response=await fetch(typeServiceBase()+f.url,{signal:AbortSignal.any([controller.signal,AbortSignal.timeout(20000)])});if(!response.ok)return null;const bytes=await response.arrayBuffer();if(bytes.byteLength!==f.nx*f.ny*4)return null;const field={...f,values:new Int16Array(bytes)};cache.set(f.url,field);return field;}catch{return null;}
+     try{return await withAbortTimeout(controller.signal,20000,async signal=>{const response=await fetch(typeServiceBase()+f.url,{signal});if(!response.ok)return null;const bytes=await response.arrayBuffer();if(bytes.byteLength!==f.nx*f.ny*4)return null;const field={...f,values:new Int16Array(bytes)};cache.set(f.url,field);return field;});}catch{return null;}
     }));
     if(controller.signal.aborted)return;
     const valid=loaded.filter((f):f is WindFrame=>f!==null).sort((a,b)=>a.time-b.time);if(!valid.length)throw Error();
@@ -29,4 +29,3 @@ export function useWindFields(ready:boolean){
  },[ready]);
  return {frames,status};
 }
-

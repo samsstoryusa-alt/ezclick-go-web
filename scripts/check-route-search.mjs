@@ -11,3 +11,8 @@ console.log('Search: homonyms, state labels, coordinate order, deduplication, co
 
 const zip=exports.parseZipPlaces({places:[{'place name':'Jacksonville',state:'Florida',longitude:'-81.6517',latitude:'30.3299'}]},'32202');assert.equal(zip[0].name,'Jacksonville');assert.equal(zip[0].detail,'Florida \u00b7 32202');assert.deepEqual(zip[0].point,[-81.6517,30.3299]);assert.deepEqual(exports.parseZipPlaces({places:[{longitude:'',latitude:'30'}]},'32202'),[]);
 console.log('ZIP: place label, postcode, numeric coordinates, missing coordinate rejection PASS');
+
+assert.equal(exports.nextSearchHighlight(-1,'ArrowUp',6),5);assert.equal(exports.nextSearchHighlight(-1,'ArrowDown',6),0);
+assert.equal(exports.nextSearchHighlight(0,'ArrowUp',6),5);assert.equal(exports.nextSearchHighlight(5,'ArrowDown',6),0);assert.equal(exports.nextSearchHighlight(-1,'ArrowUp',0),-1);
+assert.equal(exports.searchScrollTop(0,144,240,48),144);assert.equal(exports.searchScrollTop(144,144,0,48),0);assert.equal(exports.searchScrollTop(48,144,96,48),48);
+console.log('PASS: first ArrowUp/Down, wrap-around, empty results, sixth row visible, wrap scrolls back to first');

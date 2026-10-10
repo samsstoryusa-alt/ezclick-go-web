@@ -11,11 +11,12 @@ const react={
 function effect(fn,deps){const i=cursor++,old=cells[i];if(!old||deps.some((v,n)=>!Object.is(v,old.deps[n]))){cells[i]={deps,cleanup:old?.cleanup};effects.push(()=>{cells[i].cleanup?.();cells[i].cleanup=fn();});}}
 let clock=10000;const date={now:()=>clock};let pending=[];
 const transport={weatherRequest:(_,options)=>new Promise(resolve=>pending.push({resolve,signal:options.signal}))};
-const exports={};new Function('exports','require','fetch','setTimeout','clearTimeout','setInterval','clearInterval','Date',ts.transpileModule(fs.readFileSync('app/road-route.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(exports,n=>n==='react'?react:transport,async()=>({ok:true,json:async()=>({coverage:'contiguous-us'})}),()=>1,()=>{},()=>1,()=>{},date);
+const waypointApi={};new Function('exports',ts.transpileModule(fs.readFileSync('app/route-waypoints.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText)(waypointApi);
+const exports={};new Function('exports','require','fetch','setTimeout','clearTimeout','setInterval','clearInterval','Date',ts.transpileModule(fs.readFileSync('app/road-route.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(exports,n=>n==='react'?react:n==='./route-waypoints'?waypointApi:transport,async()=>({ok:true,json:async()=>({coverage:'contiguous-us'})}),()=>1,()=>{},()=>1,()=>{},date);
 // tripApi is the only browser-specific part of the transport setup.
 globalThis.document={documentElement:{dataset:{weatherStandalone:'true'}}};
-let active=true,points=[[-86,36],[-81,30]],current;
-function render(){do{dirty=false;cursor=0;current=exports.useRoadRoute(null,active,points,exports.DEFAULT_TRUCK);}while(dirty);while(effects.length)effects.shift()();return current;}
+let via=[];let active=true,points=[[-86,36],[-81,30]],current;
+function render(){do{dirty=false;cursor=0;current=exports.useRoadRoute(null,active,points,exports.DEFAULT_TRUCK,'truck',via);}while(dirty);while(effects.length)effects.shift()();return current;}
 const payload={code:'Ok',routes:[{distance:100,duration:60,geometry:{type:'LineString',coordinates:[[-86,36],[-81,30]]}}]};
 render();const oldBuild=current.build();render();assert.equal(current.busy,true);
 points=[[-85,35],[-81,30]];render();assert.equal(pending[0].signal.aborted,true);assert.equal(current.busy,false);
@@ -24,3 +25,17 @@ pending[1].resolve(payload);await newBuild;render();assert.ok(current.route);ass
 clock+=2000;const closingBuild=current.build();render();active=false;render();assert.equal(pending[2].signal.aborted,true);pending[2].resolve({...payload,routes:[{...payload.routes[0],distance:999}]});await closingBuild;render();assert.equal(current.route.distance,100);assert.equal(current.error,'');assert.equal(current.busy,false);
 active=true;points=[null,null];render();assert.equal(current.route,null);assert.equal(current.hasPrevious,false);
 console.log('PASS: changed-route cancellation, late response isolation, current request success, close cancellation, clear route');
+points=[[-86,36],[-81,30]];render();clock+=2000;
+const cancelledBuild=current.build();render();const cancelled=pending.at(-1);
+assert.equal(current.busy,true);current.cancelBuild();render();assert.equal(cancelled.signal.aborted,true);assert.equal(current.busy,false);
+cancelled.resolve(payload);await cancelledBuild;render();assert.equal(current.route,null);assert.equal(current.error,'');
+clock+=2000;const retry=current.build();render();pending.at(-1).resolve(payload);await retry;render();assert.ok(current.route);
+console.log('PASS: explicit voice cancellation aborts transport, rejects late success, and allows retry');
+
+clock+=2000;const beforeVia=current.build();render();const obsolete=pending.at(-1);
+via=[[-83,34]];render();assert.equal(obsolete.signal.aborted,true);assert.equal(current.route,null);
+obsolete.resolve(payload);await beforeVia;render();assert.equal(current.route,null);
+clock+=2000;const through=current.build();render();pending.at(-1).resolve(payload);await through;render();
+assert.deepEqual(JSON.parse(current.route.key).via,via);
+via=[];render();assert.equal(current.route,null);
+console.log('PASS: adding/removing via invalidates route and isolates late responses');
